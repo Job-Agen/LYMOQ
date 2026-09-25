@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const LymoqApp());
-}
+void main() => runApp(const LymoqApp());
 
 class LymoqApp extends StatelessWidget {
   const LymoqApp({super.key});
@@ -14,12 +12,8 @@ class LymoqApp extends StatelessWidget {
       title: 'LYMOQ',
       theme: ThemeData(
         useMaterial3: true,
-        scaffoldBackgroundColor: const Color(0xFFF8FAF7),
-        fontFamily: 'Roboto',
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF073D31),
-          brightness: Brightness.light,
-        ),
+        scaffoldBackgroundColor: LymoqColors.background,
+        colorScheme: ColorScheme.fromSeed(seedColor: LymoqColors.forest),
       ),
       home: const OnboardingScreen(),
     );
@@ -30,14 +24,15 @@ class LymoqColors {
   static const forest = Color(0xFF073D31);
   static const forest2 = Color(0xFF005C47);
   static const accent = Color(0xFF008566);
-  static const mint = Color(0xFFDFF3E9);
-  static const mintStrong = Color(0xFFBFE7D3);
-  static const background = Color(0xFFF8FAF7);
-  static const muted = Color(0xFF67766F);
-  static const border = Color(0xFFE4EAE6);
-  static const white = Colors.white;
-  static const text = Color(0xFF101815);
-  static const success = Color(0xFF167A5C);
+  static const mint = Color(0xFFE8F6EF);
+  static const mintStrong = Color(0xFFCDEEDF);
+  static const background = Color(0xFFF9FBF8);
+  static const surface = Colors.white;
+  static const text = Color(0xFF111815);
+  static const muted = Color(0xFF6F7C76);
+  static const border = Color(0xFFE3EAE6);
+  static const success = Color(0xFF18936C);
+  static const danger = Color(0xFFD45454);
 }
 
 class OnboardingScreen extends StatelessWidget {
@@ -45,9 +40,9 @@ class OnboardingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.sizeOf(context).width;
-    final cardWidth = (width * .72).clamp(250.0, 330.0).toDouble();
-    final cardHeight = cardWidth * .61;
+    final size = MediaQuery.sizeOf(context);
+    final cardWidth = (size.width * .70).clamp(250.0, 310.0);
+    final cardHeight = cardWidth * .62;
 
     return Scaffold(
       body: SafeArea(
@@ -55,170 +50,119 @@ class OnboardingScreen extends StatelessWidget {
           builder: (context, constraints) {
             return SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.fromLTRB(24, 16, 24, 22),
+              padding: const EdgeInsets.fromLTRB(26, 14, 26, 20),
               child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: (constraints.maxHeight - 38).clamp(0.0, double.infinity),
-                ),
+                constraints: BoxConstraints(minHeight: constraints.maxHeight - 34),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const _OnboardingHeader(),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 18),
                     const Text(
                       'Your money.\nYour rules.',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontSize: 30,
-                        height: .98,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: -1.1,
                         color: LymoqColors.text,
+                        fontSize: 30,
+                        height: .96,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: -1.2,
                       ),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 10),
                     const Text(
                       'Create secure virtual cards\nfor your online payments.',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontSize: 14,
-                        height: 1.35,
                         color: LymoqColors.muted,
+                        fontSize: 14,
+                        height: 1.25,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 18),
                     SizedBox(
-                      height: cardHeight + 54,
+                      height: cardHeight + 66,
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
-                          Container(
-                            width: cardWidth * .92,
-                            height: cardHeight + 18,
-                            decoration: BoxDecoration(
-                              color: const Color(0xB3DFF3E9),
-                              borderRadius: BorderRadius.circular(48),
+                          Transform.translate(
+                            offset: const Offset(-28, 12),
+                            child: Transform.rotate(
+                              angle: -.17,
+                              child: Container(
+                                width: cardWidth * .86,
+                                height: cardHeight * .86,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFBFE8D6),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Transform.translate(
+                            offset: const Offset(26, -2),
+                            child: Transform.rotate(
+                              angle: .08,
+                              child: Container(
+                                width: cardWidth * .88,
+                                height: cardHeight * .88,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFDDF3E9),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                              ),
                             ),
                           ),
                           Transform.rotate(
-                            angle: -0.13,
-                            child: Container(
+                            angle: -.12,
+                            child: _VirtualCard(
                               width: cardWidth,
                               height: cardHeight,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(22),
-                                gradient: const LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    LymoqColors.forest,
-                                    Color(0xFF0A5947),
-                                    Color(0xFF0D7058),
-                                  ],
-                                ),
-                                boxShadow: const [
-                                  BoxShadow(
-                                    color: Color(0x33073D31),
-                                    blurRadius: 24,
-                                    offset: Offset(0, 14),
-                                  ),
-                                ],
-                              ),
-                              child: const Padding(
-                                padding: EdgeInsets.all(20),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          'LYMOQ',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w900,
-                                          ),
-                                        ),
-                                        Text(
-                                          'VISA',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.w900,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Spacer(),
-                                    Text(
-                                      '••••  4821',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w700,
-                                        letterSpacing: 2,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                              showMerchant: false,
                             ),
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 24),
-                    const _Benefit(text: 'Spend online safely'),
-                    const _Benefit(text: 'Stay in control'),
-                    const _Benefit(text: 'Set your own limits'),
-                    const _Benefit(text: 'Built for Africa'),
-                    const SizedBox(height: 22),
+                    const SizedBox(height: 4),
+                    const _Benefit(icon: Icons.lock_outline_rounded, text: 'Spend online safely'),
+                    const _Benefit(icon: Icons.tune_rounded, text: 'Stay in control'),
+                    const _Benefit(icon: Icons.speed_rounded, text: 'Set your own limits'),
+                    const _Benefit(icon: Icons.public_rounded, text: 'Built for Africa'),
+                    const SizedBox(height: 16),
                     SizedBox(
-                      height: 56,
+                      height: 52,
                       child: FilledButton(
                         onPressed: () {
                           Navigator.of(context).pushReplacement(
-                            MaterialPageRoute<void>(
-                              builder: (_) => const HomeScreen(),
-                            ),
+                            MaterialPageRoute<void>(builder: (_) => const HomeScreen()),
                           );
                         },
                         style: FilledButton.styleFrom(
                           backgroundColor: LymoqColors.forest2,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14),
-                          ),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                         ),
                         child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(
-                              'Get started',
-                              style: TextStyle(fontWeight: FontWeight.w800),
-                            ),
+                            Text('Get started', style: TextStyle(fontWeight: FontWeight.w800)),
                             SizedBox(width: 12),
                             Icon(Icons.arrow_forward_rounded, size: 18),
                           ],
                         ),
                       ),
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 8),
                     TextButton(
                       onPressed: () {
                         Navigator.of(context).pushReplacement(
-                          MaterialPageRoute<void>(
-                            builder: (_) => const HomeScreen(),
-                          ),
+                          MaterialPageRoute<void>(builder: (_) => const HomeScreen()),
                         );
                       },
                       child: const Text(
                         'I already have an account',
-                        style: TextStyle(
-                          color: LymoqColors.forest,
-                          fontWeight: FontWeight.w700,
-                        ),
+                        style: TextStyle(color: LymoqColors.forest, fontWeight: FontWeight.w700),
                       ),
                     ),
                   ],
@@ -246,28 +190,19 @@ class _OnboardingHeader extends StatelessWidget {
             color: LymoqColors.forest,
             fontSize: 22,
             fontWeight: FontWeight.w900,
-            letterSpacing: 1.3,
+            letterSpacing: 1.2,
           ),
         ),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 7),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x12000000),
-                blurRadius: 12,
-                offset: Offset(0, 4),
-              ),
-            ],
+            boxShadow: const [BoxShadow(color: Color(0x10000000), blurRadius: 10, offset: Offset(0, 4))],
           ),
           child: const Row(
             children: [
-              Text(
-                'EN',
-                style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800),
-              ),
+              Text('EN', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800)),
               SizedBox(width: 4),
               Icon(Icons.keyboard_arrow_down_rounded, size: 16),
             ],
@@ -279,7 +214,8 @@ class _OnboardingHeader extends StatelessWidget {
 }
 
 class _Benefit extends StatelessWidget {
-  const _Benefit({required this.text});
+  const _Benefit({required this.icon, required this.text});
+  final IconData icon;
   final String text;
 
   @override
@@ -291,45 +227,19 @@ class _Benefit extends StatelessWidget {
           Container(
             width: 30,
             height: 30,
-            decoration: const BoxDecoration(
-              color: LymoqColors.mintStrong,
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.check_rounded,
-              size: 16,
-              color: LymoqColors.forest,
-            ),
+            decoration: const BoxDecoration(color: LymoqColors.forest2, shape: BoxShape.circle),
+            child: Icon(icon, size: 16, color: Colors.white),
           ),
           const SizedBox(width: 12),
-          Text(
-            text,
-            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
-          ),
+          Text(text, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700)),
         ],
       ),
     );
   }
 }
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
-
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  int _selectedIndex = 0;
-
-  void _showNextStep() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Create Card flow will be implemented in screen 03.'),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -339,100 +249,40 @@ class _HomeScreenState extends State<HomeScreen> {
         bottom: false,
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
-          padding: const EdgeInsets.fromLTRB(20, 18, 20, 28),
+          padding: const EdgeInsets.fromLTRB(20, 14, 20, 22),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const _HomeHeader(),
-              const SizedBox(height: 26),
-              _HeroPanel(onCreateCard: _showNextStep),
-              const SizedBox(height: 28),
-              const _SectionTitle(title: 'Active cards', action: 'See all'),
               const SizedBox(height: 14),
-              const _ActiveCardTile(),
-              const SizedBox(height: 28),
-              const _SectionTitle(title: 'Recent activity', action: 'See all'),
+              const _HeroPanel(),
+              const SizedBox(height: 14),
+              const _SectionTitle(title: 'Active cards'),
               const SizedBox(height: 8),
-              const _ActivityRow(
-                icon: Icons.design_services_outlined,
-                merchant: 'Canva',
-                subtitle: 'Today · 10:42',
-                amount: '5,650 FCFA',
-                status: 'Approved',
-                statusColor: LymoqColors.success,
+              const _ActiveCardTile(
+                brand: 'C',
+                name: 'Canva Card',
+                amount: '15,000 FCFA',
+                detail: '1 payment  •  Expires in 42 min',
+                brandGradient: [Color(0xFF4B8EFF), Color(0xFF7947FF)],
               ),
-              const Divider(height: 1, color: LymoqColors.border),
-              const _ActivityRow(
-                icon: Icons.campaign_outlined,
-                merchant: 'Meta Ads',
-                subtitle: 'Yesterday · 18:11',
-                amount: '12,000 FCFA',
-                status: 'Approved',
-                statusColor: LymoqColors.success,
+              const SizedBox(height: 8),
+              const _ActiveCardTile(
+                brand: '∞',
+                name: 'Meta Ads Card',
+                amount: '50,000 FCFA',
+                detail: '17,000 FCFA remaining\nExpires in 28 days',
+                brandGradient: [Color(0xFF0A7BFF), Color(0xFF27A0FF)],
               ),
-              const Divider(height: 1, color: LymoqColors.border),
-              const _ActivityRow(
-                icon: Icons.language_rounded,
-                merchant: 'Google',
-                subtitle: 'Yesterday · 14:06',
-                amount: '16,500 FCFA',
-                status: 'Blocked',
-                statusColor: Color(0xFFC9504D),
-              ),
+              const SizedBox(height: 14),
+              const _SectionTitle(title: 'Recent activity'),
+              const SizedBox(height: 4),
+              const _ActivityRow(),
             ],
           ),
         ),
       ),
-      bottomNavigationBar: SafeArea(
-        top: false,
-        child: Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            border: Border(top: BorderSide(color: LymoqColors.border)),
-          ),
-          child: NavigationBar(
-            height: 72,
-            backgroundColor: Colors.white,
-            indicatorColor: LymoqColors.mint,
-            selectedIndex: _selectedIndex,
-            onDestinationSelected: (index) {
-              setState(() => _selectedIndex = index);
-              if (index != 0) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      '${['Home', 'Cards', 'Activity', 'Profile'][index]} screen comes next.',
-                    ),
-                    behavior: SnackBarBehavior.floating,
-                  ),
-                );
-              }
-            },
-            destinations: const [
-              NavigationDestination(
-                icon: Icon(Icons.home_outlined),
-                selectedIcon: Icon(Icons.home_rounded),
-                label: 'Home',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.credit_card_outlined),
-                selectedIcon: Icon(Icons.credit_card_rounded),
-                label: 'Cards',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.receipt_long_outlined),
-                selectedIcon: Icon(Icons.receipt_long_rounded),
-                label: 'Activity',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.person_outline_rounded),
-                selectedIcon: Icon(Icons.person_rounded),
-                label: 'Profile',
-              ),
-            ],
-          ),
-        ),
-      ),
+      bottomNavigationBar: const _BottomNav(),
     );
   }
 }
@@ -443,61 +293,30 @@ class _HomeHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Expanded(
+        const Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              Text(
-                'Good morning,',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: LymoqColors.muted,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              SizedBox(height: 2),
-              Text(
-                'Koffi 👋',
-                style: TextStyle(
-                  fontSize: 26,
-                  height: 1,
-                  color: LymoqColors.text,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: -0.7,
-                ),
-              ),
+            children: [
+              Text('Good morning,', style: TextStyle(fontSize: 12, color: LymoqColors.muted, fontWeight: FontWeight.w500)),
+              SizedBox(height: 1),
+              Text('Koffi 👋', style: TextStyle(fontSize: 24, height: 1, fontWeight: FontWeight.w900, letterSpacing: -.7)),
             ],
           ),
         ),
         Container(
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: LymoqColors.border),
-          ),
-          child: const Icon(Icons.notifications_none_rounded, size: 22),
+          width: 38,
+          height: 38,
+          decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle, border: Border.all(color: LymoqColors.border)),
+          child: const Icon(Icons.notifications_none_rounded, size: 20),
         ),
-        const SizedBox(width: 10),
+        const SizedBox(width: 8),
         Container(
-          width: 44,
-          height: 44,
-          decoration: const BoxDecoration(
-            color: LymoqColors.mintStrong,
-            shape: BoxShape.circle,
-          ),
+          width: 38,
+          height: 38,
           alignment: Alignment.center,
-          child: const Text(
-            'K',
-            style: TextStyle(
-              color: LymoqColors.forest,
-              fontSize: 16,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
+          decoration: const BoxDecoration(color: LymoqColors.mintStrong, shape: BoxShape.circle),
+          child: const Text('K', style: TextStyle(color: LymoqColors.forest, fontWeight: FontWeight.w900)),
         ),
       ],
     );
@@ -505,92 +324,53 @@ class _HomeHeader extends StatelessWidget {
 }
 
 class _HeroPanel extends StatelessWidget {
-  const _HeroPanel({required this.onCreateCard});
-
-  final VoidCallback onCreateCard;
+  const _HeroPanel();
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: 150,
       width: double.infinity,
-      padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(18),
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            LymoqColors.forest,
-            Color(0xFF0A5847),
-            Color(0xFF0D6B56),
-          ],
+          colors: [Color(0xFF073D31), Color(0xFF07523F)],
         ),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x24073D31),
-            blurRadius: 24,
-            offset: Offset(0, 12),
-          ),
-        ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      clipBehavior: Clip.antiAlias,
+      child: Stack(
         children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            decoration: BoxDecoration(
-              color: const Color(0x22FFFFFF),
-              borderRadius: BorderRadius.circular(30),
-            ),
-            child: const Text(
-              'YOUR MONEY. YOUR RULES.',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 10,
-                letterSpacing: .8,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          const Text(
-            'Pay online with\nconfidence.',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 28,
-              height: 1.05,
-              fontWeight: FontWeight.w900,
-              letterSpacing: -0.9,
-            ),
-          ),
-          const SizedBox(height: 10),
-          const Text(
-            'Create a virtual card in seconds and stay in control.',
-            style: TextStyle(
-              color: Color(0xFFD7E8E1),
-              fontSize: 14,
-              height: 1.4,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 20),
-          SizedBox(
-            height: 48,
-            child: FilledButton.icon(
-              onPressed: onCreateCard,
-              style: FilledButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: LymoqColors.forest,
-                padding: const EdgeInsets.symmetric(horizontal: 18),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
+          Positioned(right: -30, top: 14, child: Transform.rotate(angle: .35, child: Container(width: 100, height: 100, decoration: BoxDecoration(color: const Color(0x1AFFFFFF), borderRadius: BorderRadius.circular(18))))),
+          Positioned(right: 20, bottom: -32, child: Transform.rotate(angle: -.25, child: Container(width: 120, height: 74, decoration: BoxDecoration(color: const Color(0x1400C890), borderRadius: BorderRadius.circular(18))))),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(18, 16, 18, 14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Pay online with\nconfidence.', style: TextStyle(color: Colors.white, fontSize: 24, height: 1.0, fontWeight: FontWeight.w900, letterSpacing: -.8)),
+                const SizedBox(height: 7),
+                const SizedBox(
+                  width: 210,
+                  child: Text('Create a virtual card in seconds and stay in control.', style: TextStyle(color: Color(0xFFD7E8E1), fontSize: 12, height: 1.25, fontWeight: FontWeight.w500)),
                 ),
-              ),
-              icon: const Icon(Icons.add_rounded, size: 20),
-              label: const Text(
-                'Create a card',
-                style: TextStyle(fontWeight: FontWeight.w800),
-              ),
+                const Spacer(),
+                SizedBox(
+                  height: 38,
+                  child: FilledButton.icon(
+                    onPressed: () {},
+                    style: FilledButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: LymoqColors.forest,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                    icon: const Icon(Icons.add_rounded, size: 18),
+                    label: const Text('Create a card', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800)),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -600,32 +380,19 @@ class _HeroPanel extends StatelessWidget {
 }
 
 class _SectionTitle extends StatelessWidget {
-  const _SectionTitle({required this.title, required this.action});
-
+  const _SectionTitle({required this.title});
   final String title;
-  final String action;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          title,
-          style: const TextStyle(
-            color: LymoqColors.text,
-            fontSize: 18,
-            fontWeight: FontWeight.w900,
-            letterSpacing: -0.3,
-          ),
-        ),
-        Text(
-          action,
-          style: const TextStyle(
-            color: LymoqColors.accent,
-            fontSize: 12,
-            fontWeight: FontWeight.w800,
-          ),
+        Text(title, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w900, letterSpacing: -.3)),
+        TextButton(
+          onPressed: () {},
+          style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: Size.zero, tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+          child: const Text('See all', style: TextStyle(color: LymoqColors.accent, fontSize: 11, fontWeight: FontWeight.w800)),
         ),
       ],
     );
@@ -633,266 +400,195 @@ class _SectionTitle extends StatelessWidget {
 }
 
 class _ActiveCardTile extends StatelessWidget {
-  const _ActiveCardTile();
+  const _ActiveCardTile({
+    required this.brand,
+    required this.name,
+    required this.amount,
+    required this.detail,
+    required this.brandGradient,
+  });
+
+  final String brand;
+  final String name;
+  final String amount;
+  final String detail;
+  final List<Color> brandGradient;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: LymoqColors.border),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x08000000),
-            blurRadius: 18,
-            offset: Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Column(
+      padding: const EdgeInsets.all(11),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(13), border: Border.all(color: LymoqColors.border)),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 56,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: LymoqColors.forest,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                alignment: Alignment.center,
-                child: const Text(
-                  'LYMOQ',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 9,
-                    letterSpacing: .5,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 14),
-              const Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            'Canva Card',
-                            style: TextStyle(
-                              fontSize: 15,
-                              color: LymoqColors.text,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
-                        ),
-                        _StatusPill(text: 'ACTIVE'),
-                      ],
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      '•••• 4821',
-                      style: TextStyle(
-                        color: LymoqColors.muted,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
           Container(
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF4F8F5),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: const Row(
+            width: 38,
+            height: 38,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(gradient: LinearGradient(colors: brandGradient), borderRadius: BorderRadius.circular(11)),
+            child: Text(brand, style: const TextStyle(color: Colors.white, fontSize: 21, fontWeight: FontWeight.w900)),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: _MiniMetric(label: 'LIMIT', value: '15,000 FCFA'),
-                ),
-                _VerticalDivider(),
-                Expanded(
-                  child: _MiniMetric(label: 'PAYMENTS', value: '1'),
-                ),
-                _VerticalDivider(),
-                Expanded(
-                  child: _MiniMetric(label: 'EXPIRES', value: '42 min'),
-                ),
+                Text(name, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w900)),
+                const SizedBox(height: 2),
+                Text(amount, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800)),
+                const SizedBox(height: 2),
+                Text(detail, style: const TextStyle(fontSize: 10.5, height: 1.25, color: LymoqColors.muted, fontWeight: FontWeight.w500)),
               ],
             ),
           ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(color: LymoqColors.mint, borderRadius: BorderRadius.circular(30)),
+            child: const Text('ACTIVE', style: TextStyle(fontSize: 9, color: LymoqColors.success, fontWeight: FontWeight.w900)),
+          ),
         ],
       ),
-    );
-  }
-}
-
-class _StatusPill extends StatelessWidget {
-  const _StatusPill({required this.text});
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
-      decoration: BoxDecoration(
-        color: LymoqColors.mint,
-        borderRadius: BorderRadius.circular(99),
-      ),
-      child: Text(
-        text,
-        style: const TextStyle(
-          color: LymoqColors.success,
-          fontSize: 9,
-          fontWeight: FontWeight.w900,
-          letterSpacing: .5,
-        ),
-      ),
-    );
-  }
-}
-
-class _MiniMetric extends StatelessWidget {
-  const _MiniMetric({required this.label, required this.value});
-
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            color: LymoqColors.muted,
-            fontSize: 8,
-            fontWeight: FontWeight.w800,
-            letterSpacing: .5,
-          ),
-        ),
-        const SizedBox(height: 3),
-        Text(
-          value,
-          textAlign: TextAlign.center,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
-            color: LymoqColors.text,
-            fontSize: 11,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _VerticalDivider extends StatelessWidget {
-  const _VerticalDivider();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 1,
-      height: 30,
-      margin: const EdgeInsets.symmetric(horizontal: 8),
-      color: LymoqColors.border,
     );
   }
 }
 
 class _ActivityRow extends StatelessWidget {
-  const _ActivityRow({
-    required this.icon,
-    required this.merchant,
-    required this.subtitle,
-    required this.amount,
-    required this.status,
-    required this.statusColor,
-  });
-
-  final IconData icon;
-  final String merchant;
-  final String subtitle;
-  final String amount;
-  final String status;
-  final Color statusColor;
+  const _ActivityRow();
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 14),
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
         children: [
           Container(
-            width: 44,
-            height: 44,
+            width: 38,
+            height: 38,
+            alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: LymoqColors.border),
+              gradient: const LinearGradient(colors: [Color(0xFF4B8EFF), Color(0xFF7947FF)]),
+              borderRadius: BorderRadius.circular(11),
             ),
-            child: Icon(icon, color: LymoqColors.forest, size: 21),
+            child: const Text('C', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w900)),
           ),
-          const SizedBox(width: 12),
-          Expanded(
+          const SizedBox(width: 10),
+          const Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  merchant,
-                  style: const TextStyle(
-                    color: LymoqColors.text,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  subtitle,
-                  style: const TextStyle(
-                    color: LymoqColors.muted,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
+                Text('Canva', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w900)),
+                SizedBox(height: 2),
+                Text('Today, 10:42', style: TextStyle(fontSize: 10.5, color: LymoqColors.muted)),
               ],
             ),
           ),
-          Column(
+          const Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(
-                amount,
-                style: const TextStyle(
-                  color: LymoqColors.text,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-              const SizedBox(height: 3),
-              Text(
-                status,
-                style: TextStyle(
-                  color: statusColor,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
+              Text('\$9.99', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w900)),
+              SizedBox(height: 2),
+              Text('Approved', style: TextStyle(fontSize: 10.5, color: LymoqColors.success, fontWeight: FontWeight.w800)),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BottomNav extends StatelessWidget {
+  const _BottomNav();
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      top: false,
+      child: Container(
+        height: 62,
+        decoration: const BoxDecoration(color: Colors.white, border: Border(top: BorderSide(color: LymoqColors.border))),
+        child: const Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _NavItem(icon: Icons.home_rounded, label: 'Home', selected: true),
+            _NavItem(icon: Icons.credit_card_outlined, label: 'Cards'),
+            _NavItem(icon: Icons.show_chart_rounded, label: 'Activity'),
+            _NavItem(icon: Icons.person_outline_rounded, label: 'Profile'),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _NavItem extends StatelessWidget {
+  const _NavItem({required this.icon, required this.label, this.selected = false});
+  final IconData icon;
+  final String label;
+  final bool selected;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = selected ? LymoqColors.accent : LymoqColors.muted;
+    return SizedBox(
+      width: 64,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, size: 21, color: color),
+          const SizedBox(height: 2),
+          Text(label, style: TextStyle(fontSize: 9.5, color: color, fontWeight: selected ? FontWeight.w800 : FontWeight.w600)),
+        ],
+      ),
+    );
+  }
+}
+
+class _VirtualCard extends StatelessWidget {
+  const _VirtualCard({required this.width, required this.height, required this.showMerchant});
+  final double width;
+  final double height;
+  final bool showMerchant;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: width,
+      height: height,
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF073D31), Color(0xFF075842), Color(0xFF08705A)],
+        ),
+        boxShadow: const [BoxShadow(color: Color(0x30073D31), blurRadius: 22, offset: Offset(0, 12))],
+      ),
+      child: Stack(
+        children: [
+          Positioned(right: -30, top: 18, child: Transform.rotate(angle: .45, child: Container(width: 120, height: 70, decoration: BoxDecoration(color: const Color(0x12FFFFFF), borderRadius: BorderRadius.circular(16))))),
+          Positioned(left: 60, bottom: -24, child: Transform.rotate(angle: -.3, child: Container(width: 150, height: 80, decoration: BoxDecoration(color: const Color(0x1300D49A), borderRadius: BorderRadius.circular(18))))),
+          Padding(
+            padding: const EdgeInsets.all(19),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('LYMOQ', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w900)),
+                    Text('VISA', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900)),
+                  ],
+                ),
+                if (showMerchant) ...[
+                  const SizedBox(height: 18),
+                  const Text('CANVA CARD', style: TextStyle(color: Color(0xFFCEE2DA), fontSize: 9, fontWeight: FontWeight.w700, letterSpacing: .8)),
+                ],
+                const Spacer(),
+                const Text('••••••  4821', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w800, letterSpacing: 1.6)),
+              ],
+            ),
           ),
         ],
       ),
