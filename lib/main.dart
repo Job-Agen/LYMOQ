@@ -27,12 +27,22 @@ class LymoqColors {
   static const mint = Color(0xFFE8F6EF);
   static const mintStrong = Color(0xFFCDEEDF);
   static const background = Color(0xFFF9FBF8);
-  static const surface = Colors.white;
   static const text = Color(0xFF111815);
   static const muted = Color(0xFF6F7C76);
   static const border = Color(0xFFE3EAE6);
   static const success = Color(0xFF18936C);
-  static const danger = Color(0xFFD45454);
+}
+
+class ResponsiveValues {
+  const ResponsiveValues(this.width);
+  final double width;
+
+  bool get compact => width < 360;
+  bool get large => width >= 420;
+  double get pagePadding => compact ? 16 : (large ? 24 : 20);
+  double get heroTitle => compact ? 21 : (large ? 25 : 23);
+  double get heroBody => compact ? 11 : 12;
+  double get sectionTitle => compact ? 16 : 17;
 }
 
 class OnboardingScreen extends StatelessWidget {
@@ -40,49 +50,49 @@ class OnboardingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.sizeOf(context);
-    final cardWidth = (size.width * .70).clamp(250.0, 310.0);
-    final cardHeight = cardWidth * .62;
-
     return Scaffold(
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
+            final r = ResponsiveValues(constraints.maxWidth);
+            final cardWidth = (constraints.maxWidth * .70).clamp(230.0, 310.0);
+            final cardHeight = cardWidth * .62;
+
             return SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.fromLTRB(26, 14, 26, 20),
+              padding: EdgeInsets.fromLTRB(r.pagePadding, 14, r.pagePadding, 20),
               child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: constraints.maxHeight - 34),
+                constraints: BoxConstraints(minHeight: (constraints.maxHeight - 34).clamp(0, double.infinity)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const _OnboardingHeader(),
-                    const SizedBox(height: 18),
-                    const Text(
+                    SizedBox(height: r.compact ? 14 : 18),
+                    Text(
                       'Your money.\nYour rules.',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: LymoqColors.text,
-                        fontSize: 30,
+                        fontSize: r.compact ? 27 : 30,
                         height: .96,
                         fontWeight: FontWeight.w900,
                         letterSpacing: -1.2,
                       ),
                     ),
                     const SizedBox(height: 10),
-                    const Text(
+                    Text(
                       'Create secure virtual cards\nfor your online payments.',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: LymoqColors.muted,
-                        fontSize: 14,
+                        fontSize: r.compact ? 13 : 14,
                         height: 1.25,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    const SizedBox(height: 18),
+                    SizedBox(height: r.compact ? 12 : 18),
                     SizedBox(
-                      height: cardHeight + 66,
+                      height: cardHeight + 58,
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
@@ -116,29 +126,23 @@ class OnboardingScreen extends StatelessWidget {
                           ),
                           Transform.rotate(
                             angle: -.12,
-                            child: _VirtualCard(
-                              width: cardWidth,
-                              height: cardHeight,
-                              showMerchant: false,
-                            ),
+                            child: _VirtualCard(width: cardWidth, height: cardHeight),
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 2),
                     const _Benefit(icon: Icons.lock_outline_rounded, text: 'Spend online safely'),
                     const _Benefit(icon: Icons.tune_rounded, text: 'Stay in control'),
                     const _Benefit(icon: Icons.speed_rounded, text: 'Set your own limits'),
                     const _Benefit(icon: Icons.public_rounded, text: 'Built for Africa'),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 14),
                     SizedBox(
                       height: 52,
                       child: FilledButton(
-                        onPressed: () {
-                          Navigator.of(context).pushReplacement(
-                            MaterialPageRoute<void>(builder: (_) => const HomeScreen()),
-                          );
-                        },
+                        onPressed: () => Navigator.of(context).pushReplacement(
+                          MaterialPageRoute<void>(builder: (_) => const HomeScreen()),
+                        ),
                         style: FilledButton.styleFrom(
                           backgroundColor: LymoqColors.forest2,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
@@ -153,13 +157,11 @@ class OnboardingScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 6),
                     TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pushReplacement(
-                          MaterialPageRoute<void>(builder: (_) => const HomeScreen()),
-                        );
-                      },
+                      onPressed: () => Navigator.of(context).pushReplacement(
+                        MaterialPageRoute<void>(builder: (_) => const HomeScreen()),
+                      ),
                       child: const Text(
                         'I already have an account',
                         style: TextStyle(color: LymoqColors.forest, fontWeight: FontWeight.w700),
@@ -186,12 +188,7 @@ class _OnboardingHeader extends StatelessWidget {
       children: [
         const Text(
           'LYMOQ',
-          style: TextStyle(
-            color: LymoqColors.forest,
-            fontSize: 22,
-            fontWeight: FontWeight.w900,
-            letterSpacing: 1.2,
-          ),
+          style: TextStyle(color: LymoqColors.forest, fontSize: 22, fontWeight: FontWeight.w900, letterSpacing: 1.2),
         ),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 7),
@@ -201,6 +198,7 @@ class _OnboardingHeader extends StatelessWidget {
             boxShadow: const [BoxShadow(color: Color(0x10000000), blurRadius: 10, offset: Offset(0, 4))],
           ),
           child: const Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
               Text('EN', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800)),
               SizedBox(width: 4),
@@ -231,7 +229,7 @@ class _Benefit extends StatelessWidget {
             child: Icon(icon, size: 16, color: Colors.white),
           ),
           const SizedBox(width: 12),
-          Text(text, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700)),
+          Expanded(child: Text(text, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700))),
         ],
       ),
     );
@@ -247,39 +245,44 @@ class HomeScreen extends StatelessWidget {
       backgroundColor: LymoqColors.background,
       body: SafeArea(
         bottom: false,
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          padding: const EdgeInsets.fromLTRB(20, 14, 20, 22),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const _HomeHeader(),
-              const SizedBox(height: 14),
-              const _HeroPanel(),
-              const SizedBox(height: 14),
-              const _SectionTitle(title: 'Active cards'),
-              const SizedBox(height: 8),
-              const _ActiveCardTile(
-                brand: 'C',
-                name: 'Canva Card',
-                amount: '15,000 FCFA',
-                detail: '1 payment  •  Expires in 42 min',
-                brandGradient: [Color(0xFF4B8EFF), Color(0xFF7947FF)],
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final r = ResponsiveValues(constraints.maxWidth);
+            return SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              padding: EdgeInsets.fromLTRB(r.pagePadding, 14, r.pagePadding, 22),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const _HomeHeader(),
+                  const SizedBox(height: 14),
+                  const _HeroPanel(),
+                  const SizedBox(height: 14),
+                  _SectionTitle(title: 'Active cards', fontSize: r.sectionTitle),
+                  const SizedBox(height: 8),
+                  const _ActiveCardTile(
+                    brand: 'C',
+                    name: 'Canva Card',
+                    amount: '15,000 FCFA',
+                    detail: '1 payment  •  Expires in 42 min',
+                    brandGradient: [Color(0xFF4B8EFF), Color(0xFF7947FF)],
+                  ),
+                  const SizedBox(height: 8),
+                  const _ActiveCardTile(
+                    brand: '∞',
+                    name: 'Meta Ads Card',
+                    amount: '50,000 FCFA',
+                    detail: '17,000 FCFA remaining\nExpires in 28 days',
+                    brandGradient: [Color(0xFF0A7BFF), Color(0xFF27A0FF)],
+                  ),
+                  const SizedBox(height: 14),
+                  _SectionTitle(title: 'Recent activity', fontSize: r.sectionTitle),
+                  const SizedBox(height: 4),
+                  const _ActivityRow(),
+                ],
               ),
-              const SizedBox(height: 8),
-              const _ActiveCardTile(
-                brand: '∞',
-                name: 'Meta Ads Card',
-                amount: '50,000 FCFA',
-                detail: '17,000 FCFA remaining\nExpires in 28 days',
-                brandGradient: [Color(0xFF0A7BFF), Color(0xFF27A0FF)],
-              ),
-              const SizedBox(height: 14),
-              const _SectionTitle(title: 'Recent activity'),
-              const SizedBox(height: 4),
-              const _ActivityRow(),
-            ],
-          ),
+            );
+          },
         ),
       ),
       bottomNavigationBar: const _BottomNav(),
@@ -328,70 +331,122 @@ class _HeroPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 150,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18),
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFF073D31), Color(0xFF07523F)],
-        ),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Stack(
-        children: [
-          Positioned(right: -30, top: 14, child: Transform.rotate(angle: .35, child: Container(width: 100, height: 100, decoration: BoxDecoration(color: const Color(0x1AFFFFFF), borderRadius: BorderRadius.circular(18))))),
-          Positioned(right: 20, bottom: -32, child: Transform.rotate(angle: -.25, child: Container(width: 120, height: 74, decoration: BoxDecoration(color: const Color(0x1400C890), borderRadius: BorderRadius.circular(18))))),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(18, 16, 18, 14),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('Pay online with\nconfidence.', style: TextStyle(color: Colors.white, fontSize: 24, height: 1.0, fontWeight: FontWeight.w900, letterSpacing: -.8)),
-                const SizedBox(height: 7),
-                const SizedBox(
-                  width: 210,
-                  child: Text('Create a virtual card in seconds and stay in control.', style: TextStyle(color: Color(0xFFD7E8E1), fontSize: 12, height: 1.25, fontWeight: FontWeight.w500)),
-                ),
-                const Spacer(),
-                SizedBox(
-                  height: 38,
-                  child: FilledButton.icon(
-                    onPressed: () {},
-                    style: FilledButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: LymoqColors.forest,
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                    ),
-                    icon: const Icon(Icons.add_rounded, size: 18),
-                    label: const Text('Create a card', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800)),
-                  ),
-                ),
-              ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final r = ResponsiveValues(constraints.maxWidth);
+        return Container(
+          width: double.infinity,
+          constraints: const BoxConstraints(minHeight: 158),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(18),
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFF073D31), Color(0xFF07523F)],
             ),
           ),
-        ],
-      ),
+          clipBehavior: Clip.antiAlias,
+          child: Stack(
+            children: [
+              Positioned(
+                right: -30,
+                top: 14,
+                child: Transform.rotate(
+                  angle: .35,
+                  child: Container(
+                    width: 100,
+                    height: 100,
+                    decoration: BoxDecoration(color: const Color(0x1AFFFFFF), borderRadius: BorderRadius.circular(18)),
+                  ),
+                ),
+              ),
+              Positioned(
+                right: 20,
+                bottom: -32,
+                child: Transform.rotate(
+                  angle: -.25,
+                  child: Container(
+                    width: 120,
+                    height: 74,
+                    decoration: BoxDecoration(color: const Color(0x1400C890), borderRadius: BorderRadius.circular(18)),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.fromLTRB(r.compact ? 16 : 18, 16, r.compact ? 16 : 18, 16),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Pay online with\nconfidence.',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: r.heroTitle,
+                        height: 1.02,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: -.8,
+                      ),
+                    ),
+                    const SizedBox(height: 7),
+                    ConstrainedBox(
+                      constraints: BoxConstraints(maxWidth: r.compact ? 185 : 220),
+                      child: Text(
+                        'Create a virtual card in seconds and stay in control.',
+                        style: TextStyle(
+                          color: const Color(0xFFD7E8E1),
+                          fontSize: r.heroBody,
+                          height: 1.22,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(minHeight: 40),
+                      child: FilledButton.icon(
+                        onPressed: () {},
+                        style: FilledButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: LymoqColors.forest,
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                          minimumSize: const Size(0, 40),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        ),
+                        icon: const Icon(Icons.add_rounded, size: 18),
+                        label: const Text('Create a card', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800)),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
 
 class _SectionTitle extends StatelessWidget {
-  const _SectionTitle({required this.title});
+  const _SectionTitle({required this.title, required this.fontSize});
   final String title;
+  final double fontSize;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(title, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w900, letterSpacing: -.3)),
+        Text(title, style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.w900, letterSpacing: -.3)),
         TextButton(
           onPressed: () {},
-          style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: Size.zero, tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+          style: TextButton.styleFrom(
+            padding: EdgeInsets.zero,
+            minimumSize: Size.zero,
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          ),
           child: const Text('See all', style: TextStyle(color: LymoqColors.accent, fontSize: 11, fontWeight: FontWeight.w800)),
         ),
       ],
@@ -417,8 +472,13 @@ class _ActiveCardTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: double.infinity,
       padding: const EdgeInsets.all(11),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(13), border: Border.all(color: LymoqColors.border)),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(13),
+        border: Border.all(color: LymoqColors.border),
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -434,7 +494,7 @@ class _ActiveCardTile extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(name, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w900)),
+                Text(name, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w900)),
                 const SizedBox(height: 2),
                 Text(amount, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800)),
                 const SizedBox(height: 2),
@@ -442,6 +502,7 @@ class _ActiveCardTile extends StatelessWidget {
               ],
             ),
           ),
+          const SizedBox(width: 6),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(color: LymoqColors.mint, borderRadius: BorderRadius.circular(30)),
@@ -545,10 +606,9 @@ class _NavItem extends StatelessWidget {
 }
 
 class _VirtualCard extends StatelessWidget {
-  const _VirtualCard({required this.width, required this.height, required this.showMerchant});
+  const _VirtualCard({required this.width, required this.height});
   final double width;
   final double height;
-  final bool showMerchant;
 
   @override
   Widget build(BuildContext context) {
@@ -567,26 +627,44 @@ class _VirtualCard extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          Positioned(right: -30, top: 18, child: Transform.rotate(angle: .45, child: Container(width: 120, height: 70, decoration: BoxDecoration(color: const Color(0x12FFFFFF), borderRadius: BorderRadius.circular(16))))),
-          Positioned(left: 60, bottom: -24, child: Transform.rotate(angle: -.3, child: Container(width: 150, height: 80, decoration: BoxDecoration(color: const Color(0x1300D49A), borderRadius: BorderRadius.circular(18))))),
-          Padding(
-            padding: const EdgeInsets.all(19),
+          Positioned(
+            right: -30,
+            top: 18,
+            child: Transform.rotate(
+              angle: .45,
+              child: Container(
+                width: 120,
+                height: 70,
+                decoration: BoxDecoration(color: const Color(0x12FFFFFF), borderRadius: BorderRadius.circular(16)),
+              ),
+            ),
+          ),
+          Positioned(
+            left: 60,
+            bottom: -24,
+            child: Transform.rotate(
+              angle: -.3,
+              child: Container(
+                width: 150,
+                height: 80,
+                decoration: BoxDecoration(color: const Color(0x1300D49A), borderRadius: BorderRadius.circular(18)),
+              ),
+            ),
+          ),
+          const Padding(
+            padding: EdgeInsets.all(19),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text('LYMOQ', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w900)),
                     Text('VISA', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900)),
                   ],
                 ),
-                if (showMerchant) ...[
-                  const SizedBox(height: 18),
-                  const Text('CANVA CARD', style: TextStyle(color: Color(0xFFCEE2DA), fontSize: 9, fontWeight: FontWeight.w700, letterSpacing: .8)),
-                ],
-                const Spacer(),
-                const Text('••••••  4821', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w800, letterSpacing: 1.6)),
+                Spacer(),
+                Text('••••••  4821', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w800, letterSpacing: 1.6)),
               ],
             ),
           ),
