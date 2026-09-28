@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: po
+          POSTGRES_PASSWORD: po
+          POSTGRES_DB: po
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U po" --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql://po:po@localhost:5432/po?schema=public
+      DIRECT_URL: postgresql://po:po@localhost:5432/po?schema=public
+      JWT_SECRET: ci-only-secret-that-is-at-least-32-characters-long
+      SANDBOX_MODE: 'true'
+      SANDBOX_FUNDING_AUTO_CONFIRM_SECONDS: '10'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm test
+      - name: Migrate and seed
+        run: |
+          pnpm --filter @po/api prisma:deploy
+          pnpm db:seed
+      - name: API smoke test
+        run: |
+          pnpm --filter @po/api build
+          node apps/api/dist/main.js > api.log 2>&1 &
+          # Wait until the API answers (an unauthenticated request returns a JSON 401).
+          timeout 60 bash -c 'until curl -s localhost:3000/me | grep -q statusCode; do sleep 1; done'
+          pnpm --filter @po/api smoke
+      - if: failure()
+        run: cat api.log || true
