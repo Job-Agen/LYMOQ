@@ -74,6 +74,32 @@ cp apps/mobile/.env.example apps/mobile/.env
 pnpm mobile:dev       # then press a (Android), i (iOS), w (web) or scan the QR code
 ```
 
+## Android APK (sandbox)
+
+The APK is a standalone release build (JS bundled, signed with the debug key — for testing only).
+
+**On the phone:** install the APK, open it, and on the *Log in / Sign up* screen tap
+**API server (sandbox) → Change**, enter the address of a reachable PÔ API — for example your
+computer on the same Wi-Fi, `http://192.168.1.20:3000` (start it with `pnpm api:dev`) — then
+**Save & test**. The choice is remembered. The build default is `http://10.0.2.2:3000`
+(the host machine, seen from the Android emulator).
+
+**Build it yourself** (needs JDK 17+ and the Android SDK with NDK 27.1):
+
+```bash
+cd apps/mobile
+npx expo prebuild --platform android --no-install
+cd android && EXPO_PUBLIC_API_URL=http://10.0.2.2:3000 ./gradlew assembleRelease
+# → apps/mobile/android/app/build/outputs/apk/release/app-release.apk
+```
+
+**Or on GitHub:** the *Build PÔ Android APK* workflow builds it on every push touching the
+mobile app and uploads it as the `po-sandbox-apk` artifact (set the repository variable
+`PO_API_URL` to change the default server).
+
+Plain `http://` is allowed in this sandbox build (`plugins/with-sandbox-cleartext.js`) so a LAN
+API works; a production build must use an `https://` API and drop that plugin.
+
 ## 5. Try the full flow
 
 1. **Onboarding → Sign up** (any email, 8+ char password)

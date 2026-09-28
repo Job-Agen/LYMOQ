@@ -1,6 +1,20 @@
 import type { ApiErrorDto } from '@po/shared';
 
-const API_URL = (process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:3000').replace(/\/$/, '');
+export const DEFAULT_API_URL = normalizeUrl(process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:3000');
+let API_URL = DEFAULT_API_URL;
+
+function normalizeUrl(url: string): string {
+  return url.trim().replace(/\/+$/, '');
+}
+
+/** Sandbox only: lets an installed APK target any reachable API without rebuilding. */
+export function setApiBaseUrl(url: string | null): void {
+  API_URL = url ? normalizeUrl(url) : DEFAULT_API_URL;
+}
+
+export function getApiBaseUrl(): string {
+  return API_URL;
+}
 
 export class ApiError extends Error {
   constructor(

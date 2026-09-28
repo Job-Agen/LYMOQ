@@ -6,6 +6,7 @@ import { loginSchema, registerSchema } from '@po/shared';
 import { errorMessage } from '@/api/client';
 import { api } from '@/api/endpoints';
 import { useAuth } from '@/auth/AuthProvider';
+import { ApiServerSetting } from '@/components/ApiServerSetting';
 import { Button } from '@/components/Button';
 import { Screen } from '@/components/Screen';
 import { InfoNote, InlineError } from '@/components/States';
@@ -114,6 +115,7 @@ export default function Auth() {
       <Text style={[type.caption, { textAlign: 'center' }]}>
         PÔ sandbox · no real money, cards or identity checks are involved.
       </Text>
+      <ApiServerSetting />
     </Screen>
   );
 }

@@ -1,0 +1,76 @@
+import { useState } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { DEFAULT_API_URL, getApiBaseUrl, setApiBaseUrl } from '@/api/client';
+import { apiUrlStorage } from '@/auth/token-storage';
+import { colors, radius, type } from '@/theme/tokens';
+import { Button } from './Button';
+import { TextField } from './TextField';
+
+/**
+ * Sandbox-only: choose which PÔ API the app talks to, so an installed APK can
+ * reach an API on the local network (http://192.168.x.x:3000) or a hosted one.
+ */
+export function ApiServerSetting() {
+  const [open, setOpen] = useState(false);
+  const [current, setCurrent] = useState(getApiBaseUrl());
+  const [value, setValue] = useState(current);
+  const [status, setStatus] = useState<string | null>(null);
+  const valid = /^https?:\/\/[^\s/]+/.test(value.trim());
+
+  const save = async () => {
+    const url = value.trim();
+    setApiBaseUrl(url);
+    await apiUrlStorage.set(url);
+    setCurrent(getApiBaseUrl());
+    setStatus('Checking…');
+    try {
+      const res = await fetch(`${getApiBaseUrl()}/me`);
+      setStatus(res.status === 401 ? 'Connected to the PÔ API.' : `Server answered with status ${res.status}.`);
+    } catch {
+      setStatus("Can't reach this server from the phone.");
+    }
+  };
+
+  const reset = async () => {
+    setApiBaseUrl(null);
+    await apiUrlStorage.clear();
+    setCurrent(DEFAULT_API_URL);
+    setValue(DEFAULT_API_URL);
+    setStatus(null);
+  };
+
+  return (
+    <View style={styles.box}>
+      <Pressable accessibilityRole="button" onPress={() => setOpen((o) => !o)} hitSlop={8}>
+        <Text style={type.caption}>
+          API server (sandbox): <Text style={styles.url}>{current}</Text> · {open ? 'Hide' : 'Change'}
+        </Text>
+      </Pressable>
+      {open ? (
+        <>
+          <TextField
+            label="API server URL"
+            value={value}
+            onChangeText={setValue}
+            autoCapitalize="none"
+            autoCorrect={false}
+            keyboardType="url"
+            placeholder="http://192.168.1.20:3000"
+            hint="Your computer's local IP address and the API port."
+          />
+          <View style={styles.row}>
+            <Button compact label="Save & test" variant="secondary" disabled={!valid} onPress={() => void save()} />
+            <Button compact label="Reset" variant="outline" onPress={() => void reset()} />
+          </View>
+          {status ? <Text style={type.caption}>{status}</Text> : null}
+        </>
+      ) : null}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  box: { gap: 10, padding: 12, borderRadius: radius.md, borderWidth: 1, borderColor: colors.border },
+  url: { fontWeight: '800', color: colors.text },
+  row: { flexDirection: 'row', gap: 10 },
+});

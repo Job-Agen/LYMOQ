@@ -1,9 +1,9 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import type { AuthResponseDto } from '@po/shared';
-import { setAccessToken, setUnauthorizedHandler } from '@/api/client';
+import { setAccessToken, setApiBaseUrl, setUnauthorizedHandler } from '@/api/client';
 import { keys } from '@/api/queries';
-import { tokenStorage } from './token-storage';
+import { apiUrlStorage, tokenStorage } from './token-storage';
 
 interface AuthState {
   ready: boolean;
@@ -38,9 +38,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     setUnauthorizedHandler(() => void signOut());
-    tokenStorage
-      .get()
-      .then((token) => {
+    Promise.all([tokenStorage.get(), apiUrlStorage.get()])
+      .then(([token, apiUrl]) => {
+        setApiBaseUrl(apiUrl);
         setAccessToken(token);
         setSignedIn(Boolean(token));
       })
