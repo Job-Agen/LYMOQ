@@ -1,0 +1,118 @@
+import { Injectable } from '@nestjs/common';
+import type { CardStatus, Currency, DeclineReason } from '@po/shared';
+
+/** Everything the engine needs to decide — no database, no provider, no clock. */
+export interface CardPolicySnapshot {
+  status: CardStatus;
+  currency: Currency;
+  maxAmount: number;
+  spentAmount: number;
+  /** null = unlimited payments until expiration */
+  maxTransactionCount: number | null;
+  currentTransactionCount: number;
+  expiresAt: Date;
+  /** Merchant slug, null = any merchant */
+  merchantRestriction: string | null;
+}
+
+export interface TransactionAttempt {
+  merchant: string;
+  amount: number;
+  currency: Currency;
+}
+
+export type PolicyDecision =
+  | { decision: 'APPROVED' }
+  | { decision: 'BLOCKED'; reason: DeclineReason };
+
+export interface PolicyUsageUpdate {
+  spentAmount: number;
+  currentTransactionCount: number;
+  /** True when the usage rule is exhausted and the card must be TERMINATED. */
+  usageExhausted: boolean;
+}
+
+export class InvalidTransactionAttemptError extends Error {}
+
+/** "CANVA", "Canva", " canva " → "canva". Used for merchant matching. */
+export function normalizeMerchant(merchant: string): string {
+  return merchant.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+/**
+ * CardPolicyEngine — the core business rules of PÔ.
+ *
+ * Pure and deterministic: callers pass the policy snapshot, the attempt and
+ * the current time. Persistence and concurrency control (row locking) live in
+ * the calling service, never here.
+ */
+@Injectable()
+export class CardPolicyEngine {
+  /**
+   * Evaluation order (first failing rule wins):
+   *  1. card ACTIVE?            → CARD_NOT_ACTIVE (CARD_EXPIRED if status is EXPIRED)
+   *  2. not expired?            → CARD_EXPIRED
+   *  3. transaction count left? → TRANSACTION_LIMIT_REACHED
+   *  4. amount within limit?    → AMOUNT_LIMIT_EXCEEDED
+   *  5. merchant allowed?       → MERCHANT_NOT_ALLOWED
+   *  6. otherwise               → APPROVED
+   */
+  evaluate(policy: CardPolicySnapshot, attempt: TransactionAttempt, now: Date): PolicyDecision {
+    this.assertValidAttempt(policy, attempt);
+
+    if (policy.status !== 'ACTIVE') {
+      return blocked(policy.status === 'EXPIRED' ? 'CARD_EXPIRED' : 'CARD_NOT_ACTIVE');
+    }
+    if (this.isExpired(policy, now)) {
+      return blocked('CARD_EXPIRED');
+    }
+    if (policy.maxTransactionCount !== null && policy.currentTransactionCount >= policy.maxTransactionCount) {
+      return blocked('TRANSACTION_LIMIT_REACHED');
+    }
+    if (attempt.amount > this.remainingLimit(policy)) {
+      return blocked('AMOUNT_LIMIT_EXCEEDED');
+    }
+    if (
+      policy.merchantRestriction !== null &&
+      normalizeMerchant(policy.merchantRestriction) !== normalizeMerchant(attempt.merchant)
+    ) {
+      return blocked('MERCHANT_NOT_ALLOWED');
+    }
+    return { decision: 'APPROVED' };
+  }
+
+  /** New counters after an APPROVED transaction. */
+  applyApprovedTransaction(policy: CardPolicySnapshot, amount: number): PolicyUsageUpdate {
+    const spentAmount = policy.spentAmount + amount;
+    const currentTransactionCount = policy.currentTransactionCount + 1;
+    if (spentAmount > policy.maxAmount) {
+      throw new InvalidTransactionAttemptError('Approved amount exceeds the policy limit');
+    }
+    return {
+      spentAmount,
+      currentTransactionCount,
+      usageExhausted: policy.maxTransactionCount !== null && currentTransactionCount >= policy.maxTransactionCount,
+    };
+  }
+
+  remainingLimit(policy: Pick<CardPolicySnapshot, 'maxAmount' | 'spentAmount'>): number {
+    return Math.max(0, policy.maxAmount - policy.spentAmount);
+  }
+
+  isExpired(policy: Pick<CardPolicySnapshot, 'expiresAt'>, now: Date): boolean {
+    return now.getTime() >= policy.expiresAt.getTime();
+  }
+
+  private assertValidAttempt(policy: CardPolicySnapshot, attempt: TransactionAttempt): void {
+    if (!Number.isInteger(attempt.amount) || attempt.amount <= 0) {
+      throw new InvalidTransactionAttemptError('Amount must be a positive integer in minor units');
+    }
+    if (attempt.currency !== policy.currency) {
+      throw new InvalidTransactionAttemptError(`Currency ${attempt.currency} does not match card currency`);
+    }
+  }
+}
+
+function blocked(reason: DeclineReason): PolicyDecision {
+  return { decision: 'BLOCKED', reason };
+}

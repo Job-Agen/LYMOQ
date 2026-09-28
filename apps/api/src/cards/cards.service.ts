@@ -1,0 +1,196 @@
+import {
+  BadRequestException,
+  ConflictException,
+  ForbiddenException,
+  Inject,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
+import type { CardDto, CreateCardDraftInput, UpdateCardRulesInput } from '@po/shared';
+import { KycService } from '../kyc/kyc.service';
+import { PrismaService } from '../prisma/prisma.service';
+import { CARD_ISSUER_PROVIDER, type CardIssuerProvider } from '../providers/card-issuer-provider.interface';
+import { cardInclude, toCardDto, type CardWithRelations } from './card.presenter';
+import { PricingService } from './pricing.service';
+
+const MINUTE_MS = 60_000;
+
+@Injectable()
+export class CardsService {
+  private readonly logger = new Logger(CardsService.name);
+
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly pricing: PricingService,
+    private readonly kyc: KycService,
+    @Inject(CARD_ISSUER_PROVIDER) private readonly issuer: CardIssuerProvider,
+  ) {}
+
+  /** Cards the user has funded (drafts waiting for funding are not listed). */
+  async list(userId: string): Promise<CardDto[]> {
+    await this.expireOverdueCards(userId);
+    const cards = await this.prisma.card.findMany({
+      where: { userId, status: { not: 'PENDING_FUNDING' } },
+      include: cardInclude,
+      orderBy: { createdAt: 'desc' },
+    });
+    return cards.map((c) => this.present(c));
+  }
+
+  async get(userId: string, cardId: string): Promise<CardDto> {
+    await this.expireOverdueCards(userId);
+    return this.present(await this.findOwned(userId, cardId));
+  }
+
+  async createDraft(userId: string, input: CreateCardDraftInput): Promise<CardDto> {
+    let merchantName: string | null = null;
+    if (input.merchantRestriction !== null) {
+      const merchant = await this.prisma.merchant.findUnique({ where: { slug: input.merchantRestriction } });
+      if (!merchant) throw new BadRequestException('Unknown merchant');
+      merchantName = merchant.name;
+    }
+
+    // Provisional expiry; it is recomputed from durationMinutes at activation.
+    const expiresAt = new Date(Date.now() + input.durationMinutes * MINUTE_MS);
+    const card = await this.prisma.card.create({
+      data: {
+        userId,
+        label: input.label ?? (merchantName ? `${merchantName} Card` : 'Online Card'),
+        status: 'PENDING_FUNDING',
+        expiresAt,
+        policy: {
+          create: {
+            maxAmount: input.maxAmount,
+            currency: input.currency,
+            maxTransactionCount: input.maxTransactionCount,
+            merchantRestriction: input.merchantRestriction,
+            durationMinutes: input.durationMinutes,
+            expiresAt,
+          },
+        },
+      },
+      include: cardInclude,
+    });
+    return this.present(card);
+  }
+
+  /**
+   * Issues the card with the issuer and activates it. Called only once the
+   * funding is CONFIRMED. Idempotent: an already-issued card is returned as is.
+   */
+  async activateAfterFunding(cardId: string): Promise<void> {
+    const card = await this.prisma.card.findUnique({ where: { id: cardId }, include: cardInclude });
+    if (!card?.policy) throw new NotFoundException('Card not found');
+    if (card.status !== 'PENDING_FUNDING') return;
+    if (!(await this.kyc.isVerified(card.userId))) {
+      throw new ForbiddenException('Verify your identity before activating a card');
+    }
+
+    const now = new Date();
+    const expiresAt = new Date(now.getTime() + card.policy.durationMinutes * MINUTE_MS);
+    const issued = await this.issuer.createCard({ cardId: card.id, userId: card.userId, label: card.label, expiresAt });
+
+    const updated = await this.prisma.card.updateMany({
+      where: { id: card.id, status: 'PENDING_FUNDING' },
+      data: {
+        status: 'ACTIVE',
+        providerCardId: issued.providerCardId,
+        last4: issued.last4,
+        activatedAt: now,
+        expiresAt,
+      },
+    });
+    if (updated.count === 0) {
+      // A concurrent activation won; release the duplicate issuer card.
+      await this.issuer.terminateCard(issued.providerCardId);
+      return;
+    }
+    await this.prisma.cardPolicy.update({ where: { cardId: card.id }, data: { expiresAt } });
+  }
+
+  async freeze(userId: string, cardId: string): Promise<CardDto> {
+    const card = await this.findOwned(userId, cardId);
+    if (card.status !== 'ACTIVE') throw new ConflictException('Only an active card can be frozen');
+    await this.transition(card, 'ACTIVE', { status: 'FROZEN' });
+    if (card.providerCardId) await this.issuer.freezeCard(card.providerCardId);
+    return this.get(userId, cardId);
+  }
+
+  async unfreeze(userId: string, cardId: string): Promise<CardDto> {
+    const card = await this.findOwned(userId, cardId);
+    if (card.status !== 'FROZEN') throw new ConflictException('Only a frozen card can be unfrozen');
+    await this.transition(card, 'FROZEN', { status: 'ACTIVE' });
+    if (card.providerCardId) await this.issuer.unfreezeCard(card.providerCardId);
+    return this.get(userId, cardId);
+  }
+
+  async terminate(userId: string, cardId: string): Promise<CardDto> {
+    const card = await this.findOwned(userId, cardId);
+    if (card.status === 'TERMINATED') return this.present(card);
+    await this.transition(card, card.status, { status: 'TERMINATED', terminationReason: 'USER_REQUESTED' });
+    if (card.providerCardId) await this.issuer.terminateCard(card.providerCardId);
+    return this.get(userId, cardId);
+  }
+
+  /** Rules can only be tightened: a lower limit or fewer payments, never more. */
+  async updateRules(userId: string, cardId: string, input: UpdateCardRulesInput): Promise<CardDto> {
+    const card = await this.findOwned(userId, cardId);
+    const policy = card.policy;
+    if (!policy) throw new NotFoundException('Card not found');
+    if (card.status !== 'ACTIVE' && card.status !== 'FROZEN') {
+      throw new ConflictException('Rules can only be changed on an active or frozen card');
+    }
+
+    if (input.maxAmount !== undefined) {
+      if (input.maxAmount > policy.maxAmount) throw new BadRequestException('The limit can only be lowered');
+      if (input.maxAmount < policy.spentAmount) {
+        throw new BadRequestException('The limit cannot be lower than what was already spent');
+      }
+    }
+    if (input.maxTransactionCount !== undefined) {
+      if (policy.maxTransactionCount !== null && input.maxTransactionCount > policy.maxTransactionCount) {
+        throw new BadRequestException('The number of payments can only be lowered');
+      }
+      if (input.maxTransactionCount <= policy.currentTransactionCount) {
+        throw new BadRequestException('Allow at least one more payment, or terminate the card instead');
+      }
+    }
+
+    await this.prisma.cardPolicy.update({
+      where: { cardId: card.id },
+      data: { maxAmount: input.maxAmount, maxTransactionCount: input.maxTransactionCount },
+    });
+    return this.get(userId, cardId);
+  }
+
+  /** Loads a card owned by the user. Other users' cards are reported as not found. */
+  async findOwned(userId: string, cardId: string): Promise<CardWithRelations> {
+    const card = await this.prisma.card.findFirst({ where: { id: cardId, userId }, include: cardInclude });
+    if (!card) throw new NotFoundException('Card not found');
+    return card;
+  }
+
+  present(card: CardWithRelations): CardDto {
+    return toCardDto(card, (funding) => this.pricing.quote(funding, card.policy?.currency ?? 'XOF'));
+  }
+
+  /** Lazily moves cards past their expiry to EXPIRED. */
+  private async expireOverdueCards(userId: string): Promise<void> {
+    const { count } = await this.prisma.card.updateMany({
+      where: { userId, status: { in: ['ACTIVE', 'FROZEN'] }, expiresAt: { lte: new Date() } },
+      data: { status: 'EXPIRED' },
+    });
+    if (count > 0) this.logger.log(`Expired ${count} card(s)`);
+  }
+
+  /** Compare-and-set status change, so concurrent requests cannot both win. */
+  private async transition(
+    card: CardWithRelations,
+    from: CardWithRelations['status'],
+    data: { status: CardWithRelations['status']; terminationReason?: 'USER_REQUESTED' },
+  ): Promise<void> {
+    const { count } = await this.prisma.card.updateMany({ where: { id: card.id, status: from }, data });
+    if (count === 0) throw new ConflictException('The card changed in the meantime. Try again.');
+  }
+}
