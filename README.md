@@ -89,7 +89,8 @@ computer on the same Wi-Fi, `http://192.168.1.20:3000` (start it with `pnpm api:
 ```bash
 cd apps/mobile
 npx expo prebuild --platform android --no-install
-cd android && EXPO_PUBLIC_API_URL=http://10.0.2.2:3000 ./gradlew assembleRelease
+cd android && EXPO_PUBLIC_API_URL=http://10.0.2.2:3000 ./gradlew assembleRelease \
+  -PreactNativeArchitectures=arm64-v8a -Pexpo.useLegacyPackaging=true
 # → apps/mobile/android/app/build/outputs/apk/release/app-release.apk
 ```
 

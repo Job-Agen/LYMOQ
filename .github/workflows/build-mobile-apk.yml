@@ -44,7 +44,8 @@ jobs:
 
       - name: Build release APK (signed with the debug key — sandbox only)
         working-directory: apps/mobile/android
-        run: ./gradlew assembleRelease --no-daemon
+        # Compressed native libs keep the APK small enough to share (~28 MB for arm64 only).
+        run: ./gradlew assembleRelease --no-daemon -PreactNativeArchitectures=arm64-v8a -Pexpo.useLegacyPackaging=true
 
       - uses: actions/upload-artifact@v4
         with:
