@@ -2,6 +2,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import type { CardStatus } from '@mesura/shared';
 import { STATUS_LABEL } from '@/lib/format';
 import { colors, radius } from '@/theme/tokens';
+import { Wordmark } from './Logo';
 
 interface VirtualCardProps {
   label: string;
@@ -22,7 +23,7 @@ export function VirtualCard({ label, last4, status }: VirtualCardProps) {
       <View style={[styles.orb, styles.orbA]} />
       <View style={[styles.orb, styles.orbB]} />
       <View style={styles.top}>
-        <Text style={styles.brand}>Mesura</Text>
+        <Wordmark height={24} />
         <Text style={styles.network}>VISA</Text>
       </View>
       <View style={styles.bottom}>
@@ -63,7 +64,6 @@ const styles = StyleSheet.create({
   orbA: { width: 260, height: 260, right: -90, top: -120, opacity: 0.35 },
   orbB: { width: 180, height: 180, right: 30, bottom: -110, opacity: 0.18 },
   top: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  brand: { color: colors.onDark, fontSize: 26, fontWeight: '900', letterSpacing: -0.5 },
   network: { color: colors.onDark, fontSize: 20, fontWeight: '900', fontStyle: 'italic' },
   bottom: { gap: 6 },
   label: { color: colors.onDarkMuted, fontSize: 12, fontWeight: '800', letterSpacing: 1.2 },

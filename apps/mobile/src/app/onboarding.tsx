@@ -1,6 +1,7 @@
 import { router } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button } from '@/components/Button';
+import { Logo } from '@/components/Logo';
 import { Screen } from '@/components/Screen';
 import { VirtualCard } from '@/components/VirtualCard';
 import { colors, radius, type } from '@/theme/tokens';
@@ -23,7 +24,7 @@ export default function Onboarding() {
         </>
       }
     >
-      <Text style={styles.brand}>Mesura</Text>
+      <Logo height={36} />
       <Text style={type.display}>Your money.{'\n'}Your rules.</Text>
       <Text style={[type.body, { color: colors.muted }]}>
         Create a secure virtual card for one online payment — and decide exactly how it can be used.
@@ -42,7 +43,6 @@ export default function Onboarding() {
 }
 
 const styles = StyleSheet.create({
-  brand: { fontSize: 28, fontWeight: '900', color: colors.forest },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   principle: {
     flexBasis: '47%',

@@ -26,7 +26,15 @@
       "bundler": "metro",
       "favicon": "./assets/favicon.png"
     },
-    "plugins": ["expo-router", "expo-secure-store", "./plugins/with-sandbox-cleartext"],
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "./plugins/with-sandbox-cleartext",
+      [
+        "expo-splash-screen",
+        { "image": "./assets/splash-icon.png", "imageWidth": 140, "resizeMode": "contain", "backgroundColor": "#073D31" }
+      ]
+    ],
     "experiments": {
       "typedRoutes": true
     }

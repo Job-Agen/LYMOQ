@@ -8,6 +8,7 @@ import { ApiError, errorMessage } from '@/api/client';
 import { useMe } from '@/api/queries';
 import { AuthProvider, useAuth } from '@/auth/AuthProvider';
 import { Button } from '@/components/Button';
+import { Logo } from '@/components/Logo';
 import { colors } from '@/theme/tokens';
 
 export default function RootLayout() {
@@ -46,7 +47,7 @@ function RootNavigator() {
   if (!ready || (signedIn && me.isPending)) {
     return (
       <View style={styles.center}>
-        <Text style={styles.logo}>Mesura</Text>
+        <Logo height={44} />
         <ActivityIndicator color={colors.green} />
       </View>
     );
@@ -54,7 +55,7 @@ function RootNavigator() {
   if (signedIn && me.isError) {
     return (
       <View style={styles.center}>
-        <Text style={styles.logo}>Mesura</Text>
+        <Logo height={44} />
         <Text style={styles.error}>{errorMessage(me.error)}</Text>
         <Button label="Try again" onPress={() => void me.refetch()} />
         <Button label="Sign out" variant="outline" onPress={() => void signOut()} />
@@ -81,6 +82,5 @@ function RootNavigator() {
 
 const styles = StyleSheet.create({
   center: { flex: 1, backgroundColor: colors.bg, alignItems: 'center', justifyContent: 'center', gap: 16, padding: 24 },
-  logo: { fontSize: 44, fontWeight: '900', color: colors.forest },
   error: { color: colors.danger, fontWeight: '700', textAlign: 'center' },
 });
