@@ -3,14 +3,15 @@
     "name": "Mesura",
     "slug": "mesura-sandbox",
     "scheme": "mesura",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "backgroundColor": "#F6F4EE",
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "africa.mesura.sandbox"
+      "bundleIdentifier": "africa.mesura.sandbox",
+      "buildNumber": "2"
     },
     "android": {
       "package": "africa.mesura.sandbox",
@@ -20,7 +21,8 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "versionCode": 2
     },
     "web": {
       "bundler": "metro",
@@ -32,7 +34,12 @@
       "./plugins/with-sandbox-cleartext",
       [
         "expo-splash-screen",
-        { "image": "./assets/splash-icon.png", "imageWidth": 140, "resizeMode": "contain", "backgroundColor": "#073D31" }
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 140,
+          "resizeMode": "contain",
+          "backgroundColor": "#073D31"
+        }
       ]
     ],
     "experiments": {
