@@ -5,7 +5,7 @@ import {
   type CardDto,
   type CreateCardDraftInput,
   type UpdateCardRulesInput,
-} from '@po/shared';
+} from '@mesura/shared';
 import { CurrentUserId } from '../common/auth-user';
 import { ZodValidationPipe } from '../common/zod-validation.pipe';
 import { CardsService } from './cards.service';

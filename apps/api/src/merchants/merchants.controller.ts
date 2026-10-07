@@ -1,5 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
-import type { MerchantDto } from '@po/shared';
+import type { MerchantDto } from '@mesura/shared';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Controller('merchants')

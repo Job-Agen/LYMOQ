@@ -9,7 +9,7 @@ import {
   MOBILE_MONEY_PROVIDER_LABELS,
   MobileMoneyProvider,
   type MobileMoneyProvider as Provider,
-} from '@po/shared';
+} from '@mesura/shared';
 import { errorMessage } from '@/api/client';
 import { api } from '@/api/endpoints';
 import { useCard, useMe } from '@/api/queries';
@@ -105,7 +105,7 @@ export default function Fund() {
             <Divider />
             <RuleRow icon="cash-outline" label="Total" value={formatMoney(c.pricing.total)} emphasis />
           </Surface>
-          <InfoNote>You will approve the payment on your phone. PÔ never asks for your Mobile Money PIN.</InfoNote>
+          <InfoNote>You will approve the payment on your phone. Mesura never asks for your Mobile Money PIN.</InfoNote>
           <InfoNote tone="sandbox">Sandbox: no real Mobile Money request is sent and nothing is debited.</InfoNote>
         </>
       )}

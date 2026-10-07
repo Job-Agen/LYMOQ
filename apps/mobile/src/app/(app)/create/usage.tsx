@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { USAGE_PRESETS } from '@po/shared';
+import { USAGE_PRESETS } from '@mesura/shared';
 import { Button } from '@/components/Button';
 import { OptionRow } from '@/components/OptionRow';
 import { Screen } from '@/components/Screen';

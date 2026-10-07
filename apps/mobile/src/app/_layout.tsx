@@ -46,7 +46,7 @@ function RootNavigator() {
   if (!ready || (signedIn && me.isPending)) {
     return (
       <View style={styles.center}>
-        <Text style={styles.logo}>PÔ</Text>
+        <Text style={styles.logo}>Mesura</Text>
         <ActivityIndicator color={colors.green} />
       </View>
     );
@@ -54,7 +54,7 @@ function RootNavigator() {
   if (signedIn && me.isError) {
     return (
       <View style={styles.center}>
-        <Text style={styles.logo}>PÔ</Text>
+        <Text style={styles.logo}>Mesura</Text>
         <Text style={styles.error}>{errorMessage(me.error)}</Text>
         <Button label="Try again" onPress={() => void me.refetch()} />
         <Button label="Sign out" variant="outline" onPress={() => void signOut()} />

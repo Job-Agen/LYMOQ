@@ -1,5 +1,5 @@
 import type { Prisma } from '@prisma/client';
-import type { CardDto, PricingDto } from '@po/shared';
+import type { CardDto, PricingDto } from '@mesura/shared';
 import { iso } from '../common/iso';
 
 export const cardInclude = {

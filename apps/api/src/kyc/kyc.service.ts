@@ -1,6 +1,6 @@
 import { ConflictException, Inject, Injectable } from '@nestjs/common';
 import type { KycProfile } from '@prisma/client';
-import type { KycProfileDto, KycStartInput } from '@po/shared';
+import type { KycProfileDto, KycStartInput } from '@mesura/shared';
 import { iso } from '../common/iso';
 import { PrismaService } from '../prisma/prisma.service';
 import { KYC_PROVIDER, type KycProvider } from '../providers/kyc-provider.interface';

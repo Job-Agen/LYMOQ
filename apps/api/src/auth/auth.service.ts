@@ -1,6 +1,6 @@
 import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import type { AuthResponseDto, LoginInput, RegisterInput } from '@po/shared';
+import type { AuthResponseDto, LoginInput, RegisterInput } from '@mesura/shared';
 import { PrismaService } from '../prisma/prisma.service';
 import { UsersService } from '../users/users.service';
 import { hashPassword, verifyPassword } from './password';

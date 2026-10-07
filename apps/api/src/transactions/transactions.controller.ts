@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
-import { transactionFilterSchema, type TransactionDto, type TransactionFilterInput } from '@po/shared';
+import { transactionFilterSchema, type TransactionDto, type TransactionFilterInput } from '@mesura/shared';
 import { CurrentUserId } from '../common/auth-user';
 import { ZodValidationPipe } from '../common/zod-validation.pipe';
 import { TransactionsService } from './transactions.service';

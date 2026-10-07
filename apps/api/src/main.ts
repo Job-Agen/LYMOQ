@@ -15,7 +15,7 @@ async function bootstrap(): Promise<void> {
 
   await app.listen(env.PORT, '0.0.0.0');
   const logger = new Logger('Bootstrap');
-  logger.log(`PÔ API listening on http://localhost:${env.PORT}`);
+  logger.log(`Mesura API listening on http://localhost:${env.PORT}`);
   if (env.SANDBOX_MODE) logger.warn('SANDBOX_MODE is on — no real money, cards or KYC are involved.');
 }
 

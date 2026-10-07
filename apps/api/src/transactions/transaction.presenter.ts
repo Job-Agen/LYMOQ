@@ -1,5 +1,5 @@
 import type { Prisma } from '@prisma/client';
-import { declineReasonMessage, type TransactionDto } from '@po/shared';
+import { declineReasonMessage, type TransactionDto } from '@mesura/shared';
 import { iso } from '../common/iso';
 
 export const transactionInclude = {

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # End-to-end sandbox smoke test against a running API (default http://localhost:3000).
 # Requires: curl, python3, a migrated + seeded database.
-#   pnpm --filter @po/api smoke
+#   pnpm --filter @mesura/api smoke
 set -euo pipefail
 A="${API_URL:-http://localhost:3000}"
 JSON='content-type: application/json'
@@ -66,12 +66,12 @@ curl -s "$A/transactions" -H "$H" | j "len(d)"
 curl -s "$A/transactions?status=BLOCKED" -H "$H" | j "[t['declineReason'] for t in d]"
 
 echo "== ownership: the demo user cannot see or charge this user's card (expect 404s)"
-DT=$(curl -s -X POST "$A/auth/login" -H "$JSON" -d '{"email":"demo@po.test","password":"demo1234"}' | j "d['accessToken']")
+DT=$(curl -s -X POST "$A/auth/login" -H "$JSON" -d '{"email":"demo@mesura.test","password":"demo1234"}' | j "d['accessToken']")
 curl -s "$A/cards/$CARD" -H "Authorization: Bearer $DT" | j "(d['statusCode'], d['message'])"
 curl -s -X POST "$A/sandbox/transactions" -H "Authorization: Bearer $DT" -H "$JSON" \
   -d "{\"cardId\":\"$CARD\",\"merchant\":\"CANVA\",\"amount\":100,\"currency\":\"XOF\"}" | j "(d['statusCode'], d['message'])"
 
 echo "== auth (expect 401s)"
 curl -s "$A/cards" | j "(d['statusCode'], d['message'])"
-curl -s -X POST "$A/auth/login" -H "$JSON" -d '{"email":"demo@po.test","password":"wrong-pass"}' | j "(d['statusCode'], d['message'])"
+curl -s -X POST "$A/auth/login" -H "$JSON" -d '{"email":"demo@mesura.test","password":"wrong-pass"}' | j "(d['statusCode'], d['message'])"
 echo "== done"

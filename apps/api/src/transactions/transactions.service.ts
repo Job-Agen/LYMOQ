@@ -1,5 +1,5 @@
 import { BadRequestException, Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
-import type { SimulateTransactionInput, SimulateTransactionResponseDto, TransactionDto, TransactionFilterInput } from '@po/shared';
+import type { SimulateTransactionInput, SimulateTransactionResponseDto, TransactionDto, TransactionFilterInput } from '@mesura/shared';
 import {
   CardPolicyEngine,
   InvalidTransactionAttemptError,

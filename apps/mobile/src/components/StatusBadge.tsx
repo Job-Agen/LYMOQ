@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
-import type { CardStatus, TransactionStatus } from '@po/shared';
+import type { CardStatus, TransactionStatus } from '@mesura/shared';
 import { STATUS_LABEL } from '@/lib/format';
 import { colors, radius } from '@/theme/tokens';
 

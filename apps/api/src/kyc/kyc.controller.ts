@@ -1,6 +1,6 @@
 import { Body, Controller, Get, HttpCode, Post } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
-import { kycStartSchema, type KycProfileDto, type KycStartInput } from '@po/shared';
+import { kycStartSchema, type KycProfileDto, type KycStartInput } from '@mesura/shared';
 import { CurrentUserId } from '../common/auth-user';
 import { ZodValidationPipe } from '../common/zod-validation.pipe';
 import { KycService } from './kyc.service';

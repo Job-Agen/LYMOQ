@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
-import type { CardStatus } from '@po/shared';
+import type { CardStatus } from '@mesura/shared';
 import { STATUS_LABEL } from '@/lib/format';
 import { colors, radius } from '@/theme/tokens';
 
@@ -10,7 +10,7 @@ interface VirtualCardProps {
   status?: CardStatus;
 }
 
-/** Masked card visual. PÔ never has — and therefore never shows — a real PAN or CVV. */
+/** Masked card visual. Mesura never has — and therefore never shows — a real PAN or CVV. */
 export function VirtualCard({ label, last4, status }: VirtualCardProps) {
   const inactive = status && status !== 'ACTIVE' && status !== 'PENDING_FUNDING';
   return (
@@ -22,7 +22,7 @@ export function VirtualCard({ label, last4, status }: VirtualCardProps) {
       <View style={[styles.orb, styles.orbA]} />
       <View style={[styles.orb, styles.orbB]} />
       <View style={styles.top}>
-        <Text style={styles.brand}>PÔ</Text>
+        <Text style={styles.brand}>Mesura</Text>
         <Text style={styles.network}>VISA</Text>
       </View>
       <View style={styles.bottom}>

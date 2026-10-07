@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
-import { AMOUNT_PRESETS, createCardDraftSchema, formatIllustrativeUsd, formatMoney } from '@po/shared';
+import { AMOUNT_PRESETS, createCardDraftSchema, formatIllustrativeUsd, formatMoney } from '@mesura/shared';
 import { Button } from '@/components/Button';
 import { Screen } from '@/components/Screen';
 import { InlineError } from '@/components/States';

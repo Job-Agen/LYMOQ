@@ -1,5 +1,5 @@
 import { createContext, useContext, useMemo, useState, type ReactNode } from 'react';
-import { DEFAULT_DURATION_MINUTES, type CreateCardDraftInput, type MerchantDto } from '@po/shared';
+import { DEFAULT_DURATION_MINUTES, type CreateCardDraftInput, type MerchantDto } from '@mesura/shared';
 
 /** UI state for the 4-step flow. Nothing is persisted until "Review card". */
 export interface CardRulesDraft {

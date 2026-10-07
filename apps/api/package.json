@@ -1,5 +1,5 @@
 {
-  "name": "@po/api",
+  "name": "@mesura/api",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -25,7 +25,7 @@
     "@nestjs/jwt": "11.0.2",
     "@nestjs/platform-express": "11.2.6",
     "@nestjs/throttler": "6.7.1",
-    "@po/shared": "workspace:*",
+    "@mesura/shared": "workspace:*",
     "@prisma/client": "6.19.3",
     "reflect-metadata": "0.2.2",
     "rxjs": "7.8.2",
@@ -34,7 +34,7 @@
   "devDependencies": {
     "@nestjs/cli": "11.0.24",
     "@nestjs/testing": "11.2.6",
-    "@po/config": "workspace:*",
+    "@mesura/config": "workspace:*",
     "@types/express": "5.0.6",
     "@types/jest": "29.5.14",
     "@types/node": "22.20.4",

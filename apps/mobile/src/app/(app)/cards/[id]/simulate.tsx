@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { formatIllustrativeUsd, simulateTransactionSchema } from '@po/shared';
+import { formatIllustrativeUsd, simulateTransactionSchema } from '@mesura/shared';
 import { errorMessage } from '@/api/client';
 import { api } from '@/api/endpoints';
 import { useCard, useInvalidateActivity, useMerchants } from '@/api/queries';

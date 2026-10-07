@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "PÔ",
-    "slug": "po-sandbox",
-    "scheme": "po",
+    "name": "Mesura",
+    "slug": "mesura-sandbox",
+    "scheme": "mesura",
     "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -10,10 +10,10 @@
     "backgroundColor": "#F6F4EE",
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "africa.po.sandbox"
+      "bundleIdentifier": "africa.mesura.sandbox"
     },
     "android": {
-      "package": "africa.po.sandbox",
+      "package": "africa.mesura.sandbox",
       "adaptiveIcon": {
         "backgroundColor": "#073D31",
         "foregroundImage": "./assets/android-icon-foreground.png",

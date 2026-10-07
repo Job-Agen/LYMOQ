@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { DURATION_PRESETS, formatDuration, formatMoney, MAX_DURATION_MINUTES } from '@po/shared';
+import { DURATION_PRESETS, formatDuration, formatMoney, MAX_DURATION_MINUTES } from '@mesura/shared';
 import { errorMessage } from '@/api/client';
 import { api } from '@/api/endpoints';
 import { Button } from '@/components/Button';

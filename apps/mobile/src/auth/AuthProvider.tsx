@@ -1,6 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import type { AuthResponseDto } from '@po/shared';
+import type { AuthResponseDto } from '@mesura/shared';
 import { setAccessToken, setApiBaseUrl, setUnauthorizedHandler } from '@/api/client';
 import { keys } from '@/api/queries';
 import { apiUrlStorage, tokenStorage } from './token-storage';

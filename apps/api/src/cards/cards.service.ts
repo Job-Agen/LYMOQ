@@ -7,7 +7,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import type { CardDto, CreateCardDraftInput, UpdateCardRulesInput } from '@po/shared';
+import type { CardDto, CreateCardDraftInput, UpdateCardRulesInput } from '@mesura/shared';
 import { KycService } from '../kyc/kyc.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { CARD_ISSUER_PROVIDER, type CardIssuerProvider } from '../providers/card-issuer-provider.interface';

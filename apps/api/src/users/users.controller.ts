@@ -1,5 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
-import type { UserDto } from '@po/shared';
+import type { UserDto } from '@mesura/shared';
 import { CurrentUserId } from '../common/auth-user';
 import { UsersService } from './users.service';
 

@@ -2,7 +2,7 @@ import { BadRequestException, PipeTransform } from '@nestjs/common';
 import type { ZodType, ZodTypeDef } from 'zod';
 
 /**
- * Validates a request body/query with a schema from @po/shared.
+ * Validates a request body/query with a schema from @mesura/shared.
  * The same schemas power the mobile forms, so both sides agree on the contract,
  * but the backend never trusts that the client already validated.
  */

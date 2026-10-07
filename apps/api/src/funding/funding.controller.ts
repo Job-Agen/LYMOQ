@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
-import { fundCardSchema, type FundCardInput, type FundingDto } from '@po/shared';
+import { fundCardSchema, type FundCardInput, type FundingDto } from '@mesura/shared';
 import { CurrentUserId } from '../common/auth-user';
 import { ZodValidationPipe } from '../common/zod-validation.pipe';
 import { FundingService } from './funding.service';

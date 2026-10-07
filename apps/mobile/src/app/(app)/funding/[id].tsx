@@ -3,7 +3,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
-import { formatMoney, MOBILE_MONEY_PROVIDER_LABELS } from '@po/shared';
+import { formatMoney, MOBILE_MONEY_PROVIDER_LABELS } from '@mesura/shared';
 import { errorMessage } from '@/api/client';
 import { api } from '@/api/endpoints';
 import { keys, useFunding } from '@/api/queries';
@@ -76,7 +76,7 @@ export default function FundingConfirmation() {
               <Text style={styles.waitingText}>Waiting for confirmation…</Text>
             </View>
           )}
-          <InfoNote>Check your phone and approve the request in your Mobile Money app. PÔ never asks for your PIN.</InfoNote>
+          <InfoNote>Check your phone and approve the request in your Mobile Money app. Mesura never asks for your PIN.</InfoNote>
           <InfoNote tone="sandbox">Sandbox: this request confirms automatically after a few seconds, or tap “Simulate confirmation”.</InfoNote>
         </View>
       )}

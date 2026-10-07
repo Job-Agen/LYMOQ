@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { formatMoney, type CardDto } from '@po/shared';
+import { formatMoney, type CardDto } from '@mesura/shared';
 import { formatTimeLeft, paymentsLabel } from '@/lib/format';
 import { colors, radius, type } from '@/theme/tokens';
 import { MerchantAvatar } from './MerchantAvatar';

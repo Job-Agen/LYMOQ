@@ -1,8 +1,8 @@
 import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
 
-const TOKEN_KEY = 'po.accessToken';
-const API_URL_KEY = 'po.apiUrl';
+const TOKEN_KEY = 'mesura.accessToken';
+const API_URL_KEY = 'mesura.apiUrl';
 const webMemory = new Map<string, string>();
 
 /** Keychain / Keystore on device. On web (dev only) values live in memory. */

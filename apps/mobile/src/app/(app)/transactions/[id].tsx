@@ -1,6 +1,6 @@
 import { useLocalSearchParams } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
-import { formatMoney } from '@po/shared';
+import { formatMoney } from '@mesura/shared';
 import { errorMessage } from '@/api/client';
 import { useTransaction } from '@/api/queries';
 import { MerchantAvatar } from '@/components/MerchantAvatar';

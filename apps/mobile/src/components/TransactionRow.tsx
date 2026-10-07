@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { formatMoney, type TransactionDto } from '@po/shared';
+import { formatMoney, type TransactionDto } from '@mesura/shared';
 import { formatDateTime } from '@/lib/format';
 import { colors, type } from '@/theme/tokens';
 import { MerchantAvatar } from './MerchantAvatar';

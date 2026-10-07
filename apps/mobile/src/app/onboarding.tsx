@@ -23,7 +23,7 @@ export default function Onboarding() {
         </>
       }
     >
-      <Text style={styles.brand}>PÔ</Text>
+      <Text style={styles.brand}>Mesura</Text>
       <Text style={type.display}>Your money.{'\n'}Your rules.</Text>
       <Text style={[type.body, { color: colors.muted }]}>
         Create a secure virtual card for one online payment — and decide exactly how it can be used.

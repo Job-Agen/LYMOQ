@@ -5,7 +5,7 @@ import {
   type FundingDto,
   type SimulateTransactionInput,
   type SimulateTransactionResponseDto,
-} from '@po/shared';
+} from '@mesura/shared';
 import { CurrentUserId } from '../common/auth-user';
 import { ZodValidationPipe } from '../common/zod-validation.pipe';
 import { FundingService } from '../funding/funding.service';

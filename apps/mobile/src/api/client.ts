@@ -1,4 +1,4 @@
-import type { ApiErrorDto } from '@po/shared';
+import type { ApiErrorDto } from '@mesura/shared';
 
 export const DEFAULT_API_URL = normalizeUrl(process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:3000');
 let API_URL = DEFAULT_API_URL;
@@ -52,7 +52,7 @@ export async function request<T>(method: Method, path: string, body?: unknown): 
       body: body !== undefined ? JSON.stringify(body) : undefined,
     });
   } catch {
-    throw new ApiError(0, `Can't reach PÔ right now. Check your connection (API: ${API_URL}).`);
+    throw new ApiError(0, `Can't reach Mesura right now. Check your connection (API: ${API_URL}).`);
   }
 
   const text = await response.text();

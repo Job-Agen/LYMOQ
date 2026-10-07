@@ -1,6 +1,6 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { Text } from 'react-native';
-import { formatMoney } from '@po/shared';
+import { formatMoney } from '@mesura/shared';
 import { errorMessage } from '@/api/client';
 import { useCard } from '@/api/queries';
 import { Button } from '@/components/Button';

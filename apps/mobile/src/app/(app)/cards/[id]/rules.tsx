@@ -1,7 +1,7 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { Text } from 'react-native';
-import { formatMoney, updateCardRulesSchema, type UpdateCardRulesInput } from '@po/shared';
+import { formatMoney, updateCardRulesSchema, type UpdateCardRulesInput } from '@mesura/shared';
 import { errorMessage } from '@/api/client';
 import { api } from '@/api/endpoints';
 import { useCard, useCardAction } from '@/api/queries';

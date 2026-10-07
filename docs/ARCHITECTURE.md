@@ -1,4 +1,4 @@
-# PÔ sandbox — architecture
+# Mesura sandbox — architecture
 
 ## 1. Starting point
 
@@ -41,7 +41,7 @@ packages/shared/               Enums, money helpers, Zod request schemas, respon
 packages/config/               tsconfig.base.json (strict)
 ```
 
-Business rules live only in the API. The app reuses the *request schemas* from `@po/shared`
+Business rules live only in the API. The app reuses the *request schemas* from `@mesura/shared`
 for instant form feedback; the API validates every request again with the same schemas.
 
 ## 3. Dependencies
@@ -137,7 +137,7 @@ terminates exhausted cards, and records the transaction (approved or blocked).
 5. merchant allowed? → `MERCHANT_NOT_ALLOWED`
 6. → `APPROVED`
 
-Decline codes are translated to plain language (`declineReasonMessage` in `@po/shared`),
+Decline codes are translated to plain language (`declineReasonMessage` in `@mesura/shared`),
 e.g. "This card can only be used with Canva."
 
 ## 8. Provider abstractions

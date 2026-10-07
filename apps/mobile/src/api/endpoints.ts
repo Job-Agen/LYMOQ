@@ -14,7 +14,7 @@ import type {
   TransactionDto,
   UpdateCardRulesInput,
   UserDto,
-} from '@po/shared';
+} from '@mesura/shared';
 import { request } from './client';
 
 export type TransactionFilter = 'ALL' | 'APPROVED' | 'BLOCKED';

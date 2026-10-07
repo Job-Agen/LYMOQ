@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { loginSchema, registerSchema } from '@po/shared';
+import { loginSchema, registerSchema } from '@mesura/shared';
 import { errorMessage } from '@/api/client';
 import { api } from '@/api/endpoints';
 import { useAuth } from '@/auth/AuthProvider';
@@ -111,9 +111,9 @@ export default function Auth() {
         onSubmitEditing={onSubmit}
       />
       <InlineError message={submit.isError ? errorMessage(submit.error) : null} />
-      {mode === 'login' ? <InfoNote tone="sandbox">Sandbox demo account: demo@po.test / demo1234</InfoNote> : null}
+      {mode === 'login' ? <InfoNote tone="sandbox">Sandbox demo account: demo@mesura.test / demo1234</InfoNote> : null}
       <Text style={[type.caption, { textAlign: 'center' }]}>
-        PÔ sandbox · no real money, cards or identity checks are involved.
+        Mesura sandbox · no real money, cards or identity checks are involved.
       </Text>
       <ApiServerSetting />
     </Screen>

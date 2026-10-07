@@ -1,4 +1,4 @@
-import type { Currency, FundingStatus, MobileMoneyProvider } from '@po/shared';
+import type { Currency, FundingStatus, MobileMoneyProvider } from '@mesura/shared';
 
 export interface InitiateFundingRequest {
   /** Our internal idempotency reference for this funding attempt. */
@@ -22,7 +22,7 @@ export interface FundingStatusResult {
 /**
  * Collects money from the user (Mobile Money pull payment).
  * Sandbox: SandboxMobileMoneyProvider. Future: a regulated aggregator.
- * The user's Mobile Money PIN is entered on their phone, never in PÔ.
+ * The user's Mobile Money PIN is entered on their phone, never in Mesura.
  */
 export interface PaymentProvider {
   initiateFunding(request: InitiateFundingRequest): Promise<InitiateFundingResult>;

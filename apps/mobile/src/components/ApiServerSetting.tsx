@@ -7,7 +7,7 @@ import { Button } from './Button';
 import { TextField } from './TextField';
 
 /**
- * Sandbox-only: choose which PÔ API the app talks to, so an installed APK can
+ * Sandbox-only: choose which Mesura API the app talks to, so an installed APK can
  * reach an API on the local network (http://192.168.x.x:3000) or a hosted one.
  */
 export function ApiServerSetting() {
@@ -25,7 +25,7 @@ export function ApiServerSetting() {
     setStatus('Checking…');
     try {
       const res = await fetch(`${getApiBaseUrl()}/me`);
-      setStatus(res.status === 401 ? 'Connected to the PÔ API.' : `Server answered with status ${res.status}.`);
+      setStatus(res.status === 401 ? 'Connected to the Mesura API.' : `Server answered with status ${res.status}.`);
     } catch {
       setStatus("Can't reach this server from the phone.");
     }

@@ -1,6 +1,6 @@
 import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
-import { loginSchema, registerSchema, type AuthResponseDto, type LoginInput, type RegisterInput } from '@po/shared';
+import { loginSchema, registerSchema, type AuthResponseDto, type LoginInput, type RegisterInput } from '@mesura/shared';
 import { Public } from '../common/auth-user';
 import { ZodValidationPipe } from '../common/zod-validation.pipe';
 import { AuthService } from './auth.service';

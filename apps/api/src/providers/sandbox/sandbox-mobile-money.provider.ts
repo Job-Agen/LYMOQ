@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
-import type { FundingStatus } from '@po/shared';
+import type { FundingStatus } from '@mesura/shared';
 import { APP_ENV, type AppEnv } from '../../config/env';
 import type {
   FundingStatusResult,

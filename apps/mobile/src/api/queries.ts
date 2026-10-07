@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { CardDto, FundingDto } from '@po/shared';
+import type { CardDto, FundingDto } from '@mesura/shared';
 import { api, type TransactionFilter } from './endpoints';
 
 export const keys = {

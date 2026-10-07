@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import type { CardStatus, Currency, DeclineReason } from '@po/shared';
+import type { CardStatus, Currency, DeclineReason } from '@mesura/shared';
 
 /** Everything the engine needs to decide — no database, no provider, no clock. */
 export interface CardPolicySnapshot {
@@ -40,7 +40,7 @@ export function normalizeMerchant(merchant: string): string {
 }
 
 /**
- * CardPolicyEngine — the core business rules of PÔ.
+ * CardPolicyEngine — the core business rules of Mesura.
  *
  * Pure and deterministic: callers pass the policy snapshot, the attempt and
  * the current time. Persistence and concurrency control (row locking) live in

@@ -1,6 +1,6 @@
-# PÔ — "Your money. Your rules."
+# Mesura — "Your money. Your rules."
 
-Sandbox prototype of **PÔ**, a controlled virtual card for online payments (initial market: Togo).
+Sandbox prototype of **Mesura**, a controlled virtual card for online payments (initial market: Togo).
 The user decides **HOW MUCH** a card can spend, **WHERE** it can be used, **HOW MANY** times, and **HOW LONG** it stays active.
 
 > **Sandbox only.** No real money moves, no real Visa/Mastercard is issued, no Mobile Money
@@ -38,7 +38,7 @@ pnpm build:shared     # compiles packages/shared (API and app import it)
 Start Postgres (skip if you already have one):
 
 ```bash
-docker run -d --name po-db -p 5432:5432 -e POSTGRES_USER=po -e POSTGRES_PASSWORD=po -e POSTGRES_DB=po postgres:16
+docker run -d --name mesura-db -p 5432:5432 -e POSTGRES_USER=mesura -e POSTGRES_PASSWORD=mesura -e POSTGRES_DB=mesura postgres:16
 ```
 
 Configure and migrate:
@@ -53,9 +53,9 @@ pnpm db:seed          # merchants, demo user, demo cards and activity
 ```
 
 **Neon:** put the *pooled* connection string in `DATABASE_URL` and the *direct* one in `DIRECT_URL`
-(both with `?sslmode=require`), then run `pnpm --filter @po/api prisma:deploy` and `pnpm db:seed`.
+(both with `?sslmode=require`), then run `pnpm --filter @mesura/api prisma:deploy` and `pnpm db:seed`.
 
-Demo account created by the seed: **`demo@po.test` / `demo1234`** (KYC verified, 4 cards, mixed activity).
+Demo account created by the seed: **`demo@mesura.test` / `demo1234`** (KYC verified, 4 cards, mixed activity).
 
 ## 3. Run the API
 
@@ -79,7 +79,7 @@ pnpm mobile:dev       # then press a (Android), i (iOS), w (web) or scan the QR 
 The APK is a standalone release build (JS bundled, signed with the debug key — for testing only).
 
 **On the phone:** install the APK, open it, and on the *Log in / Sign up* screen tap
-**API server (sandbox) → Change**, enter the address of a reachable PÔ API — for example your
+**API server (sandbox) → Change**, enter the address of a reachable Mesura API — for example your
 computer on the same Wi-Fi, `http://192.168.1.20:3000` (start it with `pnpm api:dev`) — then
 **Save & test**. The choice is remembered. The build default is `http://10.0.2.2:3000`
 (the host machine, seen from the Android emulator).
@@ -94,8 +94,8 @@ cd android && EXPO_PUBLIC_API_URL=http://10.0.2.2:3000 ./gradlew assembleRelease
 # → apps/mobile/android/app/build/outputs/apk/release/app-release.apk
 ```
 
-**Or on GitHub:** the *Build PÔ Android APK* workflow builds it on every push touching the
-mobile app and uploads it as the `po-sandbox-apk` artifact (set the repository variable
+**Or on GitHub:** the *Build Mesura Android APK* workflow builds it on every push touching the
+mobile app and uploads it as the `mesura-sandbox-apk` artifact (set the repository variable
 `PO_API_URL` to change the default server).
 
 Plain `http://` is allowed in this sandbox build (`plugins/with-sandbox-cleartext.js`) so a LAN
@@ -127,7 +127,7 @@ curl -X POST localhost:3000/sandbox/transactions \
 ```bash
 pnpm test                          # CardPolicyEngine unit tests (Jest)
 pnpm typecheck                     # shared + api + mobile, strict TypeScript
-pnpm --filter @po/api smoke        # end-to-end API scenario against a running API + seeded DB
+pnpm --filter @mesura/api smoke        # end-to-end API scenario against a running API + seeded DB
 ```
 
 ## Sandbox configuration (`apps/api/.env`)

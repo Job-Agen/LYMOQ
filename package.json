@@ -1,5 +1,5 @@
 {
-  "name": "po",
+  "name": "mesura",
   "private": true,
   "description": "P\u00d4 \u2014 controlled virtual cards sandbox prototype",
   "packageManager": "pnpm@10.33.0",
@@ -7,13 +7,13 @@
     "node": ">=20"
   },
   "scripts": {
-    "build:shared": "pnpm --filter @po/shared build",
-    "api:dev": "pnpm build:shared && pnpm --filter @po/api dev",
-    "mobile:dev": "pnpm build:shared && pnpm --filter @po/mobile start",
-    "db:migrate": "pnpm --filter @po/api prisma:migrate",
-    "db:seed": "pnpm --filter @po/api prisma:seed",
-    "db:reset": "pnpm --filter @po/api prisma:reset",
-    "test": "pnpm build:shared && pnpm --filter @po/api test",
+    "build:shared": "pnpm --filter @mesura/shared build",
+    "api:dev": "pnpm build:shared && pnpm --filter @mesura/api dev",
+    "mobile:dev": "pnpm build:shared && pnpm --filter @mesura/mobile start",
+    "db:migrate": "pnpm --filter @mesura/api prisma:migrate",
+    "db:seed": "pnpm --filter @mesura/api prisma:seed",
+    "db:reset": "pnpm --filter @mesura/api prisma:reset",
+    "test": "pnpm build:shared && pnpm --filter @mesura/api test",
     "typecheck": "pnpm build:shared && pnpm -r --parallel typecheck"
   }
 }

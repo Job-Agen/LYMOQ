@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import type { Currency, PricingDto } from '@po/shared';
+import type { Currency, PricingDto } from '@mesura/shared';
 import { APP_ENV, type AppEnv } from '../config/env';
 
 /**

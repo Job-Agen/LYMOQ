@@ -1,4 +1,4 @@
-import { formatDuration, formatMoney, type CardDto } from '@po/shared';
+import { formatDuration, formatMoney, type CardDto } from '@mesura/shared';
 import { formatTimeLeft, merchantLabel, paymentsLabel, paymentsUsage } from '@/lib/format';
 import { Divider, RuleRow } from './RuleRow';
 

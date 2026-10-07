@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
-import { kycStartSchema } from '@po/shared';
+import { kycStartSchema } from '@mesura/shared';
 import { errorMessage } from '@/api/client';
 import { api } from '@/api/endpoints';
 import { keys, useMe } from '@/api/queries';
@@ -77,7 +77,7 @@ export default function Kyc() {
       ) : null}
 
       {rejected ? (
-        <InlineError message="We couldn't verify your identity. You must be 18 or older to use PÔ." />
+        <InlineError message="We couldn't verify your identity. You must be 18 or older to use Mesura." />
       ) : null}
 
       <TextField label="First name" value={firstName} onChangeText={setFirstName} error={errors.firstName} autoComplete="given-name" />

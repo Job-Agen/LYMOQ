@@ -1,4 +1,4 @@
-/** PÔ design tokens — dark forest green on warm off-white. */
+/** Mesura design tokens — dark forest green on warm off-white. */
 export const colors = {
   forest: '#073D31',
   forestDeep: '#04291F',

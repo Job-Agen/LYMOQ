@@ -1,4 +1,4 @@
-import type { CardDto, CardStatus } from '@po/shared';
+import type { CardDto, CardStatus } from '@mesura/shared';
 
 const pad = (n: number) => n.toString().padStart(2, '0');
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];

@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import type { KycStatus, UserDto } from '@po/shared';
+import type { KycStatus, UserDto } from '@mesura/shared';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()

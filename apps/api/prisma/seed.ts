@@ -2,7 +2,7 @@
  * Sandbox seed: merchants, one verified demo user, demo cards and activity.
  * Idempotent — re-running resets the demo user's data.
  *
- *   Demo login: demo@po.test / demo1234
+ *   Demo login: demo@mesura.test / demo1234
  */
 import { PrismaClient, type DeclineReason, type TransactionStatus } from '@prisma/client';
 import { hashPassword } from '../src/auth/password';
@@ -13,7 +13,7 @@ const MINUTE = 60_000;
 const HOUR = 60 * MINUTE;
 const DAY = 24 * HOUR;
 
-const DEMO_EMAIL = 'demo@po.test';
+const DEMO_EMAIL = 'demo@mesura.test';
 const DEMO_PASSWORD = 'demo1234';
 
 const MERCHANTS = [
@@ -157,7 +157,12 @@ async function main(): Promise<void> {
     await prisma.merchant.upsert({ where: { slug: merchant.slug }, create: merchant, update: { name: merchant.name } });
   }
 
-  await prisma.user.deleteMany({ where: { email: DEMO_EMAIL } });
+  // Reset the demo account, plus any older account still holding seed cards.
+  await prisma.user.deleteMany({
+    where: {
+      OR: [{ email: DEMO_EMAIL }, { cards: { some: { providerCardId: { startsWith: 'sbx_card_seed_' } } } }],
+    },
+  });
   const now = Date.now();
   const user = await prisma.user.create({
     data: {

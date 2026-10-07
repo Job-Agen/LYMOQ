@@ -1,4 +1,4 @@
-// PÔ — sandbox data model
+// Mesura — sandbox data model
 //
 // Money: every amount column is an Int holding MINOR units of `currency`.
 // XOF has no minor unit, so 15000 = 15,000 FCFA. No floating point.

@@ -41,7 +41,7 @@ export default function Profile() {
         </>
       )}
       <InfoNote>
-        PÔ never asks for your Mobile Money PIN and never shows your full card number. If someone asks for them, it is not us.
+        Mesura never asks for your Mobile Money PIN and never shows your full card number. If someone asks for them, it is not us.
       </InfoNote>
       <InfoNote tone="sandbox">
         Sandbox build: no real money is moved, no real card is issued and no real identity check is made.

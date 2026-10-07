@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import type { Funding } from '@prisma/client';
 import { randomUUID } from 'node:crypto';
-import type { FundCardInput, FundingDto } from '@po/shared';
+import type { FundCardInput, FundingDto } from '@mesura/shared';
 import { CardsService } from '../cards/cards.service';
 import { PricingService } from '../cards/pricing.service';
 import { iso } from '../common/iso';
@@ -50,7 +50,7 @@ export class FundingService {
       phone: input.phone,
       amount: quote.total,
       currency: quote.currency,
-      description: `PÔ card funding ${card.label}`,
+      description: `Mesura card funding ${card.label}`,
     });
 
     const funding = await this.prisma.funding.create({
