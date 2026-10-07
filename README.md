@@ -1,92 +1,140 @@
-# LYMOQ — Flutter mobile sandbox prototype
+# Mesura — "Your money. Your rules."
 
-Prototype Flutter fidèle à la maquette fournie : onboarding, Home, création progressive de carte (Where / Amount / Usage / Duration), review, financement Mobile Money simulé, confirmation, création de carte, détails de carte et activité.
+Sandbox prototype of **Mesura**, a controlled virtual card for online payments (initial market: Togo).
+The user decides **HOW MUCH** a card can spend, **WHERE** it can be used, **HOW MANY** times, and **HOW LONG** it stays active.
 
-## Important
+> **Sandbox only.** No real money moves, no real Visa/Mastercard is issued, no Mobile Money
+> request is sent and no KYC provider is called. All external partners are fake providers
+> behind interfaces, so they can later be replaced by regulated partners.
 
-Cette version est un **sandbox UI fonctionnel** :
-
-- aucun argent réel n'est déplacé ;
-- aucune carte Visa/Mastercard réelle n'est émise ;
-- aucun PIN Mobile Money n'est demandé ;
-- le financement est simulé ;
-- les numéros de carte affichés sont masqués/fictifs.
-
-## Stack
-
-- Flutter / Dart
-- Material 3 avec design system LYMOQ personnalisé
-- aucune dépendance métier externe : le prototype reste léger
-
-## Structure
-
-```text
-lib/
-  main.dart
-  app.dart
-  models/
-  state/
-  theme/
-  widgets/
-  screens/
-docs/
-  reference_prototype.png
+```
+apps/
+  api/        NestJS + Prisma + PostgreSQL (modular monolith)
+  mobile/     Expo (React Native) + Expo Router + TanStack Query
+packages/
+  shared/     Enums, money helpers, Zod request schemas, API response types
+  config/     Shared strict tsconfig
+legacy/
+  flutter-prototype/   Earlier UI-only Flutter mock (kept for reference)
 ```
 
-## Démarrage sur Windows
+Architecture, data model, endpoint list and build phases: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
-Le bundle contient le code Flutter mais pas les dossiers Android/iOS générés par le SDK, car l'environnement de génération ne dispose pas du SDK Flutter.
+## Requirements
 
-1. Installe Flutter et Android Studio si nécessaire.
-2. Ouvre PowerShell dans ce dossier.
-3. Exécute :
+- Node.js ≥ 20 and pnpm 10 (`corepack enable`)
+- PostgreSQL 14+ locally, in Docker, or on [Neon](https://neon.tech)
+- For the phone: the Expo Go app (SDK 57) or an Android emulator / iOS simulator
 
-```powershell
-flutter create --platforms=android,ios --org com.lymoq.app .
-flutter pub get
-flutter analyze
-flutter test
-flutter run
+## 1. Install
+
+```bash
+pnpm install          # also generates the Prisma client
+pnpm build:shared     # compiles packages/shared (API and app import it)
 ```
 
-Ou lance :
+## 2. Database
 
-```powershell
-.\scripts\bootstrap_windows.bat
+Start Postgres (skip if you already have one):
+
+```bash
+docker run -d --name mesura-db -p 5432:5432 -e POSTGRES_USER=mesura -e POSTGRES_PASSWORD=mesura -e POSTGRES_DB=mesura postgres:16
 ```
 
-## Parcours testable
+Configure and migrate:
 
-1. Get started
-2. Create a card
-3. Choisir Anywhere ou Specific merchant
-4. Choisir le montant
-5. Choisir le nombre de paiements
-6. Choisir la durée
-7. Review card
-8. Fund card
-9. Choisir TMoney / Flooz / Moov Money
-10. La confirmation sandbox prend environ 3 secondes
-11. La carte est ajoutée à l'application
-12. Ouvrir Card details
-13. Freeze / Unfreeze / Terminate
-14. Voir Activity
-15. Ouvrir la transaction Google bloquée pour afficher Payment blocked
+```bash
+cp apps/api/.env.example apps/api/.env
+# set JWT_SECRET (≥ 32 chars):
+node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"
 
-## Design
+pnpm db:migrate       # applies prisma/migrations
+pnpm db:seed          # merchants, demo user, demo cards and activity
+```
 
-La palette et la hiérarchie sont centralisées dans `lib/theme/lymoq_theme.dart`.
+**Neon:** put the *pooled* connection string in `DATABASE_URL` and the *direct* one in `DIRECT_URL`
+(both with `?sslmode=require`), then run `pnpm --filter @mesura/api prisma:deploy` and `pnpm db:seed`.
 
-Couleurs principales :
+Demo account created by the seed: **`demo@mesura.test` / `demo1234`** (KYC verified, 4 cards, mixed activity).
 
-- Forest : `#073D31`
-- CTA green : `#005C47`
-- Accent : `#008566`
-- Mint : `#DFF3E9`
-- Background : `#F8FAF7`
+## 3. Run the API
 
-La référence visuelle originale est conservée dans `docs/reference_prototype.png`.
+```bash
+pnpm api:dev          # http://localhost:3000
+```
 
-## Limite connue
+## 4. Run the mobile app
 
-Le SDK Flutter n'étant pas installé dans l'environnement qui a généré ce bundle, je n'ai pas pu exécuter `flutter analyze`, `flutter test` ou produire un APK ici. Les scripts fournis lancent ces validations dès que le projet est ouvert dans un environnement Flutter local.
+```bash
+cp apps/mobile/.env.example apps/mobile/.env
+# EXPO_PUBLIC_API_URL must be reachable from the device:
+#   iOS simulator / web: http://localhost:3000
+#   Android emulator:    http://10.0.2.2:3000
+#   Phone with Expo Go:  http://<your computer's LAN IP>:3000
+pnpm mobile:dev       # then press a (Android), i (iOS), w (web) or scan the QR code
+```
+
+## Android APK (sandbox)
+
+The APK is a standalone release build (JS bundled, signed with the debug key — for testing only).
+
+**On the phone:** install the APK, open it, and on the *Log in / Sign up* screen tap
+**API server (sandbox) → Change**, enter the address of a reachable Mesura API — for example your
+computer on the same Wi-Fi, `http://192.168.1.20:3000` (start it with `pnpm api:dev`) — then
+**Save & test**. The choice is remembered. The build default is `http://10.0.2.2:3000`
+(the host machine, seen from the Android emulator).
+
+**Build it yourself** (needs JDK 17+ and the Android SDK with NDK 27.1):
+
+```bash
+cd apps/mobile
+npx expo prebuild --platform android --no-install
+cd android && EXPO_PUBLIC_API_URL=http://10.0.2.2:3000 ./gradlew assembleRelease \
+  -PreactNativeArchitectures=arm64-v8a -Pexpo.useLegacyPackaging=true
+# → apps/mobile/android/app/build/outputs/apk/release/app-release.apk
+```
+
+**Or on GitHub:** the *Build Mesura Android APK* workflow builds it on every push touching the
+mobile app and uploads it as the `mesura-sandbox-apk` artifact (set the repository variable
+`PO_API_URL` to change the default server).
+
+Plain `http://` is allowed in this sandbox build (`plugins/with-sandbox-cleartext.js`) so a LAN
+API works; a production build must use an `https://` API and drop that plugin.
+
+## 5. Try the full flow
+
+1. **Onboarding → Sign up** (any email, 8+ char password)
+2. **KYC** — name, date of birth (18+), Togo number → verified instantly (sandbox)
+3. **Home → Create a card** → Where (Anywhere / merchant) → How much → How many → How long
+4. **Review** — maximum, merchant, payments, duration, illustrative fees (5 %)
+5. **Fund** — pick TMoney / Flooz / Moov Money → *Pay 15,750 FCFA*
+6. **Confirm the payment** — auto-confirms after ~10 s, or tap *Simulate confirmation*
+7. **Card created** → **Card details** — masked card, rules, *Freeze*, *Manage rules*, *Terminate*
+8. **Simulate an online payment** — choose a merchant and amount → **Approved** or **Payment blocked**
+9. **Activity** — All / Approved / Blocked → transaction details with the plain-language reason
+
+Or drive it from the command line (merchant charging a card):
+
+```bash
+curl -X POST localhost:3000/sandbox/transactions \
+  -H "Authorization: Bearer $TOKEN" -H 'content-type: application/json' \
+  -d '{"cardId":"<id>","merchant":"CANVA","amount":5650,"currency":"XOF"}'
+# → {"status":"APPROVED", ...}  or  {"status":"BLOCKED","reason":"MERCHANT_NOT_ALLOWED", ...}
+```
+
+## Tests and checks
+
+```bash
+pnpm test                          # CardPolicyEngine unit tests (Jest)
+pnpm typecheck                     # shared + api + mobile, strict TypeScript
+pnpm --filter @mesura/api smoke        # end-to-end API scenario against a running API + seeded DB
+```
+
+## Sandbox configuration (`apps/api/.env`)
+
+| Variable | Default | Meaning |
+| --- | --- | --- |
+| `SANDBOX_MODE` | `true` in `.env.example` | Enables `/sandbox/*`. When `false` those routes return 404. |
+| `SANDBOX_FUNDING_AUTO_CONFIRM_SECONDS` | `10` | Fake Mobile Money auto-approval delay (`0` = manual only). |
+| `SERVICE_FEE_BPS` | `500` | Illustrative fee, in basis points (5 %). |
+| `FUNDING_EXPIRY_MINUTES` | `15` | A pending Mobile Money request expires after this. |

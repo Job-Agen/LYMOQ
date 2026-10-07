@@ -1,0 +1,189 @@
+// Mesura — sandbox data model
+//
+// Money: every amount column is an Int holding MINOR units of `currency`.
+// XOF has no minor unit, so 15000 = 15,000 FCFA. No floating point.
+//
+// Sensitive data that is intentionally NOT modelled: card PAN, CVV,
+// Mobile Money PIN, identity document scans.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum KycStatus {
+  NOT_STARTED
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum CardStatus {
+  PENDING_FUNDING
+  ACTIVE
+  FROZEN
+  EXPIRED
+  TERMINATED
+}
+
+enum TerminationReason {
+  USER_REQUESTED
+  USAGE_LIMIT_REACHED
+}
+
+enum FundingStatus {
+  PENDING
+  CONFIRMED
+  FAILED
+  EXPIRED
+}
+
+enum TransactionStatus {
+  PENDING
+  APPROVED
+  BLOCKED
+  FAILED
+}
+
+enum DeclineReason {
+  CARD_NOT_ACTIVE
+  CARD_EXPIRED
+  AMOUNT_LIMIT_EXCEEDED
+  TRANSACTION_LIMIT_REACHED
+  MERCHANT_NOT_ALLOWED
+}
+
+enum MobileMoneyProvider {
+  TMONEY
+  FLOOZ
+  MOOV_MONEY
+}
+
+enum Currency {
+  XOF
+}
+
+model User {
+  id           String      @id @default(cuid())
+  email        String      @unique
+  name         String
+  phone        String?
+  passwordHash String
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  kycProfile   KycProfile?
+  cards        Card[]
+  fundings     Funding[]
+}
+
+model KycProfile {
+  id                String    @id @default(cuid())
+  userId            String    @unique
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status            KycStatus @default(NOT_STARTED)
+  firstName         String?
+  lastName          String?
+  dateOfBirth       DateTime? @db.Date
+  country           String?
+  /// Reference returned by the KYC provider (sandbox: fake).
+  providerReference String?
+  verifiedAt        DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model Merchant {
+  id        String       @id @default(cuid())
+  name      String
+  slug      String       @unique
+  iconUrl   String?
+  createdAt DateTime     @default(now())
+  policies  CardPolicy[]
+}
+
+model Card {
+  id                String             @id @default(cuid())
+  userId            String
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label             String
+  /// Issuer-side identifier. Null until the card is issued after funding.
+  providerCardId    String?            @unique
+  /// Only the last 4 digits are ever stored.
+  last4             String?
+  status            CardStatus         @default(PENDING_FUNDING)
+  terminationReason TerminationReason?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  activatedAt       DateTime?
+  /// Mirrors policy.expiresAt (the policy is the source of truth).
+  expiresAt         DateTime
+  policy            CardPolicy?
+  fundings          Funding[]
+  transactions      Transaction[]
+
+  @@index([userId, createdAt])
+}
+
+model CardPolicy {
+  id                      String    @id @default(cuid())
+  cardId                  String    @unique
+  card                    Card      @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  maxAmount               Int
+  spentAmount             Int       @default(0)
+  currency                Currency  @default(XOF)
+  /// Null = unlimited payments until expiration.
+  maxTransactionCount     Int?
+  currentTransactionCount Int       @default(0)
+  /// Merchant slug, null = usable anywhere. Sandbox-only enforcement.
+  merchantRestriction     String?
+  merchant                Merchant? @relation(fields: [merchantRestriction], references: [slug])
+  /// Chosen lifetime; expiresAt is recomputed from it at activation.
+  durationMinutes         Int
+  expiresAt               DateTime
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+}
+
+model Funding {
+  id                String              @id @default(cuid())
+  userId            String
+  user              User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cardId            String
+  card              Card                @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  provider          MobileMoneyProvider
+  /// Reference returned by the payment provider (sandbox: fake).
+  providerReference String              @unique
+  phone             String
+  amount            Int
+  fee               Int
+  total             Int
+  currency          Currency            @default(XOF)
+  status            FundingStatus       @default(PENDING)
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  confirmedAt       DateTime?
+
+  @@index([cardId])
+  @@index([userId, createdAt])
+}
+
+model Transaction {
+  id            String            @id @default(cuid())
+  cardId        String
+  card          Card              @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  /// Normalised merchant identifier as presented by the merchant.
+  merchant      String
+  merchantName  String
+  amount        Int
+  currency      Currency          @default(XOF)
+  status        TransactionStatus
+  declineReason DeclineReason?
+  createdAt     DateTime          @default(now())
+
+  @@index([cardId, createdAt])
+}

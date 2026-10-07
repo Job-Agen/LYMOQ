@@ -1,0 +1,55 @@
+name: Build Mesura Android APK
+
+on:
+  push:
+    branches: [main, 'claude/**']
+    paths:
+      - 'apps/mobile/**'
+      - 'packages/shared/**'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/build-mobile-apk.yml'
+  workflow_dispatch:
+    inputs:
+      api_url:
+        description: 'Default API URL baked into the app (can be changed in-app on the login screen)'
+        required: false
+        default: ''
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      # Priority: manual input → repository variable PO_API_URL → Android emulator host.
+      EXPO_PUBLIC_API_URL: ${{ inputs.api_url || vars.PO_API_URL || 'http://10.0.2.2:3000' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      # GitHub's Ubuntu runners ship the Android SDK (ANDROID_HOME, licences accepted);
+      # Gradle downloads any missing platform, build-tools or NDK version on its own.
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build:shared
+
+      - name: Generate native Android project
+        working-directory: apps/mobile
+        run: npx expo prebuild --platform android --no-install
+
+      - name: Build release APK (signed with the debug key — sandbox only)
+        working-directory: apps/mobile/android
+        # Compressed native libs keep the APK small enough to share (~28 MB for arm64 only).
+        run: ./gradlew assembleRelease --no-daemon -PreactNativeArchitectures=arm64-v8a -Pexpo.useLegacyPackaging=true
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mesura-sandbox-apk
+          path: apps/mobile/android/app/build/outputs/apk/release/app-release.apk
+          if-no-files-found: error

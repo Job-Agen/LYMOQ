@@ -1,0 +1,49 @@
+{
+  "expo": {
+    "name": "Mesura",
+    "slug": "mesura-sandbox",
+    "scheme": "mesura",
+    "version": "0.1.1",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#F6F4EE",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "africa.mesura.sandbox",
+      "buildNumber": "2"
+    },
+    "android": {
+      "package": "africa.mesura.sandbox",
+      "adaptiveIcon": {
+        "backgroundColor": "#073D31",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "versionCode": 2
+    },
+    "web": {
+      "bundler": "metro",
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "./plugins/with-sandbox-cleartext",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 140,
+          "resizeMode": "contain",
+          "backgroundColor": "#073D31"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

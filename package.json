@@ -1,0 +1,19 @@
+{
+  "name": "mesura",
+  "private": true,
+  "description": "P\u00d4 \u2014 controlled virtual cards sandbox prototype",
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build:shared": "pnpm --filter @mesura/shared build",
+    "api:dev": "pnpm build:shared && pnpm --filter @mesura/api dev",
+    "mobile:dev": "pnpm build:shared && pnpm --filter @mesura/mobile start",
+    "db:migrate": "pnpm --filter @mesura/api prisma:migrate",
+    "db:seed": "pnpm --filter @mesura/api prisma:seed",
+    "db:reset": "pnpm --filter @mesura/api prisma:reset",
+    "test": "pnpm build:shared && pnpm --filter @mesura/api test",
+    "typecheck": "pnpm build:shared && pnpm -r --parallel typecheck"
+  }
+}
