@@ -1,13 +1,16 @@
 import 'reflect-metadata';
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import type { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
 import { loadEnv } from './config/env';
 
 async function bootstrap(): Promise<void> {
   loadDotEnv();
   const env = loadEnv();
-  const app = await NestFactory.create(AppModule, { logger: ['log', 'warn', 'error'] });
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, { logger: ['log', 'warn', 'error'] });
+  // Rate limiting is per client IP; behind a proxy that IP comes from X-Forwarded-For.
+  if (env.TRUST_PROXY) app.set('trust proxy', 1);
 
   const origins = env.CORS_ORIGINS.split(',').map((o) => o.trim()).filter(Boolean);
   app.enableCors({ origin: origins.length > 0 ? origins : true });
