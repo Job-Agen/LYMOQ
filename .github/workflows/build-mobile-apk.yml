@@ -33,8 +33,9 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - uses: android-actions/setup-android@v3
 
+      # GitHub's Ubuntu runners ship the Android SDK (ANDROID_HOME, licences accepted);
+      # Gradle downloads any missing platform, build-tools or NDK version on its own.
       - run: pnpm install --frozen-lockfile
       - run: pnpm build:shared
 
