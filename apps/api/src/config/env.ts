@@ -12,6 +12,8 @@ const envSchema = z.object({
   JWT_SECRET: z.string().min(32, 'JWT_SECRET must be at least 32 characters'),
   JWT_EXPIRES_IN: z.string().default('7d'),
   CORS_ORIGINS: z.string().default(''),
+  /** Behind a reverse proxy (Vercel, load balancer): read the client IP from X-Forwarded-For. */
+  TRUST_PROXY: booleanString,
   SANDBOX_MODE: booleanString,
   SANDBOX_FUNDING_AUTO_CONFIRM_SECONDS: z.coerce.number().int().min(0).default(10),
   SERVICE_FEE_BPS: z.coerce.number().int().min(0).max(10_000).default(500),
