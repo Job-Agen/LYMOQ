@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, type ViewStyle } from 'react-native';
 import type { CardStatus } from '@mesura/shared';
 import { STATUS_LABEL } from '@/lib/format';
 import { colors, radius } from '@/theme/tokens';
@@ -9,37 +9,37 @@ interface VirtualCardProps {
   /** Sandbox masked representation only. null while the card is not issued yet. */
   last4: string | null;
   status?: CardStatus;
+  /** Compact variant for illustrations (onboarding). */
+  small?: boolean;
+  style?: ViewStyle;
 }
 
 /** Masked card visual. Mesura never has — and therefore never shows — a real PAN or CVV. */
-export function VirtualCard({ label, last4, status }: VirtualCardProps) {
+export function VirtualCard({ label, last4, status, small, style }: VirtualCardProps) {
   const inactive = status && status !== 'ACTIVE' && status !== 'PENDING_FUNDING';
   return (
     <View
-      style={[styles.card, inactive && styles.inactive]}
+      style={[styles.card, small && styles.small, inactive && styles.inactive, style]}
       accessible
       accessibilityLabel={`${label}, carte Visa se terminant par ${last4 ?? 'pas encore émise'}${status ? `, ${STATUS_LABEL[status]}` : ''}`}
     >
-      <View style={[styles.orb, styles.orbA]} />
-      <View style={[styles.orb, styles.orbB]} />
+      <View style={[styles.facet, styles.facetA]} />
+      <View style={[styles.facet, styles.facetB]} />
       <View style={styles.top}>
-        <Wordmark height={24} />
-        <Text style={styles.network}>VISA</Text>
+        <Wordmark height={small ? 18 : 22} />
+        <Text style={[styles.network, small && { fontSize: 17 }]}>VISA</Text>
       </View>
       <View style={styles.bottom}>
-        <Text style={styles.label} numberOfLines={1}>
-          {label.toUpperCase()}
-        </Text>
-        <Text style={styles.number}>•••• •••• •••• {last4 ?? '••••'}</Text>
-        <View style={styles.meta}>
-          <View>
-            <Text style={styles.metaLabel}>EXP</Text>
-            <Text style={styles.metaValue}>••/••</Text>
-          </View>
-          <View>
-            <Text style={styles.metaLabel}>CVV</Text>
-            <Text style={styles.metaValue}>•••</Text>
-          </View>
+        {small ? null : (
+          <Text style={styles.label} numberOfLines={1}>
+            {label.toUpperCase()}
+          </Text>
+        )}
+        <View style={styles.numberRow}>
+          <Text style={[styles.number, small && { fontSize: 15 }]}>
+            {small ? '•••• ' : '•••• •••• '}
+            {last4 ?? '••••'}
+          </Text>
           {inactive && status ? <Text style={styles.stamp}>{STATUS_LABEL[status].toUpperCase()}</Text> : null}
         </View>
       </View>
@@ -49,27 +49,32 @@ export function VirtualCard({ label, last4, status }: VirtualCardProps) {
 
 const styles = StyleSheet.create({
   card: {
-    aspectRatio: 1.586,
+    aspectRatio: 2.1,
     width: '100%',
     maxWidth: 420,
     alignSelf: 'center',
-    borderRadius: radius.lg + 2,
-    backgroundColor: colors.forest,
-    padding: 22,
+    borderRadius: radius.lg,
+    backgroundColor: colors.forestDeep,
+    paddingHorizontal: 22,
+    paddingVertical: 18,
     justifyContent: 'space-between',
     overflow: 'hidden',
+    shadowColor: '#04291F',
+    shadowOpacity: 0.25,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 6,
   },
+  small: { aspectRatio: 1.6, paddingHorizontal: 18, paddingVertical: 16 },
   inactive: { backgroundColor: '#3F4A45' },
-  orb: { position: 'absolute', borderRadius: 999, backgroundColor: colors.accent },
-  orbA: { width: 260, height: 260, right: -90, top: -120, opacity: 0.35 },
-  orbB: { width: 180, height: 180, right: 30, bottom: -110, opacity: 0.18 },
+  facet: { position: 'absolute', backgroundColor: colors.accent, borderRadius: 40 },
+  facetA: { width: 220, height: 220, right: -70, bottom: -120, opacity: 0.22, transform: [{ rotate: '35deg' }] },
+  facetB: { width: 140, height: 140, right: 30, bottom: -70, opacity: 0.14, transform: [{ rotate: '20deg' }] },
   top: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  network: { color: colors.onDark, fontSize: 20, fontWeight: '900', fontStyle: 'italic' },
+  network: { color: colors.onDark, fontSize: 21, fontWeight: '900', fontStyle: 'italic' },
   bottom: { gap: 6 },
-  label: { color: colors.onDarkMuted, fontSize: 12, fontWeight: '800', letterSpacing: 1.2 },
-  number: { color: colors.onDark, fontSize: 19, fontWeight: '800', letterSpacing: 2 },
-  meta: { flexDirection: 'row', gap: 26, alignItems: 'flex-end' },
-  metaLabel: { color: colors.onDarkMuted, fontSize: 10, fontWeight: '800' },
-  metaValue: { color: colors.onDark, fontSize: 14, fontWeight: '800' },
-  stamp: { marginLeft: 'auto', color: colors.onDark, fontSize: 13, fontWeight: '900', letterSpacing: 1.5 },
+  label: { color: colors.onDarkMuted, fontSize: 11, fontWeight: '700', letterSpacing: 2 },
+  numberRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  number: { color: colors.onDark, fontSize: 18, fontWeight: '700', letterSpacing: 2 },
+  stamp: { color: colors.onDark, fontSize: 12, fontWeight: '900', letterSpacing: 1.5 },
 });

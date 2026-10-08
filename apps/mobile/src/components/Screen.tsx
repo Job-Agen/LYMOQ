@@ -72,8 +72,6 @@ const styles = StyleSheet.create({
     paddingTop: space.md,
     paddingBottom: space.lg,
     gap: space.sm,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: colors.border,
     backgroundColor: colors.bg,
   },
 });

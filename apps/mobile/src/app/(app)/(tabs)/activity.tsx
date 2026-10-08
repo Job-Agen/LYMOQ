@@ -5,8 +5,8 @@ import type { TransactionFilter } from '@/api/endpoints';
 import { useTransactions } from '@/api/queries';
 import { Screen } from '@/components/Screen';
 import { EmptyState, ErrorState, ListSkeleton } from '@/components/States';
-import { TransactionRow } from '@/components/TransactionRow';
-import { colors, radius, type } from '@/theme/tokens';
+import { TransactionList } from '@/components/TransactionRow';
+import { colors, radius } from '@/theme/tokens';
 
 const FILTERS: { key: TransactionFilter; label: string }[] = [
   { key: 'ALL', label: 'Toutes' },
@@ -19,8 +19,7 @@ export default function Activity() {
   const txs = useTransactions(filter);
 
   return (
-    <Screen edges={['top']} onRefresh={() => void txs.refetch()} refreshing={txs.isRefetching}>
-      <Text style={type.title}>Activité</Text>
+    <Screen title="Activité" back={false} edges={['top']} onRefresh={() => void txs.refetch()} refreshing={txs.isRefetching}>
       <View style={styles.filters} accessibilityRole="tablist">
         {FILTERS.map((f) => (
           <Pressable
@@ -40,12 +39,12 @@ export default function Activity() {
         <ErrorState message={errorMessage(txs.error)} onRetry={() => void txs.refetch()} />
       ) : (txs.data ?? []).length === 0 ? (
         <EmptyState
-          icon="pulse-outline"
+          icon="stats-chart-outline"
           title={filter === 'BLOCKED' ? 'Rien de bloqué' : "Aucun paiement pour l'instant"}
           message={filter === 'BLOCKED' ? 'Les paiements stoppés par vos règles apparaîtront ici.' : 'Les paiements effectués avec vos cartes apparaissent ici.'}
         />
       ) : (
-        <View>{(txs.data ?? []).map((tx) => <TransactionRow key={tx.id} tx={tx} />)}</View>
+        <TransactionList txs={txs.data ?? []} />
       )}
     </Screen>
   );
@@ -54,15 +53,14 @@ export default function Activity() {
 const styles = StyleSheet.create({
   filters: { flexDirection: 'row', gap: 8 },
   chip: {
-    minHeight: 40,
-    paddingHorizontal: 18,
-    borderRadius: radius.pill,
-    borderWidth: 1.5,
-    borderColor: colors.border,
+    flex: 1,
+    minHeight: 42,
+    borderRadius: radius.md,
+    alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.surface,
+    backgroundColor: colors.fill,
   },
-  chipOn: { backgroundColor: colors.forest, borderColor: colors.forest },
-  chipText: { fontWeight: '800', color: colors.text },
+  chipOn: { backgroundColor: colors.green },
+  chipText: { fontWeight: '700', color: colors.text },
   chipTextOn: { color: colors.onDark },
 });

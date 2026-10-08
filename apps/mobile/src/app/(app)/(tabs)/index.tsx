@@ -1,5 +1,6 @@
 import { router } from 'expo-router';
-import { StyleSheet, Text, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useCards, useMe, useTransactions } from '@/api/queries';
 import { errorMessage } from '@/api/client';
 import { Button } from '@/components/Button';
@@ -7,7 +8,7 @@ import { CardListItem } from '@/components/CardListItem';
 import { Screen } from '@/components/Screen';
 import { SectionHeader } from '@/components/SectionHeader';
 import { EmptyState, ErrorState, ListSkeleton } from '@/components/States';
-import { TransactionRow } from '@/components/TransactionRow';
+import { TransactionList } from '@/components/TransactionRow';
 import { greeting } from '@/lib/format';
 import { colors, radius, type } from '@/theme/tokens';
 
@@ -22,15 +23,22 @@ export default function Home() {
 
   return (
     <Screen edges={['top']} onRefresh={refresh} refreshing={cards.isRefetching || activity.isRefetching}>
-      <View>
-        <Text style={[type.body, { color: colors.muted }]}>{greeting()}</Text>
-        <Text style={type.title}>{me.data?.name ?? ''} 👋</Text>
+      <View style={styles.header}>
+        <View style={{ flex: 1 }}>
+          <Text style={[type.body, { color: colors.muted }]}>{greeting()}</Text>
+          <Text style={type.title}>{me.data?.name ?? ''} 👋</Text>
+        </View>
+        <Pressable accessibilityRole="button" accessibilityLabel="Activité récente" onPress={() => router.push('/activity')} style={styles.bell}>
+          <Ionicons name="notifications-outline" size={20} color={colors.text} />
+        </Pressable>
+        <Pressable accessibilityRole="button" accessibilityLabel="Profil" onPress={() => router.push('/profile')} style={styles.avatar}>
+          <Text style={styles.initial}>{(me.data?.name ?? '?').charAt(0).toUpperCase()}</Text>
+        </Pressable>
       </View>
 
       <View style={styles.hero}>
-        <View style={styles.heroOrb} />
+        <View style={styles.heroFacet} />
         <Text style={styles.heroTitle}>Payez en ligne sans exposer plus d'argent que nécessaire.</Text>
-        <Text style={styles.heroText}>Créez une carte avec son propre plafond, son marchand, ses paiements et sa durée de vie.</Text>
         <Button label="Créer une carte" icon="add" variant="light" onPress={() => router.push('/create/where')} />
       </View>
 
@@ -53,24 +61,37 @@ export default function Home() {
       ) : recent.length === 0 ? (
         <EmptyState icon="pulse-outline" title="Aucune activité pour l'instant" message="Les paiements effectués avec vos cartes apparaissent ici." />
       ) : (
-        <View>{recent.map((tx) => <TransactionRow key={tx.id} tx={tx} />)}</View>
+        <TransactionList txs={recent} />
       )}
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  hero: { backgroundColor: colors.forest, borderRadius: radius.lg + 4, padding: 22, gap: 12, overflow: 'hidden' },
-  heroOrb: {
-    position: 'absolute',
-    width: 220,
-    height: 220,
-    borderRadius: 110,
-    backgroundColor: colors.accent,
-    opacity: 0.25,
-    right: -80,
-    top: -90,
+  header: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  bell: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  heroTitle: { color: colors.onDark, fontSize: 23, fontWeight: '900', letterSpacing: -0.3, lineHeight: 28 },
-  heroText: { color: colors.onDarkMuted, fontSize: 15, fontWeight: '500' },
+  avatar: { width: 44, height: 44, borderRadius: 22, backgroundColor: colors.mint, alignItems: 'center', justifyContent: 'center' },
+  initial: { fontSize: 17, fontWeight: '800', color: colors.forest },
+  hero: { backgroundColor: colors.forestDeep, borderRadius: radius.lg + 4, padding: 22, gap: 18, overflow: 'hidden' },
+  heroFacet: {
+    position: 'absolute',
+    width: 200,
+    height: 200,
+    borderRadius: 40,
+    backgroundColor: colors.accent,
+    opacity: 0.2,
+    right: -70,
+    top: -40,
+    transform: [{ rotate: '30deg' }],
+  },
+  heroTitle: { color: colors.onDark, fontSize: 21, fontWeight: '800', letterSpacing: -0.2, lineHeight: 27, maxWidth: '85%' },
 });

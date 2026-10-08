@@ -10,7 +10,7 @@ import { SectionHeader } from '@/components/SectionHeader';
 import { CardStatusBadge } from '@/components/StatusBadge';
 import { ErrorState, InfoNote, InlineError, Skeleton } from '@/components/States';
 import { Surface } from '@/components/Surface';
-import { TransactionRow } from '@/components/TransactionRow';
+import { TransactionList } from '@/components/TransactionRow';
 import { VirtualCard } from '@/components/VirtualCard';
 import { confirmAction } from '@/lib/confirm';
 import { type } from '@/theme/tokens';
@@ -56,16 +56,13 @@ export default function CardDetails() {
         <>
           <VirtualCard label={c.label} last4={c.last4} status={c.status} />
           <View style={styles.statusRow}>
-            <Text style={type.body}>
-              {c.label} · •••• {c.last4 ?? '••••'}
-            </Text>
+            <Text style={type.body}>Statut</Text>
             <CardStatusBadge status={c.status} />
           </View>
 
           {c.status === 'FROZEN' ? <InfoNote>Cette carte est gelée. Tous les paiements sont bloqués jusqu'à ce que vous la dégeliez.</InfoNote> : null}
           {c.status === 'EXPIRED' || c.status === 'TERMINATED' ? <InfoNote>{CLOSED_MESSAGE[c.status]}</InfoNote> : null}
 
-          <SectionHeader title="Règles de sécurité" />
           <Surface>
             <CardRules card={c} mode="live" />
           </Surface>
@@ -74,13 +71,13 @@ export default function CardDetails() {
             <>
               <View style={styles.actions}>
                 {c.status === 'ACTIVE' ? (
-                  <Button compact label="Geler" icon="snow-outline" variant="secondary" loading={freeze.isPending} onPress={() => freeze.mutate(id)} />
+                  <Button compact label="Geler" variant="secondary" loading={freeze.isPending} onPress={() => freeze.mutate(id)} />
                 ) : (
-                  <Button compact label="Dégeler" icon="flame-outline" variant="secondary" loading={unfreeze.isPending} onPress={() => unfreeze.mutate(id)} />
+                  <Button compact label="Dégeler" variant="secondary" loading={unfreeze.isPending} onPress={() => unfreeze.mutate(id)} />
                 )}
-                <Button compact label="Gérer les règles" icon="options-outline" variant="secondary" onPress={() => router.push({ pathname: '/cards/[id]/rules', params: { id } })} />
+                <Button compact label="Gérer les règles" variant="neutral" onPress={() => router.push({ pathname: '/cards/[id]/rules', params: { id } })} />
+                <Button compact label="Clôturer" variant="danger" loading={terminate.isPending} onPress={() => void onTerminate()} />
               </View>
-              <Button label="Clôturer" icon="close-circle-outline" variant="danger" loading={terminate.isPending} onPress={() => void onTerminate()} />
               <InlineError message={actionError ? errorMessage(actionError) : null} />
             </>
           ) : null}
@@ -98,7 +95,7 @@ export default function CardDetails() {
           ) : (txs.data ?? []).length === 0 ? (
             <Text style={type.caption}>Aucune tentative de paiement pour l'instant.</Text>
           ) : (
-            <View>{(txs.data ?? []).map((tx) => <TransactionRow key={tx.id} tx={tx} />)}</View>
+            <TransactionList txs={txs.data ?? []} />
           )}
         </>
       )}
@@ -107,6 +104,6 @@ export default function CardDetails() {
 }
 
 const styles = StyleSheet.create({
-  statusRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  actions: { flexDirection: 'row', gap: 10 },
+  statusRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 4 },
+  actions: { flexDirection: 'row', gap: 8 },
 });

@@ -9,13 +9,12 @@ import { Button } from '@/components/Button';
 import { OptionRow } from '@/components/OptionRow';
 import { RuleRow } from '@/components/RuleRow';
 import { Screen } from '@/components/Screen';
-import { InlineError } from '@/components/States';
+import { InfoNote, InlineError } from '@/components/States';
 import { StepHeader } from '@/components/StepHeader';
-import { Surface } from '@/components/Surface';
 import { TextField } from '@/components/TextField';
 import { useCreateCard } from '@/features/create-card/CreateCardContext';
 import { paymentsLabel } from '@/lib/format';
-import { colors, type } from '@/theme/tokens';
+import { colors, radius, type } from '@/theme/tokens';
 
 const MAX_CUSTOM_HOURS = MAX_DURATION_MINUTES / 60;
 
@@ -40,7 +39,7 @@ export default function Duration() {
 
   return (
     <Screen
-      title="Créer une carte"
+      title="Créer une carte sécurisée"
       footer={
         <>
           <InlineError message={createDraft.isError ? errorMessage(createDraft.error) : null} />
@@ -55,18 +54,22 @@ export default function Duration() {
       }
     >
       <StepHeader step={4} question="Combien de temps doit-elle rester active ?" />
-      {DURATION_PRESETS.map((p) => (
-        <OptionRow
-          key={p.minutes}
-          title={p.label}
-          selected={!custom && draft.durationMinutes === p.minutes}
-          onPress={() => {
-            setCustom(false);
-            update({ durationMinutes: p.minutes });
-          }}
-        />
-      ))}
-      <OptionRow title="Personnalisée" description="Choisissez un nombre d'heures." selected={custom} onPress={() => setCustom(true)} />
+      <View style={styles.options}>
+        {DURATION_PRESETS.map((p) => (
+          <OptionRow
+            key={p.minutes}
+            title={p.label}
+            radio="left"
+            dense
+            selected={!custom && draft.durationMinutes === p.minutes}
+            onPress={() => {
+              setCustom(false);
+              update({ durationMinutes: p.minutes });
+            }}
+          />
+        ))}
+        <OptionRow title="Personnalisée" radio="left" dense selected={custom} onPress={() => setCustom(true)} />
+      </View>
       {custom ? (
         <TextField
           label="Heures"
@@ -78,7 +81,7 @@ export default function Duration() {
         />
       ) : null}
 
-      <Surface>
+      <View style={styles.summary}>
         <View style={styles.summaryHead}>
           <Text style={type.heading}>Les règles de votre carte</Text>
           <Pressable accessibilityRole="button" hitSlop={10} onPress={() => router.dismissAll()}>
@@ -93,12 +96,17 @@ export default function Duration() {
         />
         <RuleRow icon="repeat-outline" label="Paiements" value={paymentsLabel(draft.maxTransactionCount)} />
         <RuleRow icon="time-outline" label="Durée" value={formatDuration(draft.durationMinutes)} />
-      </Surface>
+      </View>
+      <InfoNote tone="plain" icon="lock-closed-outline">
+        Cette carte ne pourra pas dépenser au-delà de ces règles.
+      </InfoNote>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
+  options: { gap: 8 },
+  summary: { backgroundColor: colors.mint, borderRadius: radius.lg, paddingHorizontal: 18, paddingVertical: 14 },
   summaryHead: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 },
   edit: { color: colors.green, fontWeight: '800' },
 });

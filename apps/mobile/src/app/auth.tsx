@@ -121,7 +121,7 @@ export default function Auth() {
 }
 
 const styles = StyleSheet.create({
-  toggle: { flexDirection: 'row', backgroundColor: '#ECE9E1', borderRadius: radius.md, padding: 4 },
+  toggle: { flexDirection: 'row', backgroundColor: colors.fill, borderRadius: radius.md, padding: 4 },
   tab: { flex: 1, minHeight: 44, borderRadius: radius.sm, alignItems: 'center', justifyContent: 'center' },
   tabOn: { backgroundColor: colors.surface },
   tabText: { fontWeight: '800', color: colors.muted, fontSize: 15 },

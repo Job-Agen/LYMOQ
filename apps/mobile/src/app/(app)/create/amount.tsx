@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
-import { AMOUNT_PRESETS, createCardDraftSchema, formatIllustrativeUsd, formatMoney, formatNumber } from '@mesura/shared';
+import { AMOUNT_PRESETS, createCardDraftSchema, formatIllustrativeUsd, formatNumber } from '@mesura/shared';
 import { Button } from '@/components/Button';
 import { Screen } from '@/components/Screen';
 import { InlineError } from '@/components/States';
@@ -14,12 +14,13 @@ const amountSchema = createCardDraftSchema.shape.maxAmount;
 export default function Amount() {
   const { draft, update } = useCreateCard();
   const [text, setText] = useState(String(draft.maxAmount));
+  const input = useRef<TextInput>(null);
   const value = Number(text.replace(/\D/g, '') || '0');
   const check = amountSchema.safeParse(value);
 
   return (
     <Screen
-      title="Créer une carte"
+      title="Créer une carte sécurisée"
       footer={
         <Button
           label="Continuer"
@@ -34,66 +35,71 @@ export default function Amount() {
     >
       <StepHeader step={2} question="Combien cette carte peut-elle dépenser ?" />
       <View style={styles.box}>
-        <TextInput
-          accessibilityLabel="Montant maximum en FCFA"
-          value={value ? formatNumber(value) : ''}
-          onChangeText={setText}
-          keyboardType="number-pad"
-          placeholder="0"
-          placeholderTextColor={colors.border}
-          style={styles.input}
-          maxLength={9}
-        />
-        <Text style={styles.currency}>FCFA</Text>
+        <View style={styles.amountRow}>
+          <TextInput
+            ref={input}
+            accessibilityLabel="Montant maximum en FCFA"
+            value={value ? formatNumber(value) : ''}
+            onChangeText={setText}
+            keyboardType="number-pad"
+            placeholder="0"
+            placeholderTextColor={colors.border}
+            style={styles.input}
+            maxLength={9}
+          />
+          <View style={styles.currency}>
+            <Text style={styles.currencyText}>FCFA</Text>
+          </View>
+        </View>
+        <Text style={type.caption}>
+          {value > 0 ? formatIllustrativeUsd(value) : '≈ 0,00 $'} (taux de change indicatif)
+        </Text>
       </View>
-      <Text style={styles.fx}>
-        {value > 0 ? formatIllustrativeUsd(value) : '≈ 0,00 $'} <Text style={type.caption}>· taux indicatif</Text>
-      </Text>
       <InlineError message={value > 0 && !check.success ? (check.error.issues[0]?.message ?? null) : null} />
-      <View style={styles.chips}>
+      <View style={styles.grid}>
         {AMOUNT_PRESETS.map((preset) => (
           <Pressable
             key={preset}
             accessibilityRole="button"
+            accessibilityState={{ selected: preset === value }}
             onPress={() => setText(String(preset))}
             style={[styles.chip, preset === value && styles.chipOn]}
           >
-            <Text style={[styles.chipText, preset === value && styles.chipTextOn]}>{formatMoney(preset)}</Text>
+            <Text style={[styles.chipText, preset === value && styles.chipTextOn]}>{formatNumber(preset)}</Text>
           </Pressable>
         ))}
+        <Pressable
+          accessibilityRole="button"
+          accessibilityHint="Saisir un autre montant"
+          onPress={() => input.current?.focus()}
+          style={styles.chip}
+        >
+          <Text style={styles.chipText}>Autre</Text>
+        </Pressable>
       </View>
-      <Text style={type.caption}>
-        C'est le maximum que la carte pourra dépenser. Un paiement au-delà du plafond restant est bloqué.
-      </Text>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  box: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: radius.lg,
-    borderWidth: 1.5,
-    borderColor: colors.accent,
-    backgroundColor: colors.surface,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-  },
-  input: { flex: 1, fontSize: 40, fontWeight: '900', color: colors.text, minHeight: 64 },
-  currency: { fontSize: 18, fontWeight: '900', color: colors.green },
-  fx: { ...type.body, fontWeight: '800', color: colors.green },
-  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  box: { borderRadius: radius.lg, backgroundColor: colors.surface, padding: 20, gap: 10 },
+  amountRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  input: { flex: 1, minWidth: 0, fontSize: 38, fontWeight: '800', color: colors.text, minHeight: 56 },
+  currency: { paddingHorizontal: 14, paddingVertical: 10, borderRadius: radius.sm, backgroundColor: colors.mint },
+  currencyText: { fontSize: 15, fontWeight: '800', color: colors.forest },
+  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   chip: {
-    minHeight: 44,
-    paddingHorizontal: 14,
-    borderRadius: radius.pill,
-    borderWidth: 1.5,
-    borderColor: colors.border,
+    flexBasis: '30%',
+    flexGrow: 1,
+    minHeight: 48,
+    borderRadius: radius.md,
+    alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.surface,
+    backgroundColor: colors.fill,
+    borderWidth: 1.5,
+    borderColor: colors.fill,
   },
-  chipOn: { borderColor: colors.accent, backgroundColor: colors.mint },
-  chipText: { fontWeight: '800', color: colors.text },
-  chipTextOn: { color: colors.forest },
+  chipOn: { borderColor: colors.accent, backgroundColor: '#F1F8F4' },
+  chipText: { fontWeight: '600', color: colors.text, fontSize: 15 },
+  chipTextOn: { color: colors.forest, fontWeight: '800' },
 });

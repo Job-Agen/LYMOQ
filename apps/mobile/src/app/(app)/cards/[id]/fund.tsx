@@ -16,15 +16,19 @@ import { useCard, useMe } from '@/api/queries';
 import { Button } from '@/components/Button';
 import { MerchantAvatar } from '@/components/MerchantAvatar';
 import { OptionRow } from '@/components/OptionRow';
-import { Divider, RuleRow } from '@/components/RuleRow';
+import { PriceSummary } from '@/components/PriceSummary';
 import { Screen } from '@/components/Screen';
 import { ErrorState, InfoNote, InlineError, Skeleton } from '@/components/States';
 import { Surface } from '@/components/Surface';
 import { TextField } from '@/components/TextField';
 import { paymentsLabel } from '@/lib/format';
-import { colors, radius, type } from '@/theme/tokens';
+import { radius, type } from '@/theme/tokens';
 
-const PROVIDER_TINT: Record<Provider, string> = { TMONEY: '#FFCC00', FLOOZ: '#F26522', MOOV_MONEY: '#0055A5' };
+const PROVIDER_TINT: Record<Provider, { bg: string; fg: string }> = {
+  TMONEY: { bg: '#FFCC00', fg: '#141414' },
+  FLOOZ: { bg: '#141B2D', fg: '#FFCC00' },
+  MOOV_MONEY: { bg: '#E8F0FB', fg: '#0055A5' },
+};
 
 function formatPhone(raw: string): string {
   const digits = raw.replace(/\D/g, '');
@@ -72,40 +76,49 @@ export default function Fund() {
         <>
           <Surface style={styles.summary}>
             <MerchantAvatar name={c.policy.merchantRestriction?.name ?? null} slug={c.policy.merchantRestriction?.slug} size={48} />
-            <View style={{ flex: 1 }}>
-              <Text style={type.heading}>{c.label}</Text>
+            <View style={{ flex: 1, gap: 2 }}>
+              <Text style={type.body}>{c.label}</Text>
+              <Text style={styles.summaryAmount}>{formatMoney(c.policy.maxAmount)}</Text>
               <Text style={type.caption}>
-                {formatMoney(c.policy.maxAmount)} · {paymentsLabel(c.policy.maxTransactionCount)} · {formatDuration(c.policy.durationMinutes)}
+                {paymentsLabel(c.policy.maxTransactionCount)} · {formatDuration(c.policy.durationMinutes)}
               </Text>
             </View>
           </Surface>
 
           <Text style={type.heading}>Choisissez comment payer</Text>
-          {(Object.keys(MOBILE_MONEY_PROVIDER_LABELS) as Provider[]).map((p) => (
-            <OptionRow
-              key={p}
-              title={MOBILE_MONEY_PROVIDER_LABELS[p]}
-              selected={provider === p}
-              onPress={() => setProvider(p)}
-              leading={<View style={[styles.dot, { backgroundColor: PROVIDER_TINT[p] }]} />}
-            />
-          ))}
+          <View style={styles.providers}>
+            {(Object.keys(MOBILE_MONEY_PROVIDER_LABELS) as Provider[]).map((p) => (
+              <OptionRow
+                key={p}
+                title={MOBILE_MONEY_PROVIDER_LABELS[p]}
+                dense
+                selected={provider === p}
+                onPress={() => setProvider(p)}
+                leading={
+                  <View style={[styles.logo, { backgroundColor: PROVIDER_TINT[p].bg }]}>
+                    <Text style={[styles.logoText, { color: PROVIDER_TINT[p].fg }]}>{MOBILE_MONEY_PROVIDER_LABELS[p].charAt(0)}</Text>
+                  </View>
+                }
+              />
+            ))}
+          </View>
 
           <TextField
-            label="Numéro Mobile Money"
+            label="Numéro de téléphone"
+            strongLabel
+            leading={<Text style={styles.flag}>🇹🇬</Text>}
             value={phone}
             onChangeText={setPhone}
             keyboardType="phone-pad"
             error={phone.length > 5 && !parsedPhone.success ? parsedPhone.error.issues[0]?.message : null}
           />
 
-          <Surface>
-            <RuleRow icon="card-outline" label="Recharge de la carte" value={formatMoney(c.pricing.funding)} />
-            <RuleRow icon="receipt-outline" label="Frais de service" value={formatMoney(c.pricing.fee)} />
-            <Divider />
-            <RuleRow icon="cash-outline" label="Total" value={formatMoney(c.pricing.total)} emphasis />
-          </Surface>
-          <InfoNote>Vous validerez le paiement sur votre téléphone. Mesura ne vous demande jamais votre code PIN Mobile Money.</InfoNote>
+          <View>
+            <PriceSummary pricing={c.pricing} />
+          </View>
+          <InfoNote tone="plain" icon="lock-closed-outline">
+            Le paiement est traité de manière sécurisée par notre partenaire. Mesura ne vous demande jamais votre code PIN.
+          </InfoNote>
           <InfoNote tone="sandbox">Sandbox : aucune vraie demande Mobile Money n'est envoyée et rien n'est débité.</InfoNote>
         </>
       )}
@@ -115,5 +128,9 @@ export default function Fund() {
 
 const styles = StyleSheet.create({
   summary: { flexDirection: 'row', alignItems: 'center', gap: 14 },
-  dot: { width: 34, height: 34, borderRadius: radius.sm, borderWidth: 1, borderColor: colors.border },
+  summaryAmount: { ...type.heading, fontSize: 19 },
+  providers: { gap: 8 },
+  logo: { width: 36, height: 36, borderRadius: radius.sm, alignItems: 'center', justifyContent: 'center' },
+  logoText: { fontSize: 16, fontWeight: '900' },
+  flag: { fontSize: 20 },
 });
