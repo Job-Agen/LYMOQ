@@ -19,11 +19,11 @@ export default function Review() {
 
   return (
     <Screen
-      title="Review your card"
+      title="Vérifiez votre carte"
       footer={
         c ? (
           <Button
-            label="Fund card"
+            label="Recharger la carte"
             icon="arrow-forward"
             disabled={c.status !== 'PENDING_FUNDING'}
             onPress={() => router.push({ pathname: '/cards/[id]/fund', params: { id } })}
@@ -44,14 +44,14 @@ export default function Review() {
           <Surface>
             <CardRules card={c} mode="before" />
           </Surface>
-          <InfoNote>After payment, your card automatically follows these rules. You can tighten them later, never loosen them.</InfoNote>
+          <InfoNote>Après le paiement, votre carte suit automatiquement ces règles. Vous pourrez les durcir plus tard, jamais les assouplir.</InfoNote>
           <Surface>
-            <RuleRow icon="card-outline" label="Card funding" value={formatMoney(c.pricing.funding, c.pricing.currency)} />
-            <RuleRow icon="receipt-outline" label="Service fee" value={formatMoney(c.pricing.fee, c.pricing.currency)} />
+            <RuleRow icon="card-outline" label="Recharge de la carte" value={formatMoney(c.pricing.funding, c.pricing.currency)} />
+            <RuleRow icon="receipt-outline" label="Frais de service" value={formatMoney(c.pricing.fee, c.pricing.currency)} />
             <Divider />
             <RuleRow icon="cash-outline" label="Total" value={formatMoney(c.pricing.total, c.pricing.currency)} emphasis />
           </Surface>
-          <Text style={[type.caption, { textAlign: 'center' }]}>Fees shown are illustrative sandbox values.</Text>
+          <Text style={[type.caption, { textAlign: 'center' }]}>Les frais affichés sont des valeurs indicatives de la sandbox.</Text>
         </>
       )}
     </Screen>

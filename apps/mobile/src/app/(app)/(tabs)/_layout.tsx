@@ -22,10 +22,10 @@ export default function TabsLayout() {
         sceneStyle: { backgroundColor: colors.bg },
       }}
     >
-      <Tabs.Screen name="index" options={{ title: 'Home', tabBarIcon: icon('home-outline', 'home') }} />
-      <Tabs.Screen name="cards" options={{ title: 'Cards', tabBarIcon: icon('card-outline', 'card') }} />
-      <Tabs.Screen name="activity" options={{ title: 'Activity', tabBarIcon: icon('pulse-outline', 'pulse') }} />
-      <Tabs.Screen name="profile" options={{ title: 'Profile', tabBarIcon: icon('person-outline', 'person') }} />
+      <Tabs.Screen name="index" options={{ title: 'Accueil', tabBarIcon: icon('home-outline', 'home') }} />
+      <Tabs.Screen name="cards" options={{ title: 'Cartes', tabBarIcon: icon('card-outline', 'card') }} />
+      <Tabs.Screen name="activity" options={{ title: 'Activité', tabBarIcon: icon('pulse-outline', 'pulse') }} />
+      <Tabs.Screen name="profile" options={{ title: 'Profil', tabBarIcon: icon('person-outline', 'person') }} />
     </Tabs>
   );
 }

@@ -21,7 +21,10 @@ import { UsersModule } from './users/users.module';
     PrismaModule,
     // Default: 120 requests per minute per client; stricter limits on auth,
     // KYC, funding and sandbox payment routes.
-    ThrottlerModule.forRoot([{ name: 'default', ttl: 60_000, limit: 120 }]),
+    ThrottlerModule.forRoot({
+      throttlers: [{ name: 'default', ttl: 60_000, limit: 120 }],
+      errorMessage: 'Trop de tentatives. Patientez une minute puis réessayez.',
+    }),
     ProvidersModule,
     CardPoliciesModule,
     AuthModule,

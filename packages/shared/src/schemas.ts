@@ -7,7 +7,7 @@ import {
   MIN_CARD_AMOUNT,
   MIN_DURATION_MINUTES,
 } from './rules';
-import { SUPPORTED_CURRENCIES } from './money';
+import { SUPPORTED_CURRENCIES, formatMoney } from './money';
 
 /**
  * Request schemas. The API validates every request body with these schemas
@@ -16,20 +16,20 @@ import { SUPPORTED_CURRENCIES } from './money';
  */
 
 const amountSchema = z
-  .number({ invalid_type_error: 'Amount must be a number' })
-  .int('Amount must be a whole number')
-  .positive('Amount must be greater than zero');
+  .number({ invalid_type_error: 'Le montant doit être un nombre' })
+  .int('Le montant doit être un nombre entier')
+  .positive('Le montant doit être supérieur à zéro');
 
 export const registerSchema = z.object({
-  name: z.string().trim().min(2, 'Enter your name').max(80),
-  email: z.string().trim().toLowerCase().email('Enter a valid email'),
-  password: z.string().min(8, 'Use at least 8 characters').max(128),
+  name: z.string().trim().min(2, 'Saisissez votre prénom').max(80),
+  email: z.string().trim().toLowerCase().email('Saisissez une adresse e-mail valide'),
+  password: z.string().min(8, 'Au moins 8 caractères').max(128),
 });
 export type RegisterInput = z.infer<typeof registerSchema>;
 
 export const loginSchema = z.object({
-  email: z.string().trim().toLowerCase().email('Enter a valid email'),
-  password: z.string().min(1, 'Enter your password').max(128),
+  email: z.string().trim().toLowerCase().email('Saisissez une adresse e-mail valide'),
+  password: z.string().min(1, 'Saisissez votre mot de passe').max(128),
 });
 export type LoginInput = z.infer<typeof loginSchema>;
 
@@ -37,15 +37,15 @@ export type LoginInput = z.infer<typeof loginSchema>;
 export const togoPhoneSchema = z
   .string()
   .transform((v) => v.replace(/[\s-]/g, ''))
-  .pipe(z.string().regex(/^\+228\d{8}$/, 'Enter a Togo number like +228 90 12 34 56'));
+  .pipe(z.string().regex(/^\+228\d{8}$/, 'Saisissez un numéro togolais, par exemple +228 90 12 34 56'));
 
 export const kycStartSchema = z.object({
-  firstName: z.string().trim().min(1, 'Enter your first name').max(60),
-  lastName: z.string().trim().min(1, 'Enter your last name').max(60),
+  firstName: z.string().trim().min(1, 'Saisissez votre prénom').max(60),
+  lastName: z.string().trim().min(1, 'Saisissez votre nom').max(60),
   dateOfBirth: z
     .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Use the format YYYY-MM-DD')
-    .refine((v) => !Number.isNaN(Date.parse(v)), 'Enter a valid date'),
+    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Utilisez le format AAAA-MM-JJ')
+    .refine((v) => !Number.isNaN(Date.parse(v)), 'Saisissez une date valide'),
   country: z.string().length(2).toUpperCase().default('TG'),
   phone: togoPhoneSchema,
 });
@@ -54,12 +54,21 @@ export type KycStartInput = z.infer<typeof kycStartSchema>;
 export const createCardDraftSchema = z.object({
   label: z.string().trim().min(1).max(40).optional(),
   maxAmount: amountSchema
-    .min(MIN_CARD_AMOUNT, `Minimum is ${MIN_CARD_AMOUNT} FCFA`)
-    .max(MAX_CARD_AMOUNT, `Maximum is ${MAX_CARD_AMOUNT} FCFA`),
+    .min(MIN_CARD_AMOUNT, `Le minimum est de ${formatMoney(MIN_CARD_AMOUNT)}`)
+    .max(MAX_CARD_AMOUNT, `Le maximum est de ${formatMoney(MAX_CARD_AMOUNT)}`),
   currency: z.enum(SUPPORTED_CURRENCIES).default('XOF'),
   /** null = unlimited payments until expiration */
-  maxTransactionCount: z.number().int().min(1).max(MAX_TRANSACTION_COUNT).nullable(),
-  durationMinutes: z.number().int().min(MIN_DURATION_MINUTES).max(MAX_DURATION_MINUTES),
+  maxTransactionCount: z
+    .number()
+    .int()
+    .min(1, 'Autorisez au moins 1 paiement')
+    .max(MAX_TRANSACTION_COUNT, `${MAX_TRANSACTION_COUNT} paiements au maximum`)
+    .nullable(),
+  durationMinutes: z
+    .number()
+    .int()
+    .min(MIN_DURATION_MINUTES, `La durée minimale est de ${MIN_DURATION_MINUTES} minutes`)
+    .max(MAX_DURATION_MINUTES, `La durée maximale est de ${MAX_DURATION_MINUTES / (24 * 60)} jours`),
   /** Merchant slug, or null for "Anywhere" */
   merchantRestriction: z.string().trim().toLowerCase().min(1).max(40).nullable(),
 });
@@ -75,16 +84,21 @@ export type FundCardInput = z.infer<typeof fundCardSchema>;
 export const updateCardRulesSchema = z
   .object({
     maxAmount: amountSchema.optional(),
-    maxTransactionCount: z.number().int().min(1).max(MAX_TRANSACTION_COUNT).optional(),
+    maxTransactionCount: z
+      .number()
+      .int()
+      .min(1, 'Autorisez au moins 1 paiement')
+      .max(MAX_TRANSACTION_COUNT, `${MAX_TRANSACTION_COUNT} paiements au maximum`)
+      .optional(),
   })
   .refine((v) => v.maxAmount !== undefined || v.maxTransactionCount !== undefined, {
-    message: 'Change at least one rule',
+    message: 'Modifiez au moins une règle',
   });
 export type UpdateCardRulesInput = z.infer<typeof updateCardRulesSchema>;
 
 export const simulateTransactionSchema = z.object({
   cardId: z.string().min(1),
-  merchant: z.string().trim().min(1).max(40),
+  merchant: z.string().trim().min(1, 'Saisissez un marchand').max(40),
   amount: amountSchema.max(MAX_CARD_AMOUNT * 10),
   currency: z.enum(SUPPORTED_CURRENCIES),
 });

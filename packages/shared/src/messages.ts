@@ -10,16 +10,16 @@ export function declineReasonMessage(
 ): string {
   switch (reason) {
     case DeclineReason.CARD_NOT_ACTIVE:
-      return 'This card is not active. It may be frozen or closed.';
+      return "Cette carte n'est pas active. Elle est peut-être gelée ou clôturée.";
     case DeclineReason.CARD_EXPIRED:
-      return 'This card has expired.';
+      return 'Cette carte a expiré.';
     case DeclineReason.AMOUNT_LIMIT_EXCEEDED:
-      return 'This payment is above the amount this card is allowed to spend.';
+      return 'Ce paiement dépasse le montant que cette carte est autorisée à dépenser.';
     case DeclineReason.TRANSACTION_LIMIT_REACHED:
-      return 'This card has already been used the maximum number of times.';
+      return 'Cette carte a déjà été utilisée le nombre maximum de fois.';
     case DeclineReason.MERCHANT_NOT_ALLOWED:
       return context.merchantRestrictionName
-        ? `This card can only be used with ${context.merchantRestrictionName}.`
-        : 'This card cannot be used with this merchant.';
+        ? `Cette carte ne peut être utilisée que chez ${context.merchantRestrictionName}.`
+        : 'Cette carte ne peut pas être utilisée chez ce marchand.';
   }
 }

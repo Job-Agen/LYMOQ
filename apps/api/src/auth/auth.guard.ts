@@ -24,14 +24,14 @@ export class AuthGuard implements CanActivate {
 
     const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
     const [scheme, token] = (request.headers.authorization ?? '').split(' ');
-    if (scheme !== 'Bearer' || !token) throw new UnauthorizedException('Sign in to continue');
+    if (scheme !== 'Bearer' || !token) throw new UnauthorizedException('Connectez-vous pour continuer');
 
     try {
       const payload = await this.jwt.verifyAsync<TokenPayload>(token);
       request.authUser = { userId: payload.sub };
       return true;
     } catch {
-      throw new UnauthorizedException('Your session has expired. Sign in again.');
+      throw new UnauthorizedException('Votre session a expiré. Reconnectez-vous.');
     }
   }
 }

@@ -52,7 +52,7 @@ export async function request<T>(method: Method, path: string, body?: unknown): 
       body: body !== undefined ? JSON.stringify(body) : undefined,
     });
   } catch {
-    throw new ApiError(0, `Can't reach Mesura right now. Check your connection (API: ${API_URL}).`);
+    throw new ApiError(0, `Impossible de joindre Mesura pour le moment. Vérifiez votre connexion (API : ${API_URL}).`);
   }
 
   const text = await response.text();
@@ -65,8 +65,8 @@ export async function request<T>(method: Method, path: string, body?: unknown): 
       typeof error.message === 'string'
         ? error.message
         : response.status === 429
-          ? 'Too many attempts. Wait a minute and try again.'
-          : 'Something went wrong. Please try again.';
+          ? 'Trop de tentatives. Patientez une minute puis réessayez.'
+          : "Une erreur s'est produite. Veuillez réessayer.";
     throw new ApiError(response.status, message, error.issues);
   }
   return data as T;
@@ -74,5 +74,5 @@ export async function request<T>(method: Method, path: string, body?: unknown): 
 
 export function errorMessage(error: unknown): string {
   if (error instanceof ApiError) return error.message;
-  return 'Something went wrong. Please try again.';
+  return "Une erreur s'est produite. Veuillez réessayer.";
 }

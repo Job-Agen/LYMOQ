@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
-import { AMOUNT_PRESETS, createCardDraftSchema, formatIllustrativeUsd, formatMoney } from '@mesura/shared';
+import { AMOUNT_PRESETS, createCardDraftSchema, formatIllustrativeUsd, formatMoney, formatNumber } from '@mesura/shared';
 import { Button } from '@/components/Button';
 import { Screen } from '@/components/Screen';
 import { InlineError } from '@/components/States';
@@ -19,10 +19,10 @@ export default function Amount() {
 
   return (
     <Screen
-      title="Create a card"
+      title="Créer une carte"
       footer={
         <Button
-          label="Continue"
+          label="Continuer"
           icon="arrow-forward"
           disabled={!check.success}
           onPress={() => {
@@ -32,11 +32,11 @@ export default function Amount() {
         />
       }
     >
-      <StepHeader step={2} question="How much can this card spend?" />
+      <StepHeader step={2} question="Combien cette carte peut-elle dépenser ?" />
       <View style={styles.box}>
         <TextInput
-          accessibilityLabel="Maximum amount in FCFA"
-          value={value ? value.toLocaleString('en-US') : ''}
+          accessibilityLabel="Montant maximum en FCFA"
+          value={value ? formatNumber(value) : ''}
           onChangeText={setText}
           keyboardType="number-pad"
           placeholder="0"
@@ -47,7 +47,7 @@ export default function Amount() {
         <Text style={styles.currency}>FCFA</Text>
       </View>
       <Text style={styles.fx}>
-        {value > 0 ? formatIllustrativeUsd(value) : '≈ $0.00'} <Text style={type.caption}>· illustrative rate</Text>
+        {value > 0 ? formatIllustrativeUsd(value) : '≈ 0,00 $'} <Text style={type.caption}>· taux indicatif</Text>
       </Text>
       <InlineError message={value > 0 && !check.success ? (check.error.issues[0]?.message ?? null) : null} />
       <View style={styles.chips}>
@@ -63,7 +63,7 @@ export default function Amount() {
         ))}
       </View>
       <Text style={type.caption}>
-        This is the most the card can ever spend. A payment above the remaining limit is blocked.
+        C'est le maximum que la carte pourra dépenser. Un paiement au-delà du plafond restant est bloqué.
       </Text>
     </Screen>
   );

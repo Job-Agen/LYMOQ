@@ -34,16 +34,16 @@ export default function SimulatePayment() {
 
   return (
     <Screen
-      title="Simulate a payment"
+      title="Simuler un paiement"
       footer={
         <>
           <InlineError message={pay.isError ? errorMessage(pay.error) : null} />
-          <Button label="Charge this card" disabled={!valid} loading={pay.isPending} onPress={() => pay.mutate()} />
+          <Button label="Débiter cette carte" disabled={!valid} loading={pay.isPending} onPress={() => pay.mutate()} />
         </>
       }
     >
-      <InfoNote tone="sandbox">You are acting as an online merchant. The card's rules decide if the payment goes through.</InfoNote>
-      <Text style={type.label}>MERCHANT</Text>
+      <InfoNote tone="sandbox">Vous jouez le rôle d'un marchand en ligne. Les règles de la carte décident si le paiement passe.</InfoNote>
+      <Text style={type.label}>MARCHAND</Text>
       <View style={styles.chips}>
         {(merchants.data ?? []).map((m) => (
           <Pressable
@@ -57,13 +57,13 @@ export default function SimulatePayment() {
           </Pressable>
         ))}
       </View>
-      <TextField label="Or type any merchant" value={merchant} onChangeText={setMerchant} autoCapitalize="words" />
+      <TextField label="Ou saisissez un autre marchand" value={merchant} onChangeText={setMerchant} autoCapitalize="words" />
       <TextField
-        label="Amount (FCFA)"
+        label="Montant (FCFA)"
         value={amount}
         onChangeText={(v) => setAmount(v.replace(/\D/g, ''))}
         keyboardType="number-pad"
-        hint={Number(amount) > 0 ? `${formatIllustrativeUsd(Number(amount))} · illustrative` : undefined}
+        hint={Number(amount) > 0 ? `${formatIllustrativeUsd(Number(amount))} · indicatif` : undefined}
       />
     </Screen>
   );

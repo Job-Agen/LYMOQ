@@ -28,11 +28,11 @@ export default function ManageRules() {
 
   return (
     <Screen
-      title="Manage rules"
+      title="Gérer les règles"
       footer={
         <>
           <InlineError message={save.isError ? errorMessage(save.error) : null} />
-          <Button label="Save stricter rules" disabled={!valid} loading={save.isPending} onPress={() => save.mutate(input, { onSuccess: () => router.back() })} />
+          <Button label="Enregistrer les règles plus strictes" disabled={!valid} loading={save.isPending} onPress={() => save.mutate(input, { onSuccess: () => router.back() })} />
         </>
       }
     >
@@ -42,27 +42,27 @@ export default function ManageRules() {
         <ErrorState message={errorMessage(card.error)} onRetry={() => void card.refetch()} />
       ) : (
         <>
-          <Text style={type.title}>Make this card stricter</Text>
+          <Text style={type.title}>Rendre cette carte plus stricte</Text>
           <Text style={[type.body, { color: colors.muted }]}>
-            You can lower the limit or allow fewer payments. To loosen a rule, create a new card.
+            Vous pouvez baisser le plafond ou autoriser moins de paiements. Pour assouplir une règle, créez une nouvelle carte.
           </Text>
           <TextField
-            label="New maximum (FCFA)"
+            label="Nouveau plafond (FCFA)"
             value={maxAmount}
             onChangeText={(v) => setMaxAmount(v.replace(/\D/g, ''))}
             keyboardType="number-pad"
             placeholder={String(c.policy.maxAmount)}
-            hint={`Now ${formatMoney(c.policy.maxAmount)} · already spent ${formatMoney(c.policy.spentAmount)}`}
+            hint={`Actuellement ${formatMoney(c.policy.maxAmount)} · déjà dépensé ${formatMoney(c.policy.spentAmount)}`}
           />
           <TextField
-            label="New number of payments"
+            label="Nouveau nombre de paiements"
             value={maxCount}
             onChangeText={(v) => setMaxCount(v.replace(/\D/g, ''))}
             keyboardType="number-pad"
-            placeholder={c.policy.maxTransactionCount === null ? 'Unlimited' : String(c.policy.maxTransactionCount)}
-            hint={`${c.policy.currentTransactionCount} payment(s) already made`}
+            placeholder={c.policy.maxTransactionCount === null ? 'Illimité' : String(c.policy.maxTransactionCount)}
+            hint={`${c.policy.currentTransactionCount} paiement(s) déjà effectué(s)`}
           />
-          <InfoNote>Merchant and expiration stay as they are. You can freeze or terminate the card at any time.</InfoNote>
+          <InfoNote>Le marchand et l'expiration restent inchangés. Vous pouvez geler ou clôturer la carte à tout moment.</InfoNote>
         </>
       )}
     </Screen>

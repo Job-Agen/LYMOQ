@@ -86,7 +86,7 @@ export class CardPolicyEngine {
     const spentAmount = policy.spentAmount + amount;
     const currentTransactionCount = policy.currentTransactionCount + 1;
     if (spentAmount > policy.maxAmount) {
-      throw new InvalidTransactionAttemptError('Approved amount exceeds the policy limit');
+      throw new InvalidTransactionAttemptError('Le montant approuvé dépasse le plafond de la carte');
     }
     return {
       spentAmount,
@@ -105,10 +105,10 @@ export class CardPolicyEngine {
 
   private assertValidAttempt(policy: CardPolicySnapshot, attempt: TransactionAttempt): void {
     if (!Number.isInteger(attempt.amount) || attempt.amount <= 0) {
-      throw new InvalidTransactionAttemptError('Amount must be a positive integer in minor units');
+      throw new InvalidTransactionAttemptError('Le montant doit être un entier positif');
     }
     if (attempt.currency !== policy.currency) {
-      throw new InvalidTransactionAttemptError(`Currency ${attempt.currency} does not match card currency`);
+      throw new InvalidTransactionAttemptError(`La devise ${attempt.currency} ne correspond pas à celle de la carte`);
     }
   }
 }

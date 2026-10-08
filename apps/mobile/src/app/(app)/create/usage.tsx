@@ -9,8 +9,8 @@ import { useCreateCard } from '@/features/create-card/CreateCardContext';
 export default function Usage() {
   const { draft, update } = useCreateCard();
   return (
-    <Screen title="Create a card" footer={<Button label="Continue" icon="arrow-forward" onPress={() => router.push('/create/duration')} />}>
-      <StepHeader step={3} question="How many payments?" />
+    <Screen title="Créer une carte" footer={<Button label="Continuer" icon="arrow-forward" onPress={() => router.push('/create/duration')} />}>
+      <StepHeader step={3} question="Combien de paiements ?" />
       {USAGE_PRESETS.map((preset) => (
         <OptionRow
           key={preset.label}

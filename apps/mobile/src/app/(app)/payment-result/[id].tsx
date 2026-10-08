@@ -19,16 +19,16 @@ export default function PaymentResult() {
 
   return (
     <Screen
-      title={t ? (blocked ? 'Payment blocked' : 'Payment approved') : ''}
+      title={t ? (blocked ? 'Paiement bloqué' : 'Paiement accepté') : ''}
       footer={
         t ? (
           <>
             {/* Only reachable from this card's details: the simulator screen is replaced by this one. */}
-            <Button label="View card details" onPress={() => router.back()} />
+            <Button label="Voir la carte" onPress={() => router.back()} />
             {blocked ? (
-              <Button label="Create new card" variant="secondary" onPress={() => router.push('/create/where')} />
+              <Button label="Créer une nouvelle carte" variant="secondary" onPress={() => router.push('/create/where')} />
             ) : (
-              <Button label="Back to home" variant="secondary" onPress={() => router.dismissAll()} />
+              <Button label="Retour à l'accueil" variant="secondary" onPress={() => router.dismissAll()} />
             )}
           </>
         ) : null
@@ -44,15 +44,15 @@ export default function PaymentResult() {
             <View style={[styles.icon, { backgroundColor: blocked ? colors.dangerSoft : colors.mint }]}>
               <Ionicons name={blocked ? 'shield' : 'checkmark-circle'} size={56} color={blocked ? colors.danger : colors.accent} />
             </View>
-            <Text style={[type.title, styles.center]}>{blocked ? 'Your rules protected\nyour money' : 'Payment approved'}</Text>
+            <Text style={[type.title, styles.center]}>{blocked ? 'Vos règles ont protégé\nvotre argent' : 'Paiement accepté'}</Text>
             <Text style={[type.body, styles.center, { color: colors.muted }]}>
-              {blocked ? t.declineMessage : 'The payment respected every rule of this card.'}
+              {blocked ? t.declineMessage : 'Le paiement a respecté toutes les règles de cette carte.'}
             </Text>
           </View>
           <Surface>
             <TransactionRow tx={t} />
           </Surface>
-          {blocked ? <InfoNote>No money left the card. The payment was stopped before reaching the merchant.</InfoNote> : null}
+          {blocked ? <InfoNote>Aucun argent n'a quitté la carte. Le paiement a été stoppé avant d'atteindre le marchand.</InfoNote> : null}
         </>
       )}
     </Screen>

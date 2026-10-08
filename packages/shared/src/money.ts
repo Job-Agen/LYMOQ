@@ -14,21 +14,25 @@ export const DEFAULT_CURRENCY: Currency = 'XOF';
 
 const CURRENCY_LABEL: Record<Currency, string> = { XOF: 'FCFA' };
 
-/** Formats an integer amount: 15000 → "15,000 FCFA". */
-export function formatMoney(amount: number, currency: Currency = DEFAULT_CURRENCY): string {
-  const grouped = Math.trunc(amount)
+/** Groups thousands the French way, with non-breaking spaces: 15000 → "15 000". */
+export function formatNumber(value: number): string {
+  return Math.trunc(value)
     .toString()
-    .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  return `${grouped} ${CURRENCY_LABEL[currency]}`;
+    .replace(/\B(?=(\d{3})+(?!\d))/g, '\u00A0');
+}
+
+/** Formats an integer amount: 15000 → "15 000 FCFA". */
+export function formatMoney(amount: number, currency: Currency = DEFAULT_CURRENCY): string {
+  return `${formatNumber(amount)}\u00A0${CURRENCY_LABEL[currency]}`;
 }
 
 /**
- * Illustrative only: 1 USD ≈ 565 FCFA. Used to show "≈ $26.55" hints in the UI.
+ * Illustrative only: 1 USD ≈ 565 FCFA. Used to show "≈ 26,55 $" hints in the UI.
  * It is not a quote and is never used for any settlement or limit logic.
  */
 export const ILLUSTRATIVE_XOF_PER_USD = 565;
 
 export function formatIllustrativeUsd(amountXof: number): string {
   const cents = Math.round((amountXof * 100) / ILLUSTRATIVE_XOF_PER_USD);
-  return `≈ $${(cents / 100).toFixed(2)}`;
+  return `≈ ${(cents / 100).toFixed(2).replace('.', ',')}\u00A0$`;
 }

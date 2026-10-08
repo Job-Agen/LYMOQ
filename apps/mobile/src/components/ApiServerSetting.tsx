@@ -22,12 +22,12 @@ export function ApiServerSetting() {
     setApiBaseUrl(url);
     await apiUrlStorage.set(url);
     setCurrent(getApiBaseUrl());
-    setStatus('Checking…');
+    setStatus('Vérification…');
     try {
       const res = await fetch(`${getApiBaseUrl()}/me`);
-      setStatus(res.status === 401 ? 'Connected to the Mesura API.' : `Server answered with status ${res.status}.`);
+      setStatus(res.status === 401 ? "Connecté à l'API Mesura." : `Le serveur a répondu avec le statut ${res.status}.`);
     } catch {
-      setStatus("Can't reach this server from the phone.");
+      setStatus('Impossible de joindre ce serveur depuis le téléphone.');
     }
   };
 
@@ -43,24 +43,24 @@ export function ApiServerSetting() {
     <View style={styles.box}>
       <Pressable accessibilityRole="button" onPress={() => setOpen((o) => !o)} hitSlop={8}>
         <Text style={type.caption}>
-          API server (sandbox): <Text style={styles.url}>{current}</Text> · {open ? 'Hide' : 'Change'}
+          Serveur API (sandbox) : <Text style={styles.url}>{current}</Text> · {open ? 'Masquer' : 'Modifier'}
         </Text>
       </Pressable>
       {open ? (
         <>
           <TextField
-            label="API server URL"
+            label="Adresse du serveur API"
             value={value}
             onChangeText={setValue}
             autoCapitalize="none"
             autoCorrect={false}
             keyboardType="url"
             placeholder="http://192.168.1.20:3000"
-            hint="Your computer's local IP address and the API port."
+            hint="L'adresse IP locale de votre ordinateur et le port de l'API, ou une adresse https://."
           />
           <View style={styles.row}>
-            <Button compact label="Save & test" variant="secondary" disabled={!valid} onPress={() => void save()} />
-            <Button compact label="Reset" variant="outline" onPress={() => void reset()} />
+            <Button compact label="Enregistrer et tester" variant="secondary" disabled={!valid} onPress={() => void save()} />
+            <Button compact label="Réinitialiser" variant="outline" onPress={() => void reset()} />
           </View>
           {status ? <Text style={type.caption}>{status}</Text> : null}
         </>

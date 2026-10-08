@@ -55,58 +55,58 @@ export default function Kyc() {
 
   return (
     <Screen
-      title="Verify your identity"
+      title="Vérifiez votre identité"
       back={false}
       footer={
         <>
-          <Button label={rejected ? 'Try again' : 'Verify my identity'} onPress={() => verify.mutate()} loading={verify.isPending} />
-          <Button label="Sign out" variant="outline" onPress={() => void signOut()} />
+          <Button label={rejected ? 'Réessayer' : 'Vérifier mon identité'} onPress={() => verify.mutate()} loading={verify.isPending} />
+          <Button label="Se déconnecter" variant="outline" onPress={() => void signOut()} />
         </>
       }
     >
-      <Text style={type.title}>One quick check before your first card</Text>
+      <Text style={type.title}>Une vérification rapide avant votre première carte</Text>
       <Text style={[type.body, { color: colors.muted }]}>
-        Regulations require us to know who creates a card. It takes less than a minute.
+        La réglementation nous oblige à savoir qui crée une carte. Cela prend moins d'une minute.
       </Text>
 
       {verify.isPending ? (
         <Surface style={styles.checking}>
           <ActivityIndicator color={colors.green} />
-          <Text style={type.body}>Checking your details…</Text>
+          <Text style={type.body}>Vérification de vos informations…</Text>
         </Surface>
       ) : null}
 
       {rejected ? (
-        <InlineError message="We couldn't verify your identity. You must be 18 or older to use Mesura." />
+        <InlineError message="Nous n'avons pas pu vérifier votre identité. Vous devez avoir 18 ans ou plus pour utiliser Mesura." />
       ) : null}
 
-      <TextField label="First name" value={firstName} onChangeText={setFirstName} error={errors.firstName} autoComplete="given-name" />
-      <TextField label="Last name" value={lastName} onChangeText={setLastName} error={errors.lastName} autoComplete="family-name" />
+      <TextField label="Prénom" value={firstName} onChangeText={setFirstName} error={errors.firstName} autoComplete="given-name" />
+      <TextField label="Nom" value={lastName} onChangeText={setLastName} error={errors.lastName} autoComplete="family-name" />
       <TextField
-        label="Date of birth"
+        label="Date de naissance"
         value={dateOfBirth}
         onChangeText={setDateOfBirth}
         error={errors.dateOfBirth}
-        placeholder="YYYY-MM-DD"
+        placeholder="AAAA-MM-JJ"
         keyboardType="numbers-and-punctuation"
         maxLength={10}
       />
       <TextField
-        label="Mobile number"
+        label="Numéro de mobile"
         value={phone}
         onChangeText={setPhone}
         error={errors.phone}
         keyboardType="phone-pad"
         autoComplete="tel"
-        hint="Togo number, e.g. +228 90 12 34 56"
+        hint="Numéro togolais, ex. +228 90 12 34 56"
       />
       <View style={styles.country}>
-        <Text style={type.label}>Country</Text>
+        <Text style={type.label}>Pays</Text>
         <Text style={type.body}>🇹🇬  Togo</Text>
       </View>
       <InlineError message={verify.isError ? errorMessage(verify.error) : null} />
       <InfoNote tone="sandbox">
-        Sandbox verification: no document is uploaded or stored, and no real identity check is made.
+        Vérification sandbox : aucun document n'est envoyé ni conservé, et aucune vraie vérification d'identité n'est faite.
       </InfoNote>
     </Screen>
   );

@@ -6,9 +6,10 @@ import { Divider, RuleRow } from '@/components/RuleRow';
 import { Screen } from '@/components/Screen';
 import { InfoNote, Skeleton } from '@/components/States';
 import { Surface } from '@/components/Surface';
+import { formatDate } from '@/lib/format';
 import { colors, type } from '@/theme/tokens';
 
-const KYC_LABEL = { NOT_STARTED: 'Not started', PENDING: 'In review', VERIFIED: 'Verified', REJECTED: 'Rejected' } as const;
+const KYC_LABEL = { NOT_STARTED: 'Non commencée', PENDING: 'En cours', VERIFIED: 'Vérifiée', REJECTED: 'Refusée' } as const;
 
 export default function Profile() {
   const me = useMe();
@@ -17,7 +18,7 @@ export default function Profile() {
 
   return (
     <Screen edges={['top']}>
-      <Text style={type.title}>Profile</Text>
+      <Text style={type.title}>Profil</Text>
       {!user ? (
         <Skeleton height={180} />
       ) : (
@@ -32,21 +33,21 @@ export default function Profile() {
             </View>
           </View>
           <Surface>
-            <RuleRow icon="shield-checkmark-outline" label="Identity" value={KYC_LABEL[user.kycStatus]} />
+            <RuleRow icon="shield-checkmark-outline" label="Identité" value={KYC_LABEL[user.kycStatus]} />
             <Divider />
-            <RuleRow icon="call-outline" label="Mobile number" value={user.phone ?? '—'} />
+            <RuleRow icon="call-outline" label="Numéro de mobile" value={user.phone ?? '—'} />
             <Divider />
-            <RuleRow icon="calendar-outline" label="Member since" value={new Date(user.createdAt).toLocaleDateString()} />
+            <RuleRow icon="calendar-outline" label="Membre depuis" value={formatDate(user.createdAt)} />
           </Surface>
         </>
       )}
       <InfoNote>
-        Mesura never asks for your Mobile Money PIN and never shows your full card number. If someone asks for them, it is not us.
+        Mesura ne vous demande jamais votre code PIN Mobile Money et n'affiche jamais le numéro complet de votre carte. Si quelqu'un vous les demande, ce n'est pas nous.
       </InfoNote>
       <InfoNote tone="sandbox">
-        Sandbox build: no real money is moved, no real card is issued and no real identity check is made.
+        Version sandbox : aucun argent réel ne circule, aucune vraie carte n'est émise et aucune vraie vérification d'identité n'est faite.
       </InfoNote>
-      <Button label="Sign out" variant="outline" icon="log-out-outline" onPress={() => void signOut()} />
+      <Button label="Se déconnecter" variant="outline" icon="log-out-outline" onPress={() => void signOut()} />
     </Screen>
   );
 }
