@@ -42,14 +42,14 @@ export default function FundingConfirmation() {
         f && !failed ? (
           <>
             <InlineError message={confirm.isError ? errorMessage(confirm.error) : null} />
-            <Button label="Simulate confirmation" icon="flask-outline" variant="secondary" loading={confirm.isPending} onPress={() => confirm.mutate()} />
+            <Button label="Simuler la confirmation" icon="flask-outline" variant="secondary" loading={confirm.isPending} onPress={() => confirm.mutate()} />
           </>
         ) : failed ? (
-          <Button label="Try again" onPress={() => router.replace({ pathname: '/cards/[id]/fund', params: { id: f.cardId } })} />
+          <Button label="Réessayer" onPress={() => router.replace({ pathname: '/cards/[id]/fund', params: { id: f.cardId } })} />
         ) : null
       }
     >
-      <Text style={[type.title, { textAlign: 'center', marginTop: 12 }]}>Confirm the payment</Text>
+      <Text style={[type.title, { textAlign: 'center', marginTop: 12 }]}>Confirmez le paiement</Text>
       {funding.isPending ? (
         <Skeleton height={260} />
       ) : funding.isError || !f ? (
@@ -60,7 +60,7 @@ export default function FundingConfirmation() {
             <Ionicons name={failed ? 'close' : 'phone-portrait-outline'} size={44} color={failed ? colors.danger : colors.green} />
           </View>
           <Text style={[type.body, { color: colors.muted }]}>
-            A {MOBILE_MONEY_PROVIDER_LABELS[f.provider]} request was sent to
+            Une demande {MOBILE_MONEY_PROVIDER_LABELS[f.provider]} a été envoyée au
           </Text>
           <Text style={type.heading}>{f.phone.replace(/^\+228(\d{2})(\d{2})(\d{2})(\d{2})$/, '+228 $1 $2 $3 $4')}</Text>
           <View style={styles.amount}>
@@ -68,16 +68,16 @@ export default function FundingConfirmation() {
           </View>
           {failed ? (
             <Text style={styles.failed}>
-              {f.status === 'EXPIRED' ? 'The request expired before it was approved.' : 'The payment was not completed.'} Nothing was charged.
+              {f.status === 'EXPIRED' ? "La demande a expiré avant d'être validée." : "Le paiement n'a pas abouti."} Rien n'a été débité.
             </Text>
           ) : (
             <View style={styles.waiting} accessibilityLiveRegion="polite">
               <ActivityIndicator color={colors.accent} />
-              <Text style={styles.waitingText}>Waiting for confirmation…</Text>
+              <Text style={styles.waitingText}>En attente de confirmation…</Text>
             </View>
           )}
-          <InfoNote>Check your phone and approve the request in your Mobile Money app. Mesura never asks for your PIN.</InfoNote>
-          <InfoNote tone="sandbox">Sandbox: this request confirms automatically after a few seconds, or tap “Simulate confirmation”.</InfoNote>
+          <InfoNote>Regardez votre téléphone et validez la demande dans votre application Mobile Money. Mesura ne vous demande jamais votre code PIN.</InfoNote>
+          <InfoNote tone="sandbox">Sandbox : cette demande se confirme automatiquement après quelques secondes, ou touchez « Simuler la confirmation ».</InfoNote>
         </View>
       )}
     </Screen>

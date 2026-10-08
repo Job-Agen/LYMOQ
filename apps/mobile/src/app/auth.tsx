@@ -64,10 +64,10 @@ export default function Auth() {
 
   return (
     <Screen
-      title={mode === 'signup' ? 'Create your account' : 'Welcome back'}
+      title={mode === 'signup' ? 'Créez votre compte' : 'Bon retour'}
       footer={
         <Button
-          label={mode === 'signup' ? 'Create account' : 'Sign in'}
+          label={mode === 'signup' ? 'Créer mon compte' : 'Se connecter'}
           onPress={onSubmit}
           loading={submit.isPending}
         />
@@ -82,38 +82,38 @@ export default function Auth() {
             onPress={() => switchMode(m)}
             style={[styles.tab, mode === m && styles.tabOn]}
           >
-            <Text style={[styles.tabText, mode === m && styles.tabTextOn]}>{m === 'signup' ? 'Sign up' : 'Log in'}</Text>
+            <Text style={[styles.tabText, mode === m && styles.tabTextOn]}>{m === 'signup' ? 'Inscription' : 'Connexion'}</Text>
           </Pressable>
         ))}
       </View>
 
       {mode === 'signup' ? (
-        <TextField label="First name" value={name} onChangeText={setName} autoComplete="given-name" error={fieldErrors.name} placeholder="Koffi" />
+        <TextField label="Prénom" value={name} onChangeText={setName} autoComplete="given-name" error={fieldErrors.name} placeholder="Koffi" />
       ) : null}
       <TextField
-        label="Email"
+        label="E-mail"
         value={email}
         onChangeText={setEmail}
         autoCapitalize="none"
         autoComplete="email"
         keyboardType="email-address"
         error={fieldErrors.email}
-        placeholder="you@example.com"
+        placeholder="vous@exemple.com"
       />
       <TextField
-        label="Password"
+        label="Mot de passe"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
         autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
         error={fieldErrors.password}
-        hint={mode === 'signup' ? 'At least 8 characters.' : undefined}
+        hint={mode === 'signup' ? 'Au moins 8 caractères.' : undefined}
         onSubmitEditing={onSubmit}
       />
       <InlineError message={submit.isError ? errorMessage(submit.error) : null} />
-      {mode === 'login' ? <InfoNote tone="sandbox">Sandbox demo account: demo@mesura.test / demo1234</InfoNote> : null}
+      {mode === 'login' ? <InfoNote tone="sandbox">Compte de démo (sandbox) : demo@mesura.test / demo1234</InfoNote> : null}
       <Text style={[type.caption, { textAlign: 'center' }]}>
-        Mesura sandbox · no real money, cards or identity checks are involved.
+        Mesura sandbox · aucun argent réel, aucune vraie carte, aucune vérification d'identité réelle.
       </Text>
       <ApiServerSetting />
     </Screen>

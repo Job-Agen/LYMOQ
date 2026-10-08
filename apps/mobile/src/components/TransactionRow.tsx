@@ -10,7 +10,7 @@ export function TransactionRow({ tx }: { tx: TransactionDto }) {
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={`${tx.merchantName}, ${formatMoney(tx.amount, tx.currency)}, ${tx.status.toLowerCase()}`}
+      accessibilityLabel={`${tx.merchantName}, ${formatMoney(tx.amount, tx.currency)}, ${tx.status === 'APPROVED' ? 'accepté' : tx.status === 'BLOCKED' ? 'bloqué' : tx.status.toLowerCase()}`}
       onPress={() => router.push({ pathname: '/transactions/[id]', params: { id: tx.id } })}
       style={({ pressed }) => [styles.row, pressed && { opacity: 0.7 }]}
     >

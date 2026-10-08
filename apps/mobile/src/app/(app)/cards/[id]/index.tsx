@@ -16,8 +16,8 @@ import { confirmAction } from '@/lib/confirm';
 import { type } from '@/theme/tokens';
 
 const CLOSED_MESSAGE = {
-  EXPIRED: 'This card has expired. It can no longer be used.',
-  TERMINATED: 'This card is closed. It can no longer be used.',
+  EXPIRED: 'Cette carte a expiré. Elle ne peut plus être utilisée.',
+  TERMINATED: 'Cette carte est clôturée. Elle ne peut plus être utilisée.',
 } as const;
 
 export default function CardDetails() {
@@ -32,16 +32,16 @@ export default function CardDetails() {
 
   const onTerminate = async () => {
     const ok = await confirmAction(
-      'Terminate this card?',
-      'The card will stop working immediately. This cannot be undone.',
-      'Terminate',
+      'Clôturer cette carte ?',
+      'La carte cessera de fonctionner immédiatement. Cette action est irréversible.',
+      'Clôturer',
     );
     if (ok) terminate.mutate(id);
   };
 
   return (
     <Screen
-      title="Card details"
+      title="Détails de la carte"
       onRefresh={() => void Promise.all([card.refetch(), txs.refetch()])}
       refreshing={card.isRefetching}
     >
@@ -62,10 +62,10 @@ export default function CardDetails() {
             <CardStatusBadge status={c.status} />
           </View>
 
-          {c.status === 'FROZEN' ? <InfoNote>This card is frozen. Every payment is blocked until you unfreeze it.</InfoNote> : null}
+          {c.status === 'FROZEN' ? <InfoNote>Cette carte est gelée. Tous les paiements sont bloqués jusqu'à ce que vous la dégeliez.</InfoNote> : null}
           {c.status === 'EXPIRED' || c.status === 'TERMINATED' ? <InfoNote>{CLOSED_MESSAGE[c.status]}</InfoNote> : null}
 
-          <SectionHeader title="Security rules" />
+          <SectionHeader title="Règles de sécurité" />
           <Surface>
             <CardRules card={c} mode="live" />
           </Surface>
@@ -74,29 +74,29 @@ export default function CardDetails() {
             <>
               <View style={styles.actions}>
                 {c.status === 'ACTIVE' ? (
-                  <Button compact label="Freeze" icon="snow-outline" variant="secondary" loading={freeze.isPending} onPress={() => freeze.mutate(id)} />
+                  <Button compact label="Geler" icon="snow-outline" variant="secondary" loading={freeze.isPending} onPress={() => freeze.mutate(id)} />
                 ) : (
-                  <Button compact label="Unfreeze" icon="flame-outline" variant="secondary" loading={unfreeze.isPending} onPress={() => unfreeze.mutate(id)} />
+                  <Button compact label="Dégeler" icon="flame-outline" variant="secondary" loading={unfreeze.isPending} onPress={() => unfreeze.mutate(id)} />
                 )}
-                <Button compact label="Manage rules" icon="options-outline" variant="secondary" onPress={() => router.push({ pathname: '/cards/[id]/rules', params: { id } })} />
+                <Button compact label="Gérer les règles" icon="options-outline" variant="secondary" onPress={() => router.push({ pathname: '/cards/[id]/rules', params: { id } })} />
               </View>
-              <Button label="Terminate" icon="close-circle-outline" variant="danger" loading={terminate.isPending} onPress={() => void onTerminate()} />
+              <Button label="Clôturer" icon="close-circle-outline" variant="danger" loading={terminate.isPending} onPress={() => void onTerminate()} />
               <InlineError message={actionError ? errorMessage(actionError) : null} />
             </>
           ) : null}
 
           <Button
-            label="Simulate an online payment"
+            label="Simuler un paiement en ligne"
             icon="flask-outline"
             variant="outline"
             onPress={() => router.push({ pathname: '/cards/[id]/simulate', params: { id } })}
           />
 
-          <SectionHeader title="Card activity" />
+          <SectionHeader title="Activité de la carte" />
           {txs.isPending ? (
             <Skeleton height={60} />
           ) : (txs.data ?? []).length === 0 ? (
-            <Text style={type.caption}>No payment attempt yet.</Text>
+            <Text style={type.caption}>Aucune tentative de paiement pour l'instant.</Text>
           ) : (
             <View>{(txs.data ?? []).map((tx) => <TransactionRow key={tx.id} tx={tx} />)}</View>
           )}

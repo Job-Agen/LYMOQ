@@ -11,7 +11,7 @@ export class UsersService {
       where: { id: userId },
       include: { kycProfile: { select: { status: true } } },
     });
-    if (!user) throw new NotFoundException('Account not found');
+    if (!user) throw new NotFoundException('Compte introuvable');
     return {
       id: user.id,
       email: user.email,

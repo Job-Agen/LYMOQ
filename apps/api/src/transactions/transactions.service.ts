@@ -36,7 +36,7 @@ export class TransactionsService {
 
   async get(userId: string, id: string): Promise<TransactionDto> {
     const tx = await this.prisma.transaction.findFirst({ where: { id, card: { userId } }, include: transactionInclude });
-    if (!tx) throw new NotFoundException('Transaction not found');
+    if (!tx) throw new NotFoundException('Transaction introuvable');
     return toTransactionDto(tx);
   }
 
@@ -47,16 +47,16 @@ export class TransactionsService {
    */
   async authorize(userId: string, input: SimulateTransactionInput): Promise<SimulateTransactionResponseDto> {
     const merchantSlug = normalizeMerchant(input.merchant);
-    if (!merchantSlug) throw new BadRequestException('Enter a merchant name');
+    if (!merchantSlug) throw new BadRequestException('Saisissez le nom du marchand');
 
     const outcome = await this.prisma.$transaction(async (tx) => {
       const locked = await tx.$queryRaw<{ id: string }[]>`
         SELECT id FROM "Card" WHERE id = ${input.cardId} AND "userId" = ${userId} FOR UPDATE`;
-      if (locked.length === 0) throw new NotFoundException('Card not found');
+      if (locked.length === 0) throw new NotFoundException('Carte introuvable');
 
       const card = await tx.card.findUniqueOrThrow({ where: { id: input.cardId }, include: { policy: true } });
       const policy = card.policy;
-      if (!policy) throw new NotFoundException('Card not found');
+      if (!policy) throw new NotFoundException('Carte introuvable');
 
       const knownMerchant = await tx.merchant.findUnique({ where: { slug: merchantSlug } });
       const now = new Date();

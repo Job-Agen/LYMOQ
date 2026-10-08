@@ -17,21 +17,21 @@ export default function Cards() {
 
   return (
     <Screen edges={['top']} onRefresh={() => void cards.refetch()} refreshing={cards.isRefetching}>
-      <Text style={type.title}>Cards</Text>
-      <Button label="Create a card" icon="add" onPress={() => router.push('/create/where')} />
+      <Text style={type.title}>Cartes</Text>
+      <Button label="Créer une carte" icon="add" onPress={() => router.push('/create/where')} />
       {cards.isPending ? (
         <ListSkeleton rows={3} rowHeight={84} />
       ) : cards.isError ? (
         <ErrorState message={errorMessage(cards.error)} onRetry={() => void cards.refetch()} />
       ) : all.length === 0 ? (
-        <EmptyState icon="card-outline" title="No cards yet" message="Each card follows the rules you set: how much, where, how many times and how long." />
+        <EmptyState icon="card-outline" title="Aucune carte pour l'instant" message="Chaque carte suit les règles que vous fixez : combien, où, combien de fois et combien de temps." />
       ) : (
         <>
-          <SectionHeader title={`In use (${live.length})`} />
-          {live.length === 0 ? <Text style={type.caption}>No active or frozen card.</Text> : live.map((c) => <CardListItem key={c.id} card={c} />)}
+          <SectionHeader title={`En service (${live.length})`} />
+          {live.length === 0 ? <Text style={type.caption}>Aucune carte active ou gelée.</Text> : live.map((c) => <CardListItem key={c.id} card={c} />)}
           {closed.length > 0 ? (
             <>
-              <SectionHeader title={`Closed & expired (${closed.length})`} />
+              <SectionHeader title={`Clôturées et expirées (${closed.length})`} />
               {closed.map((c) => (
                 <CardListItem key={c.id} card={c} />
               ))}

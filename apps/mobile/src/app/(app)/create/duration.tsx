@@ -40,12 +40,12 @@ export default function Duration() {
 
   return (
     <Screen
-      title="Create a card"
+      title="Créer une carte"
       footer={
         <>
           <InlineError message={createDraft.isError ? errorMessage(createDraft.error) : null} />
           <Button
-            label="Review card"
+            label="Vérifier la carte"
             icon="arrow-forward"
             disabled={custom && !customValid}
             loading={createDraft.isPending}
@@ -54,7 +54,7 @@ export default function Duration() {
         </>
       }
     >
-      <StepHeader step={4} question="How long should it stay active?" />
+      <StepHeader step={4} question="Combien de temps doit-elle rester active ?" />
       {DURATION_PRESETS.map((p) => (
         <OptionRow
           key={p.minutes}
@@ -66,33 +66,33 @@ export default function Duration() {
           }}
         />
       ))}
-      <OptionRow title="Custom" description="Choose a number of hours." selected={custom} onPress={() => setCustom(true)} />
+      <OptionRow title="Personnalisée" description="Choisissez un nombre d'heures." selected={custom} onPress={() => setCustom(true)} />
       {custom ? (
         <TextField
-          label="Hours"
+          label="Heures"
           value={hours}
           onChangeText={setCustomHours}
           keyboardType="number-pad"
-          placeholder="e.g. 48"
-          error={hours && !customValid ? `Between 1 and ${MAX_CUSTOM_HOURS} hours` : null}
+          placeholder="ex. 48"
+          error={hours && !customValid ? `Entre 1 et ${MAX_CUSTOM_HOURS} heures` : null}
         />
       ) : null}
 
       <Surface>
         <View style={styles.summaryHead}>
-          <Text style={type.heading}>Your card rules</Text>
+          <Text style={type.heading}>Les règles de votre carte</Text>
           <Pressable accessibilityRole="button" hitSlop={10} onPress={() => router.dismissAll()}>
-            <Text style={styles.edit}>Edit</Text>
+            <Text style={styles.edit}>Modifier</Text>
           </Pressable>
         </View>
-        <RuleRow icon="wallet-outline" label="Maximum" value={formatMoney(draft.maxAmount)} />
+        <RuleRow icon="wallet-outline" label="Plafond" value={formatMoney(draft.maxAmount)} />
         <RuleRow
           icon="storefront-outline"
-          label="Merchant"
-          value={draft.restrictToMerchant && draft.merchant ? draft.merchant.name : 'Anywhere'}
+          label="Marchand"
+          value={draft.restrictToMerchant && draft.merchant ? draft.merchant.name : 'Partout'}
         />
-        <RuleRow icon="repeat-outline" label="Payments" value={paymentsLabel(draft.maxTransactionCount)} />
-        <RuleRow icon="time-outline" label="Duration" value={formatDuration(draft.durationMinutes)} />
+        <RuleRow icon="repeat-outline" label="Paiements" value={paymentsLabel(draft.maxTransactionCount)} />
+        <RuleRow icon="time-outline" label="Durée" value={formatDuration(draft.durationMinutes)} />
       </Surface>
     </Screen>
   );

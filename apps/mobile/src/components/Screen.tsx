@@ -27,7 +27,7 @@ export function Screen({ children, title, back, footer, onRefresh, refreshing = 
           {showBack ? (
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel="Go back"
+              accessibilityLabel="Retour"
               hitSlop={12}
               onPress={() => (router.canGoBack() ? router.back() : router.replace('/'))}
               style={styles.back}

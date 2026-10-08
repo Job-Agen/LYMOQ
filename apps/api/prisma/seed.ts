@@ -53,7 +53,7 @@ interface SeedCard {
 
 const CARDS: SeedCard[] = [
   {
-    label: 'Canva Card',
+    label: 'Carte Canva',
     last4: '4821',
     status: 'ACTIVE',
     maxAmount: 15_000,
@@ -82,7 +82,7 @@ const CARDS: SeedCard[] = [
     ],
   },
   {
-    label: 'Meta Ads Card',
+    label: 'Carte Meta Ads',
     last4: '7310',
     status: 'ACTIVE',
     maxAmount: 50_000,
@@ -106,7 +106,7 @@ const CARDS: SeedCard[] = [
     ],
   },
   {
-    label: 'OpenAI Card',
+    label: 'Carte OpenAI',
     last4: '0932',
     status: 'TERMINATED',
     terminationReason: 'USAGE_LIMIT_REACHED',
@@ -129,7 +129,7 @@ const CARDS: SeedCard[] = [
     ],
   },
   {
-    label: 'Online Card',
+    label: 'Carte en ligne',
     last4: '5567',
     status: 'FROZEN',
     maxAmount: 25_000,

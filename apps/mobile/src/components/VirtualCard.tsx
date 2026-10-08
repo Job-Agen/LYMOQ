@@ -18,7 +18,7 @@ export function VirtualCard({ label, last4, status }: VirtualCardProps) {
     <View
       style={[styles.card, inactive && styles.inactive]}
       accessible
-      accessibilityLabel={`${label}, Visa card ending ${last4 ?? 'not issued yet'}${status ? `, ${STATUS_LABEL[status]}` : ''}`}
+      accessibilityLabel={`${label}, carte Visa se terminant par ${last4 ?? 'pas encore émise'}${status ? `, ${STATUS_LABEL[status]}` : ''}`}
     >
       <View style={[styles.orb, styles.orbA]} />
       <View style={[styles.orb, styles.orbB]} />

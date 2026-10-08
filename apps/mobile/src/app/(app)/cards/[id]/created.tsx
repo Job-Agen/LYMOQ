@@ -21,8 +21,8 @@ export default function Created() {
       back={false}
       footer={
         <>
-          <Button label="View card details" onPress={() => router.replace({ pathname: '/cards/[id]', params: { id } })} />
-          <Button label="Done" variant="secondary" onPress={() => router.dismissAll()} />
+          <Button label="Voir la carte" onPress={() => router.replace({ pathname: '/cards/[id]', params: { id } })} />
+          <Button label="Terminé" variant="secondary" onPress={() => router.dismissAll()} />
         </>
       }
     >
@@ -30,8 +30,8 @@ export default function Created() {
         <View style={styles.check}>
           <Ionicons name="checkmark" size={44} color={colors.onDark} />
         </View>
-        <Text style={type.title}>Your card is ready!</Text>
-        <Text style={[type.body, { color: colors.muted, textAlign: 'center' }]}>Your secure card is active and follows your rules.</Text>
+        <Text style={type.title}>Votre carte est prête !</Text>
+        <Text style={[type.body, { color: colors.muted, textAlign: 'center' }]}>Votre carte sécurisée est active et suit vos règles.</Text>
       </View>
       {card.isPending ? (
         <Skeleton height={200} />

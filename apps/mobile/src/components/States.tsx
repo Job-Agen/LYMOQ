@@ -21,7 +21,7 @@ export function Skeleton({ height = 16, width = '100%' }: { height?: number; wid
 
 export function ListSkeleton({ rows = 3, rowHeight = 64 }: { rows?: number; rowHeight?: number }) {
   return (
-    <View style={{ gap: 10 }} accessibilityLabel="Loading">
+    <View style={{ gap: 10 }} accessibilityLabel="Chargement">
       {Array.from({ length: rows }, (_, i) => (
         <Skeleton key={i} height={rowHeight} />
       ))}
@@ -54,7 +54,7 @@ export function ErrorState({ message, onRetry }: { message: string; onRetry?: ()
     <View style={styles.error} accessibilityRole="alert">
       <Ionicons name="cloud-offline-outline" size={22} color={colors.danger} />
       <Text style={[type.body, { color: colors.danger, flex: 1 }]}>{message}</Text>
-      {onRetry ? <Button label="Retry" onPress={onRetry} variant="outline" /> : null}
+      {onRetry ? <Button label="Réessayer" onPress={onRetry} variant="outline" /> : null}
     </View>
   );
 }

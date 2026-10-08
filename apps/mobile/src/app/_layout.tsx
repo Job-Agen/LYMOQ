@@ -57,8 +57,8 @@ function RootNavigator() {
       <View style={styles.center}>
         <Logo height={44} />
         <Text style={styles.error}>{errorMessage(me.error)}</Text>
-        <Button label="Try again" onPress={() => void me.refetch()} />
-        <Button label="Sign out" variant="outline" onPress={() => void signOut()} />
+        <Button label="Réessayer" onPress={() => void me.refetch()} />
+        <Button label="Se déconnecter" variant="outline" onPress={() => void signOut()} />
       </View>
     );
   }

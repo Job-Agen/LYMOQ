@@ -20,7 +20,7 @@ export class KycService {
   /** Step 1: the user submits identity details. Status → PENDING. */
   async start(userId: string, input: KycStartInput): Promise<KycProfileDto> {
     const current = await this.prisma.kycProfile.findUnique({ where: { userId } });
-    if (current?.status === 'VERIFIED') throw new ConflictException('Your identity is already verified');
+    if (current?.status === 'VERIFIED') throw new ConflictException('Votre identité est déjà vérifiée');
 
     const data = {
       status: 'PENDING' as const,
@@ -41,7 +41,7 @@ export class KycService {
     const profile = await this.prisma.kycProfile.findUnique({ where: { userId } });
     if (profile?.status === 'VERIFIED') return toDto(profile);
     if (!profile || profile.status !== 'PENDING' || !profile.firstName || !profile.lastName || !profile.dateOfBirth || !profile.country) {
-      throw new ConflictException('Submit your identity details first');
+      throw new ConflictException("Envoyez d'abord vos informations d'identité");
     }
 
     const result = await this.kycProvider.verify({

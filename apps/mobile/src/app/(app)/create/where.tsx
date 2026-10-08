@@ -18,26 +18,26 @@ export default function Where() {
 
   return (
     <Screen
-      title="Create a card"
-      footer={<Button label="Continue" icon="arrow-forward" disabled={!canContinue} onPress={() => router.push('/create/amount')} />}
+      title="Créer une carte"
+      footer={<Button label="Continuer" icon="arrow-forward" disabled={!canContinue} onPress={() => router.push('/create/amount')} />}
     >
-      <StepHeader step={1} question="Where will you use this card?" />
+      <StepHeader step={1} question="Où utiliserez-vous cette carte ?" />
       <OptionRow
-        title="Specific merchant"
-        description="Only this merchant can charge the card. Safest option."
+        title="Un marchand précis"
+        description="Seul ce marchand peut débiter la carte. L'option la plus sûre."
         selected={draft.restrictToMerchant}
         onPress={() => update({ restrictToMerchant: true })}
       />
       <OptionRow
-        title="Anywhere"
-        description="Any website or merchant can charge the card."
+        title="Partout"
+        description="N'importe quel site ou marchand peut débiter la carte."
         selected={!draft.restrictToMerchant}
         onPress={() => update({ restrictToMerchant: false })}
       />
 
       {draft.restrictToMerchant ? (
         <>
-          <Text style={type.label}>SUGGESTED MERCHANTS</Text>
+          <Text style={type.label}>MARCHANDS SUGGÉRÉS</Text>
           {merchants.isPending ? (
             <ListSkeleton rows={2} rowHeight={88} />
           ) : merchants.isError ? (
@@ -62,7 +62,7 @@ export default function Where() {
               })}
             </View>
           )}
-          <InfoNote tone="sandbox">Merchant locking is simulated in this sandbox.</InfoNote>
+          <InfoNote tone="sandbox">La restriction par marchand est simulée dans cette sandbox.</InfoNote>
         </>
       ) : null}
     </Screen>

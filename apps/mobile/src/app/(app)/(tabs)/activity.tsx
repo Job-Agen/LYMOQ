@@ -9,9 +9,9 @@ import { TransactionRow } from '@/components/TransactionRow';
 import { colors, radius, type } from '@/theme/tokens';
 
 const FILTERS: { key: TransactionFilter; label: string }[] = [
-  { key: 'ALL', label: 'All' },
-  { key: 'APPROVED', label: 'Approved' },
-  { key: 'BLOCKED', label: 'Blocked' },
+  { key: 'ALL', label: 'Toutes' },
+  { key: 'APPROVED', label: 'Acceptées' },
+  { key: 'BLOCKED', label: 'Bloquées' },
 ];
 
 export default function Activity() {
@@ -20,7 +20,7 @@ export default function Activity() {
 
   return (
     <Screen edges={['top']} onRefresh={() => void txs.refetch()} refreshing={txs.isRefetching}>
-      <Text style={type.title}>Activity</Text>
+      <Text style={type.title}>Activité</Text>
       <View style={styles.filters} accessibilityRole="tablist">
         {FILTERS.map((f) => (
           <Pressable
@@ -41,8 +41,8 @@ export default function Activity() {
       ) : (txs.data ?? []).length === 0 ? (
         <EmptyState
           icon="pulse-outline"
-          title={filter === 'BLOCKED' ? 'Nothing blocked' : 'No payments yet'}
-          message={filter === 'BLOCKED' ? 'Payments stopped by your rules will appear here.' : 'Payments made with your cards appear here.'}
+          title={filter === 'BLOCKED' ? 'Rien de bloqué' : "Aucun paiement pour l'instant"}
+          message={filter === 'BLOCKED' ? 'Les paiements stoppés par vos règles apparaîtront ici.' : 'Les paiements effectués avec vos cartes apparaissent ici.'}
         />
       ) : (
         <View>{(txs.data ?? []).map((tx) => <TransactionRow key={tx.id} tx={tx} />)}</View>

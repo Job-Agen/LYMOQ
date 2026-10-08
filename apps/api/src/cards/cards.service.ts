@@ -47,7 +47,7 @@ export class CardsService {
     let merchantName: string | null = null;
     if (input.merchantRestriction !== null) {
       const merchant = await this.prisma.merchant.findUnique({ where: { slug: input.merchantRestriction } });
-      if (!merchant) throw new BadRequestException('Unknown merchant');
+      if (!merchant) throw new BadRequestException('Marchand inconnu');
       merchantName = merchant.name;
     }
 
@@ -56,7 +56,7 @@ export class CardsService {
     const card = await this.prisma.card.create({
       data: {
         userId,
-        label: input.label ?? (merchantName ? `${merchantName} Card` : 'Online Card'),
+        label: input.label ?? (merchantName ? `Carte ${merchantName}` : 'Carte en ligne'),
         status: 'PENDING_FUNDING',
         expiresAt,
         policy: {
@@ -81,10 +81,10 @@ export class CardsService {
    */
   async activateAfterFunding(cardId: string): Promise<void> {
     const card = await this.prisma.card.findUnique({ where: { id: cardId }, include: cardInclude });
-    if (!card?.policy) throw new NotFoundException('Card not found');
+    if (!card?.policy) throw new NotFoundException('Carte introuvable');
     if (card.status !== 'PENDING_FUNDING') return;
     if (!(await this.kyc.isVerified(card.userId))) {
-      throw new ForbiddenException('Verify your identity before activating a card');
+      throw new ForbiddenException("Vérifiez votre identité avant d'activer une carte");
     }
 
     const now = new Date();
@@ -111,7 +111,7 @@ export class CardsService {
 
   async freeze(userId: string, cardId: string): Promise<CardDto> {
     const card = await this.findOwned(userId, cardId);
-    if (card.status !== 'ACTIVE') throw new ConflictException('Only an active card can be frozen');
+    if (card.status !== 'ACTIVE') throw new ConflictException('Seule une carte active peut être gelée');
     await this.transition(card, 'ACTIVE', { status: 'FROZEN' });
     if (card.providerCardId) await this.issuer.freezeCard(card.providerCardId);
     return this.get(userId, cardId);
@@ -119,7 +119,7 @@ export class CardsService {
 
   async unfreeze(userId: string, cardId: string): Promise<CardDto> {
     const card = await this.findOwned(userId, cardId);
-    if (card.status !== 'FROZEN') throw new ConflictException('Only a frozen card can be unfrozen');
+    if (card.status !== 'FROZEN') throw new ConflictException('Seule une carte gelée peut être dégelée');
     await this.transition(card, 'FROZEN', { status: 'ACTIVE' });
     if (card.providerCardId) await this.issuer.unfreezeCard(card.providerCardId);
     return this.get(userId, cardId);
@@ -137,23 +137,23 @@ export class CardsService {
   async updateRules(userId: string, cardId: string, input: UpdateCardRulesInput): Promise<CardDto> {
     const card = await this.findOwned(userId, cardId);
     const policy = card.policy;
-    if (!policy) throw new NotFoundException('Card not found');
+    if (!policy) throw new NotFoundException('Carte introuvable');
     if (card.status !== 'ACTIVE' && card.status !== 'FROZEN') {
-      throw new ConflictException('Rules can only be changed on an active or frozen card');
+      throw new ConflictException('Les règles ne peuvent être modifiées que sur une carte active ou gelée');
     }
 
     if (input.maxAmount !== undefined) {
-      if (input.maxAmount > policy.maxAmount) throw new BadRequestException('The limit can only be lowered');
+      if (input.maxAmount > policy.maxAmount) throw new BadRequestException('Le plafond ne peut être que réduit');
       if (input.maxAmount < policy.spentAmount) {
-        throw new BadRequestException('The limit cannot be lower than what was already spent');
+        throw new BadRequestException('Le plafond ne peut pas être inférieur au montant déjà dépensé');
       }
     }
     if (input.maxTransactionCount !== undefined) {
       if (policy.maxTransactionCount !== null && input.maxTransactionCount > policy.maxTransactionCount) {
-        throw new BadRequestException('The number of payments can only be lowered');
+        throw new BadRequestException('Le nombre de paiements ne peut être que réduit');
       }
       if (input.maxTransactionCount <= policy.currentTransactionCount) {
-        throw new BadRequestException('Allow at least one more payment, or terminate the card instead');
+        throw new BadRequestException('Autorisez au moins un paiement de plus, ou clôturez plutôt la carte');
       }
     }
 
@@ -167,7 +167,7 @@ export class CardsService {
   /** Loads a card owned by the user. Other users' cards are reported as not found. */
   async findOwned(userId: string, cardId: string): Promise<CardWithRelations> {
     const card = await this.prisma.card.findFirst({ where: { id: cardId, userId }, include: cardInclude });
-    if (!card) throw new NotFoundException('Card not found');
+    if (!card) throw new NotFoundException('Carte introuvable');
     return card;
   }
 
@@ -191,6 +191,6 @@ export class CardsService {
     data: { status: CardWithRelations['status']; terminationReason?: 'USER_REQUESTED' },
   ): Promise<void> {
     const { count } = await this.prisma.card.updateMany({ where: { id: card.id, status: from }, data });
-    if (count === 0) throw new ConflictException('The card changed in the meantime. Try again.');
+    if (count === 0) throw new ConflictException('La carte a changé entre-temps. Réessayez.');
   }
 }

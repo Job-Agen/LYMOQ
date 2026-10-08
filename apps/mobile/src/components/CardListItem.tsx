@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { formatMoney, type CardDto } from '@mesura/shared';
-import { formatTimeLeft, paymentsLabel } from '@/lib/format';
+import { STATUS_LABEL, formatTimeLeft, paymentsLabel } from '@/lib/format';
 import { colors, radius, type } from '@/theme/tokens';
 import { MerchantAvatar } from './MerchantAvatar';
 import { CardStatusBadge } from './StatusBadge';
@@ -13,7 +13,7 @@ export function CardListItem({ card }: { card: CardDto }) {
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={`${card.label}, ${card.status.toLowerCase()}`}
+      accessibilityLabel={`${card.label}, ${STATUS_LABEL[card.status].toLowerCase()}`}
       onPress={() => router.push({ pathname: '/cards/[id]', params: { id: card.id } })}
       style={({ pressed }) => [styles.item, pressed && { opacity: 0.8 }]}
     >
@@ -27,7 +27,7 @@ export function CardListItem({ card }: { card: CardDto }) {
         </View>
         <Text style={styles.amount}>
           {formatMoney(card.policy.remainingLimit, card.policy.currency)}
-          <Text style={type.caption}> limit left · •••• {card.last4 ?? '••••'}</Text>
+          <Text style={type.caption}> de plafond restant · •••• {card.last4 ?? '••••'}</Text>
         </Text>
         <Text style={type.caption}>
           {paymentsLabel(card.policy.maxTransactionCount)}

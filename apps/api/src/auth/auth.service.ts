@@ -15,7 +15,7 @@ export class AuthService {
 
   async register(input: RegisterInput): Promise<AuthResponseDto> {
     const existing = await this.prisma.user.findUnique({ where: { email: input.email } });
-    if (existing) throw new ConflictException('An account already exists with this email');
+    if (existing) throw new ConflictException('Un compte existe déjà avec cette adresse e-mail');
 
     const user = await this.prisma.user.create({
       data: {
@@ -32,7 +32,7 @@ export class AuthService {
     const user = await this.prisma.user.findUnique({ where: { email: input.email } });
     // Same message for unknown email and wrong password (no account enumeration).
     if (!user || !(await verifyPassword(input.password, user.passwordHash))) {
-      throw new UnauthorizedException('Email or password is incorrect');
+      throw new UnauthorizedException('E-mail ou mot de passe incorrect');
     }
     return this.issueToken(user.id);
   }

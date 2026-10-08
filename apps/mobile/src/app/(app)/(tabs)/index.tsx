@@ -29,29 +29,29 @@ export default function Home() {
 
       <View style={styles.hero}>
         <View style={styles.heroOrb} />
-        <Text style={styles.heroTitle}>Pay online without exposing more money than necessary.</Text>
-        <Text style={styles.heroText}>Create a card with its own limit, merchant, payments and lifetime.</Text>
-        <Button label="Create a card" icon="add" variant="light" onPress={() => router.push('/create/where')} />
+        <Text style={styles.heroTitle}>Payez en ligne sans exposer plus d'argent que nécessaire.</Text>
+        <Text style={styles.heroText}>Créez une carte avec son propre plafond, son marchand, ses paiements et sa durée de vie.</Text>
+        <Button label="Créer une carte" icon="add" variant="light" onPress={() => router.push('/create/where')} />
       </View>
 
-      <SectionHeader title="Active cards" action={activeCards.length > 0 ? { label: 'See all', onPress: () => router.push('/cards') } : undefined} />
+      <SectionHeader title="Cartes actives" action={activeCards.length > 0 ? { label: 'Tout voir', onPress: () => router.push('/cards') } : undefined} />
       {cards.isPending ? (
         <ListSkeleton rows={2} rowHeight={84} />
       ) : cards.isError ? (
         <ErrorState message={errorMessage(cards.error)} onRetry={() => void cards.refetch()} />
       ) : activeCards.length === 0 ? (
-        <EmptyState icon="card-outline" title="No active card" message="Create a card for your next online payment." />
+        <EmptyState icon="card-outline" title="Aucune carte active" message="Créez une carte pour votre prochain paiement en ligne." />
       ) : (
         activeCards.slice(0, 3).map((card) => <CardListItem key={card.id} card={card} />)
       )}
 
-      <SectionHeader title="Recent activity" action={recent.length > 0 ? { label: 'See all', onPress: () => router.push('/activity') } : undefined} />
+      <SectionHeader title="Activité récente" action={recent.length > 0 ? { label: 'Tout voir', onPress: () => router.push('/activity') } : undefined} />
       {activity.isPending ? (
         <ListSkeleton rows={3} rowHeight={56} />
       ) : activity.isError ? (
         <ErrorState message={errorMessage(activity.error)} onRetry={() => void activity.refetch()} />
       ) : recent.length === 0 ? (
-        <EmptyState icon="pulse-outline" title="No activity yet" message="Payments made with your cards appear here." />
+        <EmptyState icon="pulse-outline" title="Aucune activité pour l'instant" message="Les paiements effectués avec vos cartes apparaissent ici." />
       ) : (
         <View>{recent.map((tx) => <TransactionRow key={tx.id} tx={tx} />)}</View>
       )}

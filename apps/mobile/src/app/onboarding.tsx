@@ -7,10 +7,10 @@ import { VirtualCard } from '@/components/VirtualCard';
 import { colors, radius, type } from '@/theme/tokens';
 
 const PRINCIPLES = [
-  { key: 'HOW MUCH', text: 'Set the maximum the card can spend.' },
-  { key: 'WHERE', text: 'Lock it to one merchant, or use it anywhere.' },
-  { key: 'HOW MANY', text: 'Allow one payment, five, or more.' },
-  { key: 'HOW LONG', text: 'It switches off on its own when time is up.' },
+  { key: 'COMBIEN', text: 'Fixez le montant maximum que la carte peut dépenser.' },
+  { key: 'OÙ', text: 'Réservez-la à un seul marchand, ou utilisez-la partout.' },
+  { key: 'COMBIEN DE FOIS', text: 'Autorisez un paiement, cinq, ou plus.' },
+  { key: 'COMBIEN DE TEMPS', text: "Elle se désactive toute seule à l'échéance." },
 ];
 
 export default function Onboarding() {
@@ -19,17 +19,17 @@ export default function Onboarding() {
       back={false}
       footer={
         <>
-          <Button label="Get started" icon="arrow-forward" onPress={() => router.push({ pathname: '/auth', params: { mode: 'signup' } })} />
-          <Button label="I already have an account" variant="outline" onPress={() => router.push({ pathname: '/auth', params: { mode: 'login' } })} />
+          <Button label="Commencer" icon="arrow-forward" onPress={() => router.push({ pathname: '/auth', params: { mode: 'signup' } })} />
+          <Button label="J'ai déjà un compte" variant="outline" onPress={() => router.push({ pathname: '/auth', params: { mode: 'login' } })} />
         </>
       }
     >
       <Logo height={36} />
-      <Text style={type.display}>Your money.{'\n'}Your rules.</Text>
+      <Text style={type.display}>Votre argent.{'\n'}Vos règles.</Text>
       <Text style={[type.body, { color: colors.muted }]}>
-        Create a secure virtual card for one online payment — and decide exactly how it can be used.
+        Créez une carte virtuelle sécurisée pour un paiement en ligne, et décidez exactement comment elle peut être utilisée.
       </Text>
-      <VirtualCard label="Canva card" last4="4821" />
+      <VirtualCard label="Carte Canva" last4="4821" />
       <View style={styles.grid}>
         {PRINCIPLES.map((p) => (
           <View key={p.key} style={styles.principle}>

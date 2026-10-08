@@ -14,7 +14,7 @@ export class ZodValidationPipe<TOutput> implements PipeTransform<unknown, TOutpu
     if (!result.success) {
       throw new BadRequestException({
         statusCode: 400,
-        message: result.error.issues[0]?.message ?? 'Invalid request',
+        message: result.error.issues[0]?.message ?? 'Requête invalide',
         issues: result.error.issues.map((i) => ({ path: i.path.join('.'), message: i.message })),
       });
     }

@@ -49,13 +49,13 @@ export default function Fund() {
   const c = card.data;
   return (
     <Screen
-      title="Fund your card"
+      title="Rechargez votre carte"
       footer={
         c ? (
           <>
             <InlineError message={fund.isError ? errorMessage(fund.error) : null} />
             <Button
-              label={`Pay ${formatMoney(c.pricing.total, c.pricing.currency)}`}
+              label={`Payer ${formatMoney(c.pricing.total, c.pricing.currency)}`}
               disabled={!parsedPhone.success}
               loading={fund.isPending}
               onPress={() => fund.mutate()}
@@ -80,7 +80,7 @@ export default function Fund() {
             </View>
           </Surface>
 
-          <Text style={type.heading}>Choose how to pay</Text>
+          <Text style={type.heading}>Choisissez comment payer</Text>
           {(Object.keys(MOBILE_MONEY_PROVIDER_LABELS) as Provider[]).map((p) => (
             <OptionRow
               key={p}
@@ -92,7 +92,7 @@ export default function Fund() {
           ))}
 
           <TextField
-            label="Mobile Money number"
+            label="Numéro Mobile Money"
             value={phone}
             onChangeText={setPhone}
             keyboardType="phone-pad"
@@ -100,13 +100,13 @@ export default function Fund() {
           />
 
           <Surface>
-            <RuleRow icon="card-outline" label="Card funding" value={formatMoney(c.pricing.funding)} />
-            <RuleRow icon="receipt-outline" label="Service fee" value={formatMoney(c.pricing.fee)} />
+            <RuleRow icon="card-outline" label="Recharge de la carte" value={formatMoney(c.pricing.funding)} />
+            <RuleRow icon="receipt-outline" label="Frais de service" value={formatMoney(c.pricing.fee)} />
             <Divider />
             <RuleRow icon="cash-outline" label="Total" value={formatMoney(c.pricing.total)} emphasis />
           </Surface>
-          <InfoNote>You will approve the payment on your phone. Mesura never asks for your Mobile Money PIN.</InfoNote>
-          <InfoNote tone="sandbox">Sandbox: no real Mobile Money request is sent and nothing is debited.</InfoNote>
+          <InfoNote>Vous validerez le paiement sur votre téléphone. Mesura ne vous demande jamais votre code PIN Mobile Money.</InfoNote>
+          <InfoNote tone="sandbox">Sandbox : aucune vraie demande Mobile Money n'est envoyée et rien n'est débité.</InfoNote>
         </>
       )}
     </Screen>

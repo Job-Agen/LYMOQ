@@ -18,11 +18,11 @@ export interface UsagePreset {
 }
 
 export const USAGE_PRESETS: readonly UsagePreset[] = [
-  { label: '1 payment', description: 'The card closes after 1 payment.', maxTransactionCount: 1 },
-  { label: '5 payments', description: 'The card can be used up to 5 times.', maxTransactionCount: 5 },
+  { label: '1 paiement', description: 'La carte se clôture après 1 paiement.', maxTransactionCount: 1 },
+  { label: '5 paiements', description: "La carte peut être utilisée jusqu'à 5 fois.", maxTransactionCount: 5 },
   {
-    label: 'Until expiration',
-    description: 'Use it multiple times until the card expires.',
+    label: "Jusqu'à expiration",
+    description: "Utilisez-la plusieurs fois jusqu'à ce qu'elle expire.",
     maxTransactionCount: null,
   },
 ];
@@ -34,10 +34,10 @@ export interface DurationPreset {
 
 export const DURATION_PRESETS: readonly DurationPreset[] = [
   { label: '30 minutes', minutes: 30 },
-  { label: '1 hour', minutes: 60 },
-  { label: '24 hours', minutes: 24 * 60 },
-  { label: '7 days', minutes: 7 * 24 * 60 },
-  { label: '30 days', minutes: 30 * 24 * 60 },
+  { label: '1 heure', minutes: 60 },
+  { label: '24 heures', minutes: 24 * 60 },
+  { label: '7 jours', minutes: 7 * 24 * 60 },
+  { label: '30 jours', minutes: 30 * 24 * 60 },
 ];
 
 export const DEFAULT_DURATION_MINUTES = 24 * 60;
@@ -47,11 +47,11 @@ export function formatDuration(minutes: number): string {
   if (preset) return preset.label;
   if (minutes % (24 * 60) === 0) {
     const days = minutes / (24 * 60);
-    return `${days} day${days > 1 ? 's' : ''}`;
+    return `${days} jour${days > 1 ? 's' : ''}`;
   }
   if (minutes % 60 === 0) {
     const hours = minutes / 60;
-    return `${hours} hour${hours > 1 ? 's' : ''}`;
+    return `${hours} heure${hours > 1 ? 's' : ''}`;
   }
   return `${minutes} minutes`;
 }

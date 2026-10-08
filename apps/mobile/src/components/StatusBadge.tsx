@@ -27,10 +27,10 @@ const TX_TONE: Record<TransactionStatus, keyof typeof TONES> = {
 };
 
 const TX_LABEL: Record<TransactionStatus, string> = {
-  APPROVED: 'Approved',
-  BLOCKED: 'Blocked',
-  PENDING: 'Pending',
-  FAILED: 'Failed',
+  APPROVED: 'Accepté',
+  BLOCKED: 'Bloqué',
+  PENDING: 'En attente',
+  FAILED: 'Échoué',
 };
 
 function Pill({ label, tone }: { label: string; tone: keyof typeof TONES }) {

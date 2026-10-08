@@ -35,18 +35,18 @@ export default function TransactionDetails() {
           </View>
           {t.status === 'BLOCKED' ? (
             <View style={styles.blocked}>
-              <Text style={styles.blockedTitle}>Your rules protected your money.</Text>
+              <Text style={styles.blockedTitle}>Vos règles ont protégé votre argent.</Text>
               <Text style={styles.blockedText}>{t.declineMessage}</Text>
             </View>
           ) : null}
           <Surface>
-            <RuleRow icon="storefront-outline" label="Merchant" value={t.merchantName} />
-            <RuleRow icon="cash-outline" label="Amount" value={formatMoney(t.amount, t.currency)} />
+            <RuleRow icon="storefront-outline" label="Marchand" value={t.merchantName} />
+            <RuleRow icon="cash-outline" label="Montant" value={formatMoney(t.amount, t.currency)} />
             <RuleRow icon="calendar-outline" label="Date" value={formatDateTime(t.createdAt)} />
-            <RuleRow icon="card-outline" label="Card" value={`${t.cardLabel} · •••• ${t.cardLast4 ?? '••••'}`} />
+            <RuleRow icon="card-outline" label="Carte" value={`${t.cardLabel} · •••• ${t.cardLast4 ?? '••••'}`} />
             <Divider />
-            <RuleRow icon="shield-checkmark-outline" label="Status" value={t.status === 'APPROVED' ? 'Approved' : t.status === 'BLOCKED' ? 'Blocked' : t.status} />
-            {t.declineMessage ? <RuleRow icon="alert-circle-outline" label="Reason" value={t.declineMessage} /> : null}
+            <RuleRow icon="shield-checkmark-outline" label="Statut" value={t.status === 'APPROVED' ? 'Accepté' : t.status === 'BLOCKED' ? 'Bloqué' : t.status} />
+            {t.declineMessage ? <RuleRow icon="alert-circle-outline" label="Motif" value={t.declineMessage} /> : null}
           </Surface>
         </>
       )}

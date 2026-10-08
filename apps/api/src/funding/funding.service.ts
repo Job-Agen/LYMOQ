@@ -34,10 +34,10 @@ export class FundingService {
   async initiate(userId: string, cardId: string, input: FundCardInput): Promise<FundingDto> {
     const card = await this.cards.findOwned(userId, cardId);
     if (card.status !== 'PENDING_FUNDING' || !card.policy) {
-      throw new ConflictException('This card is already funded');
+      throw new ConflictException('Cette carte est déjà rechargée');
     }
     if (!(await this.kyc.isVerified(userId))) {
-      throw new ForbiddenException('Verify your identity before funding a card');
+      throw new ForbiddenException('Vérifiez votre identité avant de recharger une carte');
     }
 
     const quote = this.pricing.quote(card.policy.maxAmount, card.policy.currency);
@@ -78,7 +78,7 @@ export class FundingService {
 
   async findOwned(userId: string, fundingId: string): Promise<Funding> {
     const funding = await this.prisma.funding.findFirst({ where: { id: fundingId, userId } });
-    if (!funding) throw new NotFoundException('Payment not found');
+    if (!funding) throw new NotFoundException('Paiement introuvable');
     return funding;
   }
 
