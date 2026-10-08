@@ -16,8 +16,7 @@ export default function Cards() {
   const closed = all.filter((c) => c.status === 'EXPIRED' || c.status === 'TERMINATED');
 
   return (
-    <Screen edges={['top']} onRefresh={() => void cards.refetch()} refreshing={cards.isRefetching}>
-      <Text style={type.title}>Cartes</Text>
+    <Screen title="Cartes" back={false} edges={['top']} onRefresh={() => void cards.refetch()} refreshing={cards.isRefetching}>
       <Button label="Créer une carte" icon="add" onPress={() => router.push('/create/where')} />
       {cards.isPending ? (
         <ListSkeleton rows={3} rowHeight={84} />

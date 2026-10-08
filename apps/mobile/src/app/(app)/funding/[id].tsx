@@ -35,34 +35,45 @@ export default function FundingConfirmation() {
 
   const failed = f?.status === 'FAILED' || f?.status === 'EXPIRED';
 
+  const changeMethod = () => {
+    if (f) router.replace({ pathname: '/cards/[id]/fund', params: { id: f.cardId } });
+  };
+
   return (
     <Screen
-      back={false}
+      back
       footer={
         f && !failed ? (
           <>
             <InlineError message={confirm.isError ? errorMessage(confirm.error) : null} />
-            <Button label="Simuler la confirmation" icon="flask-outline" variant="secondary" loading={confirm.isPending} onPress={() => confirm.mutate()} />
+            <Button label="Changer de moyen de paiement" variant="link" onPress={changeMethod} />
+            <Button label="Simuler la confirmation (sandbox)" icon="flask-outline" variant="secondary" loading={confirm.isPending} onPress={() => confirm.mutate()} />
           </>
         ) : failed ? (
-          <Button label="Réessayer" onPress={() => router.replace({ pathname: '/cards/[id]/fund', params: { id: f.cardId } })} />
+          <Button label="Réessayer" onPress={changeMethod} />
         ) : null
       }
     >
-      <Text style={[type.title, { textAlign: 'center', marginTop: 12 }]}>Confirmez le paiement</Text>
+      <Text style={[type.title, styles.center]}>Confirmez le paiement</Text>
       {funding.isPending ? (
         <Skeleton height={260} />
       ) : funding.isError || !f ? (
         <ErrorState message={errorMessage(funding.error)} onRetry={() => void funding.refetch()} />
       ) : (
         <View style={styles.body}>
-          <View style={styles.phoneIcon}>
-            <Ionicons name={failed ? 'close' : 'phone-portrait-outline'} size={44} color={failed ? colors.danger : colors.green} />
+          <View style={styles.illustration} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+            <View style={styles.blob} />
+            <Ionicons name={failed ? 'close-circle-outline' : 'phone-portrait-outline'} size={84} color={failed ? colors.danger : colors.forest} />
+            {failed ? null : (
+              <View style={styles.bubble}>
+                <Ionicons name="chatbox-ellipses" size={30} color={colors.accent} />
+              </View>
+            )}
           </View>
           <Text style={[type.body, { color: colors.muted }]}>
             Une demande {MOBILE_MONEY_PROVIDER_LABELS[f.provider]} a été envoyée au
           </Text>
-          <Text style={type.heading}>{f.phone.replace(/^\+228(\d{2})(\d{2})(\d{2})(\d{2})$/, '+228 $1 $2 $3 $4')}</Text>
+          <Text style={styles.phone}>{f.phone.replace(/^\+228(\d{2})(\d{2})(\d{2})(\d{2})$/, '+228 $1 $2 $3 $4')}</Text>
           <View style={styles.amount}>
             <Text style={styles.amountText}>{formatMoney(f.total, f.currency)}</Text>
           </View>
@@ -72,12 +83,14 @@ export default function FundingConfirmation() {
             </Text>
           ) : (
             <View style={styles.waiting} accessibilityLiveRegion="polite">
-              <ActivityIndicator color={colors.accent} />
+              <ActivityIndicator color={colors.accent} size="large" />
               <Text style={styles.waitingText}>En attente de confirmation…</Text>
             </View>
           )}
-          <InfoNote>Regardez votre téléphone et validez la demande dans votre application Mobile Money. Mesura ne vous demande jamais votre code PIN.</InfoNote>
-          <InfoNote tone="sandbox">Sandbox : cette demande se confirme automatiquement après quelques secondes, ou touchez « Simuler la confirmation ».</InfoNote>
+          <InfoNote tone="mint">
+            Vérifiez votre téléphone et validez la demande de paiement dans votre application Mobile Money. Mesura ne vous demande jamais votre code PIN.
+          </InfoNote>
+          <InfoNote tone="sandbox">Sandbox : la demande se confirme toute seule après quelques secondes.</InfoNote>
         </View>
       )}
     </Screen>
@@ -85,19 +98,15 @@ export default function FundingConfirmation() {
 }
 
 const styles = StyleSheet.create({
+  center: { textAlign: 'center', marginTop: 4 },
   body: { alignItems: 'center', gap: 12 },
-  phoneIcon: {
-    width: 96,
-    height: 96,
-    borderRadius: 32,
-    backgroundColor: colors.mint,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginVertical: 8,
-  },
-  amount: { backgroundColor: colors.mint, borderRadius: radius.md, paddingHorizontal: 32, paddingVertical: 12 },
-  amountText: { fontSize: 24, fontWeight: '900', color: colors.forest },
-  waiting: { flexDirection: 'row', alignItems: 'center', gap: 10, marginVertical: 6 },
+  illustration: { width: 220, height: 140, alignItems: 'center', justifyContent: 'center' },
+  blob: { position: 'absolute', width: 210, height: 110, borderRadius: 70, backgroundColor: colors.mint },
+  bubble: { position: 'absolute', right: 52, top: 26 },
+  phone: { ...type.title, fontSize: 21 },
+  amount: { backgroundColor: colors.mint, borderRadius: radius.md, paddingHorizontal: 36, paddingVertical: 12 },
+  amountText: { fontSize: 24, fontWeight: '800', color: colors.text },
+  waiting: { alignItems: 'center', gap: 8, marginVertical: 6 },
   waitingText: { color: colors.green, fontWeight: '800' },
   failed: { color: colors.danger, fontWeight: '700', textAlign: 'center' },
 });

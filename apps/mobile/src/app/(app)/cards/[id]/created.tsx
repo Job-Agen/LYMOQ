@@ -11,6 +11,16 @@ import { Surface } from '@/components/Surface';
 import { VirtualCard } from '@/components/VirtualCard';
 import { colors, type } from '@/theme/tokens';
 
+/** Small celebratory dots around the check mark. */
+const CONFETTI = [
+  { x: 20, y: 30, c: '#2BB673' },
+  { x: 48, y: 78, c: '#F5B82E' },
+  { x: 166, y: 18, c: '#F5B82E' },
+  { x: 196, y: 56, c: '#2BB673' },
+  { x: 150, y: 96, c: '#2BB673' },
+  { x: 6, y: 92, c: '#2BB673' },
+];
+
 export default function Created() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const card = useCard(id);
@@ -27,11 +37,18 @@ export default function Created() {
       }
     >
       <View style={styles.hero}>
-        <View style={styles.check}>
-          <Ionicons name="checkmark" size={44} color={colors.onDark} />
+        <View style={styles.burst} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+          {CONFETTI.map((d, i) => (
+            <View key={i} style={[styles.dot, { left: d.x, top: d.y, backgroundColor: d.c }]} />
+          ))}
+          <View style={styles.check}>
+            <Ionicons name="checkmark" size={44} color={colors.onDark} />
+          </View>
         </View>
-        <Text style={type.title}>Votre carte est prête !</Text>
-        <Text style={[type.body, { color: colors.muted, textAlign: 'center' }]}>Votre carte sécurisée est active et suit vos règles.</Text>
+        <Text style={type.title}>Votre carte est prête.</Text>
+        <Text style={[type.body, { color: colors.muted, textAlign: 'center' }]}>
+          Votre carte sécurisée est active et prête à l'emploi.
+        </Text>
       </View>
       {card.isPending ? (
         <Skeleton height={200} />
@@ -41,7 +58,7 @@ export default function Created() {
         <>
           <VirtualCard label={c.label} last4={c.last4} status={c.status} />
           <Surface>
-            <CardRules card={c} mode="live" />
+            <CardRules card={c} mode="created" />
           </Surface>
         </>
       )}
@@ -50,14 +67,15 @@ export default function Created() {
 }
 
 const styles = StyleSheet.create({
-  hero: { alignItems: 'center', gap: 8, paddingTop: 12 },
+  hero: { alignItems: 'center', gap: 8, paddingTop: 8 },
+  burst: { width: 210, height: 120, alignItems: 'center', justifyContent: 'center' },
+  dot: { position: 'absolute', width: 7, height: 7, borderRadius: 4 },
   check: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: colors.accent,
+    backgroundColor: colors.success,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 6,
   },
 });

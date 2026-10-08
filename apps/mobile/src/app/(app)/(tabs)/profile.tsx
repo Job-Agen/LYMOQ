@@ -17,8 +17,7 @@ export default function Profile() {
   const user = me.data;
 
   return (
-    <Screen edges={['top']}>
-      <Text style={type.title}>Profil</Text>
+    <Screen title="Profil" back={false} edges={['top']}>
       {!user ? (
         <Skeleton height={180} />
       ) : (

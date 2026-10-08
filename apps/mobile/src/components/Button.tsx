@@ -3,7 +3,8 @@ import type { ComponentProps } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text } from 'react-native';
 import { colors, radius, TOUCH } from '@/theme/tokens';
 
-type Variant = 'primary' | 'secondary' | 'outline' | 'danger' | 'light';
+type Variant = 'primary' | 'secondary' | 'neutral' | 'outline' | 'danger' | 'light' | 'link';
+type IconName = ComponentProps<typeof Ionicons>['name'];
 
 interface ButtonProps {
   label: string;
@@ -11,21 +12,28 @@ interface ButtonProps {
   variant?: Variant;
   loading?: boolean;
   disabled?: boolean;
-  icon?: ComponentProps<typeof Ionicons>['name'];
+  icon?: IconName;
   compact?: boolean;
 }
 
 const VARIANTS: Record<Variant, { bg: string; fg: string; border: string }> = {
   primary: { bg: colors.green, fg: colors.onDark, border: colors.green },
   secondary: { bg: colors.mint, fg: colors.forest, border: colors.mint },
+  neutral: { bg: colors.fill, fg: colors.text, border: colors.fill },
   outline: { bg: 'transparent', fg: colors.forest, border: colors.border },
   danger: { bg: colors.dangerSoft, fg: colors.danger, border: colors.dangerSoft },
-  light: { bg: colors.onDark, fg: colors.forest, border: colors.onDark },
+  light: { bg: 'rgba(227,242,234,0.94)', fg: colors.forest, border: 'transparent' },
+  link: { bg: 'transparent', fg: colors.green, border: 'transparent' },
 };
+
+/** Directional icons sit after the label ("Continuer →"); others lead it. */
+const TRAILING_ICONS: readonly IconName[] = ['arrow-forward', 'chevron-forward'];
 
 export function Button({ label, onPress, variant = 'primary', loading, disabled, icon, compact }: ButtonProps) {
   const v = VARIANTS[variant];
   const inactive = disabled || loading;
+  const trailing = icon !== undefined && TRAILING_ICONS.includes(icon);
+  const iconNode = icon ? <Ionicons name={icon} size={18} color={v.fg} /> : null;
   return (
     <Pressable
       accessibilityRole="button"
@@ -35,6 +43,7 @@ export function Button({ label, onPress, variant = 'primary', loading, disabled,
       style={({ pressed }) => [
         styles.base,
         compact && styles.compact,
+        variant === 'link' && styles.link,
         { backgroundColor: v.bg, borderColor: v.border, opacity: inactive ? 0.5 : pressed ? 0.85 : 1 },
       ]}
     >
@@ -42,8 +51,9 @@ export function Button({ label, onPress, variant = 'primary', loading, disabled,
         <ActivityIndicator color={v.fg} />
       ) : (
         <>
-          {icon ? <Ionicons name={icon} size={18} color={v.fg} /> : null}
-          <Text style={[styles.label, { color: v.fg }]}>{label}</Text>
+          {trailing ? null : iconNode}
+          <Text style={[styles.label, { color: v.fg }, variant === 'link' && styles.linkLabel, compact && styles.compactLabel]}>{label}</Text>
+          {trailing ? iconNode : null}
         </>
       )}
     </Pressable>
@@ -61,6 +71,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 8,
   },
-  compact: { flex: 1, paddingHorizontal: 8 },
-  label: { fontSize: 16, fontWeight: '800' },
+  compact: { flex: 1, paddingHorizontal: 8, minHeight: 60, borderRadius: radius.lg },
+  compactLabel: { fontSize: 14 },
+  link: { minHeight: 44 },
+  label: { fontSize: 16, fontWeight: '800', textAlign: 'center' },
+  linkLabel: { fontSize: 15 },
 });

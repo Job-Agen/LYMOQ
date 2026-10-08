@@ -68,21 +68,42 @@ export function InlineError({ message }: { message: string | null }) {
   );
 }
 
-export function InfoNote({ children, tone = 'neutral' }: { children: string; tone?: 'neutral' | 'sandbox' }) {
+type NoteTone = 'neutral' | 'sandbox' | 'plain' | 'mint';
+
+const NOTE_ICON: Record<NoteTone, ComponentProps<typeof Ionicons>['name']> = {
+  neutral: 'information-circle-outline',
+  sandbox: 'flask-outline',
+  plain: 'information-circle-outline',
+  mint: 'information-circle-outline',
+};
+
+/**
+ * Short explanatory note. `plain` sits directly on the page (green icon), `mint` is a soft green panel,
+ * `sandbox` flags simulated behaviour.
+ */
+export function InfoNote({
+  children,
+  tone = 'neutral',
+  icon,
+}: {
+  children: string;
+  tone?: NoteTone;
+  icon?: ComponentProps<typeof Ionicons>['name'];
+}) {
+  const green = tone === 'plain' || tone === 'mint';
+  const color = tone === 'sandbox' ? colors.warning : green ? colors.green : colors.muted;
   return (
-    <View style={[styles.note, tone === 'sandbox' && styles.sandbox]}>
-      <Ionicons
-        name={tone === 'sandbox' ? 'flask-outline' : 'information-circle-outline'}
-        size={18}
-        color={tone === 'sandbox' ? colors.warning : colors.muted}
-      />
-      <Text style={[type.caption, styles.noteText, tone === 'sandbox' && { color: colors.warning }]}>{children}</Text>
+    <View style={[styles.note, tone === 'sandbox' && styles.sandbox, tone === 'plain' && styles.plain, tone === 'mint' && styles.mint]}>
+      <Ionicons name={icon ?? NOTE_ICON[tone]} size={18} color={color} />
+      <Text style={[type.caption, styles.noteText, tone === 'sandbox' && { color: colors.warning }, tone === 'mint' && { color: colors.forest }]}>
+        {children}
+      </Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  skeleton: { backgroundColor: '#E8E5DC', borderRadius: radius.md },
+  skeleton: { backgroundColor: '#E6EBE8', borderRadius: radius.md },
   empty: {
     alignItems: 'center',
     gap: 10,
@@ -115,9 +136,11 @@ const styles = StyleSheet.create({
     gap: 10,
     padding: 14,
     borderRadius: radius.md,
-    backgroundColor: '#EFEDE6',
+    backgroundColor: colors.fill,
     alignItems: 'flex-start',
   },
   sandbox: { backgroundColor: colors.warningSoft },
+  plain: { backgroundColor: 'transparent', paddingHorizontal: 4, paddingVertical: 0 },
+  mint: { backgroundColor: colors.mint },
   noteText: { flex: 1, fontSize: 13, lineHeight: 18 },
 });

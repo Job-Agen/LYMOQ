@@ -9,7 +9,7 @@ import { useCreateCard } from '@/features/create-card/CreateCardContext';
 export default function Usage() {
   const { draft, update } = useCreateCard();
   return (
-    <Screen title="Créer une carte" footer={<Button label="Continuer" icon="arrow-forward" onPress={() => router.push('/create/duration')} />}>
+    <Screen title="Créer une carte sécurisée" footer={<Button label="Continuer" icon="arrow-forward" onPress={() => router.push('/create/duration')} />}>
       <StepHeader step={3} question="Combien de paiements ?" />
       {USAGE_PRESETS.map((preset) => (
         <OptionRow
@@ -18,6 +18,7 @@ export default function Usage() {
           description={preset.description}
           selected={draft.maxTransactionCount === preset.maxTransactionCount}
           onPress={() => update({ maxTransactionCount: preset.maxTransactionCount })}
+          radio="left"
         />
       ))}
     </Screen>

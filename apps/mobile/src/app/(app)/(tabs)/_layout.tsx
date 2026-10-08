@@ -24,7 +24,7 @@ export default function TabsLayout() {
     >
       <Tabs.Screen name="index" options={{ title: 'Accueil', tabBarIcon: icon('home-outline', 'home') }} />
       <Tabs.Screen name="cards" options={{ title: 'Cartes', tabBarIcon: icon('card-outline', 'card') }} />
-      <Tabs.Screen name="activity" options={{ title: 'Activité', tabBarIcon: icon('pulse-outline', 'pulse') }} />
+      <Tabs.Screen name="activity" options={{ title: 'Activité', tabBarIcon: icon('stats-chart-outline', 'stats-chart') }} />
       <Tabs.Screen name="profile" options={{ title: 'Profil', tabBarIcon: icon('person-outline', 'person') }} />
     </Tabs>
   );

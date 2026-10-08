@@ -8,7 +8,7 @@ export const MAX_DURATION_MINUTES = 30 * 24 * 60;
 
 export const MAX_TRANSACTION_COUNT = 100;
 
-export const AMOUNT_PRESETS = [5_000, 10_000, 15_000, 25_000, 50_000, 100_000] as const;
+export const AMOUNT_PRESETS = [5_000, 10_000, 25_000, 50_000, 100_000] as const;
 
 export interface UsagePreset {
   label: string;

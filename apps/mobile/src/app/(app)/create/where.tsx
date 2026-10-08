@@ -1,3 +1,5 @@
+import { Ionicons } from '@expo/vector-icons';
+import type { ComponentProps } from 'react';
 import { router } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { errorMessage } from '@/api/client';
@@ -11,6 +13,14 @@ import { StepHeader } from '@/components/StepHeader';
 import { useCreateCard } from '@/features/create-card/CreateCardContext';
 import { colors, radius, type } from '@/theme/tokens';
 
+function OptionIcon({ name }: { name: ComponentProps<typeof Ionicons>['name'] }) {
+  return (
+    <View style={styles.optionIcon}>
+      <Ionicons name={name} size={22} color={colors.forest} />
+    </View>
+  );
+}
+
 export default function Where() {
   const { draft, update } = useCreateCard();
   const merchants = useMerchants();
@@ -18,26 +28,29 @@ export default function Where() {
 
   return (
     <Screen
-      title="Créer une carte"
+      title="Créer une carte sécurisée"
       footer={<Button label="Continuer" icon="arrow-forward" disabled={!canContinue} onPress={() => router.push('/create/amount')} />}
     >
       <StepHeader step={1} question="Où utiliserez-vous cette carte ?" />
       <OptionRow
-        title="Un marchand précis"
-        description="Seul ce marchand peut débiter la carte. L'option la plus sûre."
-        selected={draft.restrictToMerchant}
-        onPress={() => update({ restrictToMerchant: true })}
-      />
-      <OptionRow
         title="Partout"
-        description="N'importe quel site ou marchand peut débiter la carte."
+        description="Utilisez cette carte sur n'importe quel site ou chez n'importe quel marchand."
         selected={!draft.restrictToMerchant}
         onPress={() => update({ restrictToMerchant: false })}
+        leading={<OptionIcon name="globe-outline" />}
+      />
+      <OptionRow
+        title="Un marchand précis"
+        note="(selon disponibilité)"
+        description="Limitez cette carte à un seul marchand pour plus de sécurité."
+        selected={draft.restrictToMerchant}
+        onPress={() => update({ restrictToMerchant: true })}
+        leading={<OptionIcon name="storefront-outline" />}
       />
 
       {draft.restrictToMerchant ? (
         <>
-          <Text style={type.label}>MARCHANDS SUGGÉRÉS</Text>
+          <Text style={type.heading}>Choisissez le marchand</Text>
           {merchants.isPending ? (
             <ListSkeleton rows={2} rowHeight={88} />
           ) : merchants.isError ? (
@@ -62,14 +75,17 @@ export default function Where() {
               })}
             </View>
           )}
-          <InfoNote tone="sandbox">La restriction par marchand est simulée dans cette sandbox.</InfoNote>
         </>
       ) : null}
+      <InfoNote tone="plain">
+        Les restrictions par marchand sont disponibles lorsque le réseau de la carte et l'émetteur partenaire les prennent en charge.
+      </InfoNote>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
+  optionIcon: { width: 44, height: 44, borderRadius: 12, backgroundColor: colors.mint, alignItems: 'center', justifyContent: 'center', alignSelf: 'flex-start' },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   tile: {
     flexBasis: '30%',
@@ -83,6 +99,6 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     backgroundColor: colors.surface,
   },
-  tileOn: { borderColor: colors.accent, backgroundColor: colors.mint },
+  tileOn: { borderColor: colors.accent, backgroundColor: '#F1F8F4' },
   tileText: { fontWeight: '800', color: colors.text },
 });
