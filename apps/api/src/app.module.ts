@@ -7,6 +7,7 @@ import { CardsModule } from './cards/cards.module';
 import { ConfigModule } from './config/config.module';
 import { FundingModule } from './funding/funding.module';
 import { HealthController } from './health/health.controller';
+import { LegalController } from './legal/legal.controller';
 import { KycModule } from './kyc/kyc.module';
 import { MerchantsModule } from './merchants/merchants.module';
 import { PrismaModule } from './prisma/prisma.module';
@@ -36,7 +37,7 @@ import { UsersModule } from './users/users.module';
     TransactionsModule,
     SandboxModule,
   ],
-  controllers: [HealthController],
+  controllers: [HealthController, LegalController],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
 export class AppModule {}

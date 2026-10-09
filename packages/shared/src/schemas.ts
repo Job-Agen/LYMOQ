@@ -33,6 +33,12 @@ export const loginSchema = z.object({
 });
 export type LoginInput = z.infer<typeof loginSchema>;
 
+/** Account deletion is confirmed with the current password. */
+export const deleteAccountSchema = z.object({
+  password: z.string().min(1, 'Saisissez votre mot de passe').max(128),
+});
+export type DeleteAccountInput = z.infer<typeof deleteAccountSchema>;
+
 /** Togo mobile numbers: +228 followed by 8 digits. Spaces are ignored. */
 export const togoPhoneSchema = z
   .string()

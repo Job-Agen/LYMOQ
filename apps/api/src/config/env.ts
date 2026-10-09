@@ -18,6 +18,9 @@ const envSchema = z.object({
   SANDBOX_FUNDING_AUTO_CONFIRM_SECONDS: z.coerce.number().int().min(0).default(10),
   SERVICE_FEE_BPS: z.coerce.number().int().min(0).max(10_000).default(500),
   FUNDING_EXPIRY_MINUTES: z.coerce.number().int().positive().default(15),
+  /** Shown on the public legal pages (privacy policy, account deletion). */
+  LEGAL_PUBLISHER: z.string().default(''),
+  SUPPORT_EMAIL: z.string().default(''),
 });
 
 export type AppEnv = z.infer<typeof envSchema>;

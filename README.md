@@ -101,6 +101,12 @@ mobile app and uploads it as the `mesura-sandbox-apk` artifact (set the reposito
 Plain `http://` is allowed in this sandbox build (`plugins/with-sandbox-cleartext.js`) so a LAN
 API works; a production build must use an `https://` API and drop that plugin.
 
+## Google Play Store
+
+The Play Store variant (`africa.mesura.app`, https-only, no server picker) is built as a signed AAB by the
+*Release Android (Play Store AAB)* workflow. Listing texts, visuals, Play Console answers and the signing
+procedure are in [`docs/play-store/README.md`](docs/play-store/README.md).
+
 ## 5. Try the full flow
 
 1. **Onboarding → Sign up** (any email, 8+ char password)

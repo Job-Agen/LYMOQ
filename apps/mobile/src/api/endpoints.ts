@@ -14,6 +14,7 @@ import type {
   TransactionDto,
   UpdateCardRulesInput,
   UserDto,
+  DeleteAccountInput,
 } from '@mesura/shared';
 import { request } from './client';
 
@@ -23,6 +24,7 @@ export const api = {
   register: (input: RegisterInput) => request<AuthResponseDto>('POST', '/auth/register', input),
   login: (input: LoginInput) => request<AuthResponseDto>('POST', '/auth/login', input),
   me: () => request<UserDto>('GET', '/me'),
+  deleteAccount: (input: DeleteAccountInput) => request<null>('DELETE', '/me', input),
 
   kyc: () => request<KycProfileDto>('GET', '/kyc'),
   startKyc: (input: KycStartInput) => request<KycProfileDto>('POST', '/kyc/start', input),

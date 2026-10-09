@@ -1,4 +1,6 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { router } from 'expo-router';
+import { Linking, StyleSheet, Text, View } from 'react-native';
+import { getApiBaseUrl } from '@/api/client';
 import { useMe } from '@/api/queries';
 import { useAuth } from '@/auth/AuthProvider';
 import { Button } from '@/components/Button';
@@ -47,12 +49,17 @@ export default function Profile() {
         Version sandbox : aucun argent réel ne circule, aucune vraie carte n'est émise et aucune vraie vérification d'identité n'est faite.
       </InfoNote>
       <Button label="Se déconnecter" variant="outline" icon="log-out-outline" onPress={() => void signOut()} />
+      <View style={styles.links}>
+        <Button label="Politique de confidentialité" variant="link" onPress={() => void Linking.openURL(`${getApiBaseUrl()}/legal/privacy`)} />
+        <Button label="Supprimer mon compte" variant="link" onPress={() => router.push('/delete-account')} />
+      </View>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
   identity: { flexDirection: 'row', alignItems: 'center', gap: 14 },
+  links: { gap: 0 },
   avatar: {
     width: 56,
     height: 56,
