@@ -69,16 +69,32 @@ enum Currency {
 }
 
 model User {
-  id           String      @id @default(cuid())
-  email        String      @unique
-  name         String
-  phone        String?
-  passwordHash String
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
-  kycProfile   KycProfile?
-  cards        Card[]
-  fundings     Funding[]
+  id                 String              @id @default(cuid())
+  email              String              @unique
+  name               String
+  phone              String?
+  passwordHash       String
+  /// When the user accepted the terms of use at sign-up (null for accounts created before they existed).
+  termsAcceptedAt    DateTime?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  kycProfile         KycProfile?
+  cards              Card[]
+  fundings           Funding[]
+  passwordResetCodes PasswordResetCode[]
+}
+
+/// One-time code e-mailed for "forgot password". Only a hash of the code is stored.
+model PasswordResetCode {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  codeHash  String
+  expiresAt DateTime
+  attempts  Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
 }
 
 model KycProfile {

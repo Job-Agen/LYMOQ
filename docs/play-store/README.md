@@ -18,9 +18,12 @@ réponses aux questionnaires de la Play Console et procédure de signature.
 | Suppression de compte dans l'app | Profil → Supprimer mon compte |
 | Politique de confidentialité | `https://mesura-38r8.vercel.app/legal/privacy` |
 | Page de suppression de compte | `https://mesura-38r8.vercel.app/legal/delete-account` |
+| Conditions d'utilisation (acceptées à l'inscription) | `https://mesura-38r8.vercel.app/legal/terms` |
+| Mot de passe oublié (code à 6 chiffres par e-mail) | écran de connexion → *Mot de passe oublié ?* |
+| Nous contacter | Profil (affiché dès que `SUPPORT_EMAIL` est renseigné) |
 | Visuels | `docs/play-store/assets/` |
 
-Version actuelle : **0.4.0** (versionCode **5**). Chaque nouvel envoi sur Play doit augmenter
+Version actuelle : **0.5.0** (versionCode **6**). Chaque nouvel envoi sur Play doit augmenter
 `android.versionCode` dans `apps/mobile/app.json`.
 
 ## 2. Avant le premier envoi
@@ -30,7 +33,10 @@ Version actuelle : **0.4.0** (versionCode **5**). Chaque nouvel envoi sur Play d
    14 jours** avant de pouvoir publier en production.
 2. **Éditeur et e-mail de contact** : dans Vercel (projet `mesura-38r8`, variables *Production*), renseignez
    `LEGAL_PUBLISHER` (votre nom ou celui de votre société) et `SUPPORT_EMAIL`, puis redéployez.
-   Ils apparaissent sur les pages légales, qui sont exigées par Google.
+   Ils apparaissent sur les pages légales, qui sont exigées par Google, et dans *Profil → Nous contacter*.
+   **E-mails de réinitialisation** : créez une clé API sur <https://resend.com>, vérifiez votre domaine, puis
+   renseignez `RESEND_API_KEY` et `EMAIL_FROM` (ex. `Mesura <no-reply@votre-domaine>`). Sans clé, aucun e-mail
+   n'est envoyé et « Mot de passe oublié » ne peut pas aboutir.
 3. **Clé d'envoi (upload key)** : créez un keystore, puis ajoutez ces 4 secrets dans GitHub
    (*Settings → Secrets and variables → Actions*) :
    - `ANDROID_UPLOAD_KEYSTORE_BASE64` : le fichier `.jks` encodé en base64

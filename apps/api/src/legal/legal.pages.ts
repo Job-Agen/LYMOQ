@@ -127,3 +127,53 @@ cartes et leurs règles, vos recharges et votre historique de paiements. Les car
 Aucune donnée n'est conservée après la suppression.</p>`,
   );
 }
+
+export function termsPage(c: LegalContact): string {
+  return page(
+    "Conditions d'utilisation",
+    `<h1>Conditions d'utilisation</h1>
+<p class="muted">Dernière mise à jour : ${UPDATED}</p>
+${sandboxNote(c)}
+
+<h2>1. Objet</h2>
+<p>Mesura permet de créer des cartes virtuelles dont vous fixez les règles : montant maximum, marchand autorisé,
+nombre de paiements et durée de validité. Le service est édité par ${contactLine(c)}.</p>
+
+<h2>2. Accès au service</h2>
+<p>Le service est réservé aux personnes âgées de 18 ans ou plus. Vous vous engagez à fournir des informations exactes,
+notamment lors de la vérification d'identité, et à garder votre mot de passe confidentiel. Vous êtes responsable des
+actions effectuées depuis votre compte.</p>
+
+<h2>3. Fonctionnement des cartes</h2>
+<p>Chaque carte n'accepte que les paiements qui respectent ses règles. Un paiement qui ne les respecte pas est refusé.
+Une fois rechargée, vous pouvez durcir les règles d'une carte, la geler ou la clôturer, mais pas assouplir ses règles.
+Une carte se désactive automatiquement à la fin de sa durée ou après son dernier paiement autorisé.</p>
+
+<h2>4. Recharges et frais</h2>
+<p>Les cartes se rechargent par Mobile Money. Les frais de service sont affichés avant chaque paiement ; en version de
+démonstration, ils sont indicatifs et rien n'est débité. Mesura ne vous demande jamais votre code PIN Mobile Money.</p>
+
+<h2>5. Utilisation interdite</h2>
+<p>Il est interdit d'utiliser Mesura pour une activité illégale, frauduleuse ou pour contourner les mesures de sécurité
+du service, ainsi que de tenter d'accéder aux comptes d'autres personnes.</p>
+
+<h2>6. Disponibilité et responsabilité</h2>
+<p>Nous faisons notre possible pour que le service soit disponible et fiable, sans pouvoir le garantir en permanence.
+${c.sandbox ? 'En version de démonstration, le service est fourni « en l\'état », sans valeur financière.' : ''}</p>
+
+<h2>7. Données personnelles</h2>
+<p>Le traitement de vos données est décrit dans la <a href="/legal/privacy">politique de confidentialité</a>.</p>
+
+<h2>8. Durée et résiliation</h2>
+<p>Vous pouvez supprimer votre compte à tout moment depuis l'application
+(<a href="/legal/delete-account">comment faire</a>). Nous pouvons suspendre un compte en cas de non-respect des présentes
+conditions.</p>
+
+<h2>9. Modifications</h2>
+<p>Ces conditions peuvent évoluer. La date de mise à jour figure en haut de la page ; en cas de changement important,
+nous vous en informerons dans l'application.</p>
+
+<h2>10. Contact</h2>
+<p>Pour toute question : ${contactLine(c)}.</p>`,
+  );
+}

@@ -1,6 +1,9 @@
+import { useQuery } from '@tanstack/react-query';
+import Constants from 'expo-constants';
 import { router } from 'expo-router';
 import { Linking, StyleSheet, Text, View } from 'react-native';
 import { getApiBaseUrl } from '@/api/client';
+import { api } from '@/api/endpoints';
 import { useMe } from '@/api/queries';
 import { useAuth } from '@/auth/AuthProvider';
 import { Button } from '@/components/Button';
@@ -17,6 +20,7 @@ export default function Profile() {
   const me = useMe();
   const { signOut } = useAuth();
   const user = me.data;
+  const contact = useQuery({ queryKey: ['legal-contact'], queryFn: api.contact, staleTime: 60 * 60_000 });
 
   return (
     <Screen title="Profil" back={false} edges={['top']}>
@@ -50,9 +54,14 @@ export default function Profile() {
       </InfoNote>
       <Button label="Se déconnecter" variant="outline" icon="log-out-outline" onPress={() => void signOut()} />
       <View style={styles.links}>
+        {contact.data?.email ? (
+          <Button label="Nous contacter" variant="link" onPress={() => void Linking.openURL(`mailto:${contact.data?.email}?subject=Mesura`)} />
+        ) : null}
+        <Button label="Conditions d'utilisation" variant="link" onPress={() => void Linking.openURL(`${getApiBaseUrl()}/legal/terms`)} />
         <Button label="Politique de confidentialité" variant="link" onPress={() => void Linking.openURL(`${getApiBaseUrl()}/legal/privacy`)} />
         <Button label="Supprimer mon compte" variant="link" onPress={() => router.push('/delete-account')} />
       </View>
+      <Text style={[type.caption, { textAlign: 'center' }]}>Mesura · version {Constants.expoConfig?.version ?? '—'}</Text>
     </Screen>
   );
 }

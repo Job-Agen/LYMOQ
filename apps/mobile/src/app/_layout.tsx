@@ -69,6 +69,7 @@ function RootNavigator() {
       <Stack.Protected guard={!signedIn}>
         <Stack.Screen name="onboarding" />
         <Stack.Screen name="auth" />
+        <Stack.Screen name="forgot-password" />
       </Stack.Protected>
       <Stack.Protected guard={signedIn && !verified}>
         <Stack.Screen name="kyc" />
