@@ -10,9 +10,12 @@ post() { curl -s -X POST "$A$1" -H "$H" -H "$JSON" -d "${2:-{\}}"; }
 pay() { post /sandbox/transactions "{\"cardId\":\"$1\",\"merchant\":\"$2\",\"amount\":$3,\"currency\":\"XOF\"}"; }
 
 EMAIL="smoke$RANDOM$RANDOM@test.dev"
+echo "== register without accepting the terms (expect 400)"
+curl -s -X POST "$A/auth/register" -H "$JSON" \
+  -d "{\"name\":\"Ama\",\"email\":\"$EMAIL\",\"password\":\"password123\"}" | j "d['statusCode']"
 echo "== register $EMAIL"
 TOKEN=$(curl -sf -X POST "$A/auth/register" -H "$JSON" \
-  -d "{\"name\":\"Ama\",\"email\":\"$EMAIL\",\"password\":\"password123\"}" | j "d['accessToken']")
+  -d "{\"name\":\"Ama\",\"email\":\"$EMAIL\",\"password\":\"password123\",\"acceptTerms\":true}" | j "d['accessToken']")
 H="Authorization: Bearer $TOKEN"
 curl -s "$A/me" -H "$H" | j "(d['name'], d['kycStatus'])"
 
@@ -74,4 +77,19 @@ curl -s -X POST "$A/sandbox/transactions" -H "Authorization: Bearer $DT" -H "$JS
 echo "== auth (expect 401s)"
 curl -s "$A/cards" | j "(d['statusCode'], d['message'])"
 curl -s -X POST "$A/auth/login" -H "$JSON" -d '{"email":"demo@mesura.test","password":"wrong-pass"}' | j "(d['statusCode'], d['message'])"
+echo "== password reset (same answer for any e-mail; a wrong code is rejected)"
+curl -s -X POST "$A/auth/forgot-password" -H "$JSON" -d "{\"email\":\"$EMAIL\"}" | j "d"
+curl -s -X POST "$A/auth/forgot-password" -H "$JSON" -d '{"email":"nobody@test.dev"}' | j "d"
+curl -s -X POST "$A/auth/reset-password" -H "$JSON" \
+  -d "{\"email\":\"$EMAIL\",\"code\":\"000000\",\"password\":\"password456\"}" | j "(d['statusCode'], d['message'])"
+echo "== account deletion (wrong password: 403, then 204, then the token no longer works)"
+curl -s -X DELETE "$A/me" -H "$H" -H "$JSON" -d '{"password":"not-my-password"}' | j "(d['statusCode'], d['message'])"
+curl -s -o /dev/null -w '%{http_code}\n' -X DELETE "$A/me" -H "$H" -H "$JSON" -d '{"password":"password123"}'
+curl -s "$A/me" -H "$H" | j "(d['statusCode'], d['message'])"
+
+echo "== legal pages"
+curl -s -o /dev/null -w 'privacy %{http_code}\n' "$A/legal/privacy"
+curl -s -o /dev/null -w 'delete-account %{http_code}\n' "$A/legal/delete-account"
+curl -s -o /dev/null -w 'terms %{http_code}\n' "$A/legal/terms"
+curl -s "$A/legal/contact" | j "d"
 echo "== done"

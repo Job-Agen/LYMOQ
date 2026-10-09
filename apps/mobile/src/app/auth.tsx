@@ -1,9 +1,10 @@
 import { useMutation } from '@tanstack/react-query';
-import { useLocalSearchParams } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
 import { loginSchema, registerSchema } from '@mesura/shared';
-import { errorMessage } from '@/api/client';
+import { errorMessage, getApiBaseUrl, IS_PRODUCTION_BUILD } from '@/api/client';
 import { api } from '@/api/endpoints';
 import { useAuth } from '@/auth/AuthProvider';
 import { ApiServerSetting } from '@/components/ApiServerSetting';
@@ -14,7 +15,7 @@ import { TextField } from '@/components/TextField';
 import { colors, radius, type } from '@/theme/tokens';
 
 type Mode = 'login' | 'signup';
-type Field = 'name' | 'email' | 'password';
+type Field = 'name' | 'email' | 'password' | 'acceptTerms';
 
 export default function Auth() {
   const params = useLocalSearchParams<{ mode?: Mode }>();
@@ -23,12 +24,13 @@ export default function Auth() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [acceptTerms, setAcceptTerms] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<Field, string>>>({});
 
   const submit = useMutation({
     mutationFn: async () => {
       if (mode === 'signup') {
-        const parsed = registerSchema.safeParse({ name, email, password });
+        const parsed = registerSchema.safeParse({ name, email, password, acceptTerms });
         if (!parsed.success) return collectErrors(parsed.error.issues);
         return api.register(parsed.data);
       }
@@ -45,7 +47,7 @@ export default function Auth() {
     const next: Partial<Record<Field, string>> = {};
     for (const issue of issues) {
       const key = issue.path[0];
-      if ((key === 'name' || key === 'email' || key === 'password') && !next[key]) next[key] = issue.message;
+      if ((key === 'name' || key === 'email' || key === 'password' || key === 'acceptTerms') && !next[key]) next[key] = issue.message;
     }
     setFieldErrors(next);
     return null;
@@ -110,12 +112,39 @@ export default function Auth() {
         hint={mode === 'signup' ? 'Au moins 8 caractères.' : undefined}
         onSubmitEditing={onSubmit}
       />
+      {mode === 'signup' ? (
+        <View style={{ gap: 4 }}>
+          <Pressable
+            accessibilityRole="checkbox"
+            accessibilityState={{ checked: acceptTerms }}
+            onPress={() => setAcceptTerms((v) => !v)}
+            style={styles.terms}
+            hitSlop={6}
+          >
+            <Ionicons name={acceptTerms ? 'checkbox' : 'square-outline'} size={24} color={acceptTerms ? colors.green : colors.muted} />
+            <Text style={[type.caption, styles.termsText]}>
+              J'accepte les{' '}
+              <Text style={styles.link} onPress={() => void Linking.openURL(`${getApiBaseUrl()}/legal/terms`)}>
+                conditions d'utilisation
+              </Text>{' '}
+              et la{' '}
+              <Text style={styles.link} onPress={() => void Linking.openURL(`${getApiBaseUrl()}/legal/privacy`)}>
+                politique de confidentialité
+              </Text>
+              .
+            </Text>
+          </Pressable>
+          <InlineError message={fieldErrors.acceptTerms ?? null} />
+        </View>
+      ) : (
+        <Button label="Mot de passe oublié ?" variant="link" onPress={() => router.push({ pathname: '/forgot-password', params: { email } })} />
+      )}
       <InlineError message={submit.isError ? errorMessage(submit.error) : null} />
       {mode === 'login' ? <InfoNote tone="sandbox">Compte de démo (sandbox) : demo@mesura.test / demo1234</InfoNote> : null}
       <Text style={[type.caption, { textAlign: 'center' }]}>
         Mesura sandbox · aucun argent réel, aucune vraie carte, aucune vérification d'identité réelle.
       </Text>
-      <ApiServerSetting />
+      {IS_PRODUCTION_BUILD ? null : <ApiServerSetting />}
     </Screen>
   );
 }
@@ -126,4 +155,7 @@ const styles = StyleSheet.create({
   tabOn: { backgroundColor: colors.surface },
   tabText: { fontWeight: '800', color: colors.muted, fontSize: 15 },
   tabTextOn: { color: colors.forest },
+  terms: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
+  termsText: { flex: 1, fontSize: 13, lineHeight: 19 },
+  link: { color: colors.green, fontWeight: '700', textDecorationLine: 'underline' },
 });

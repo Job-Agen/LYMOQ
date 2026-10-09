@@ -11,7 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:16
+        # Official image via the AWS mirror: Docker Hub rate-limits shared runners.
+        image: public.ecr.aws/docker/library/postgres:16
         env:
           POSTGRES_USER: mesura
           POSTGRES_PASSWORD: mesura

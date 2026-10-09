@@ -20,10 +20,13 @@ const amountSchema = z
   .int('Le montant doit être un nombre entier')
   .positive('Le montant doit être supérieur à zéro');
 
+const newPasswordSchema = z.string().min(8, 'Au moins 8 caractères').max(128);
+
 export const registerSchema = z.object({
   name: z.string().trim().min(2, 'Saisissez votre prénom').max(80),
   email: z.string().trim().toLowerCase().email('Saisissez une adresse e-mail valide'),
-  password: z.string().min(8, 'Au moins 8 caractères').max(128),
+  password: newPasswordSchema,
+  acceptTerms: z.literal(true, { errorMap: () => ({ message: "Acceptez les conditions d'utilisation pour continuer" }) }),
 });
 export type RegisterInput = z.infer<typeof registerSchema>;
 
@@ -32,6 +35,29 @@ export const loginSchema = z.object({
   password: z.string().min(1, 'Saisissez votre mot de passe').max(128),
 });
 export type LoginInput = z.infer<typeof loginSchema>;
+
+/** "Forgot password", step 1: a 6-digit code is e-mailed if the account exists. */
+export const forgotPasswordSchema = z.object({
+  email: z.string().trim().toLowerCase().email('Saisissez une adresse e-mail valide'),
+});
+export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
+
+/** "Forgot password", step 2: the code from the e-mail and the new password. */
+export const resetPasswordSchema = z.object({
+  email: z.string().trim().toLowerCase().email('Saisissez une adresse e-mail valide'),
+  code: z
+    .string()
+    .trim()
+    .regex(/^\d{6}$/, 'Le code contient 6 chiffres'),
+  password: newPasswordSchema,
+});
+export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
+
+/** Account deletion is confirmed with the current password. */
+export const deleteAccountSchema = z.object({
+  password: z.string().min(1, 'Saisissez votre mot de passe').max(128),
+});
+export type DeleteAccountInput = z.infer<typeof deleteAccountSchema>;
 
 /** Togo mobile numbers: +228 followed by 8 digits. Spaces are ignored. */
 export const togoPhoneSchema = z

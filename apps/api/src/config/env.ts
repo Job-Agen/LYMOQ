@@ -18,6 +18,13 @@ const envSchema = z.object({
   SANDBOX_FUNDING_AUTO_CONFIRM_SECONDS: z.coerce.number().int().min(0).default(10),
   SERVICE_FEE_BPS: z.coerce.number().int().min(0).max(10_000).default(500),
   FUNDING_EXPIRY_MINUTES: z.coerce.number().int().positive().default(15),
+  /** Shown on the public legal pages (privacy policy, account deletion). */
+  LEGAL_PUBLISHER: z.string().default(''),
+  SUPPORT_EMAIL: z.string().default(''),
+  /** Resend (https://resend.com) API key; without it, password reset e-mails are not sent. */
+  RESEND_API_KEY: z.string().default(''),
+  /** Sender of transactional e-mails; must be on a domain verified in Resend. */
+  EMAIL_FROM: z.string().default('Mesura <onboarding@resend.dev>'),
 });
 
 export type AppEnv = z.infer<typeof envSchema>;

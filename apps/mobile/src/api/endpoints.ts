@@ -14,6 +14,9 @@ import type {
   TransactionDto,
   UpdateCardRulesInput,
   UserDto,
+  DeleteAccountInput,
+  ForgotPasswordInput,
+  ResetPasswordInput,
 } from '@mesura/shared';
 import { request } from './client';
 
@@ -22,7 +25,11 @@ export type TransactionFilter = 'ALL' | 'APPROVED' | 'BLOCKED';
 export const api = {
   register: (input: RegisterInput) => request<AuthResponseDto>('POST', '/auth/register', input),
   login: (input: LoginInput) => request<AuthResponseDto>('POST', '/auth/login', input),
+  forgotPassword: (input: ForgotPasswordInput) => request<{ sent: true }>('POST', '/auth/forgot-password', input),
+  resetPassword: (input: ResetPasswordInput) => request<AuthResponseDto>('POST', '/auth/reset-password', input),
+  contact: () => request<{ email: string | null; publisher: string | null }>('GET', '/legal/contact'),
   me: () => request<UserDto>('GET', '/me'),
+  deleteAccount: (input: DeleteAccountInput) => request<null>('DELETE', '/me', input),
 
   kyc: () => request<KycProfileDto>('GET', '/kyc'),
   startKyc: (input: KycStartInput) => request<KycProfileDto>('POST', '/kyc/start', input),
