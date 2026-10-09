@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import type { KycStatus, UserDto } from '@mesura/shared';
 import { verifyPassword } from '../auth/password';
 import { PrismaService } from '../prisma/prisma.service';
@@ -31,7 +31,8 @@ export class UsersService {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user) throw new NotFoundException('Compte introuvable');
     if (!(await verifyPassword(password, user.passwordHash))) {
-      throw new UnauthorizedException('Mot de passe incorrect');
+      // 403, not 401: the app signs out on any 401, and a typo must not log the user out.
+      throw new ForbiddenException('Mot de passe incorrect');
     }
     await this.prisma.user.delete({ where: { id: userId } });
   }

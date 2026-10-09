@@ -74,7 +74,7 @@ curl -s -X POST "$A/sandbox/transactions" -H "Authorization: Bearer $DT" -H "$JS
 echo "== auth (expect 401s)"
 curl -s "$A/cards" | j "(d['statusCode'], d['message'])"
 curl -s -X POST "$A/auth/login" -H "$JSON" -d '{"email":"demo@mesura.test","password":"wrong-pass"}' | j "(d['statusCode'], d['message'])"
-echo "== account deletion (wrong password: 401, then 204, then the token no longer works)"
+echo "== account deletion (wrong password: 403, then 204, then the token no longer works)"
 curl -s -X DELETE "$A/me" -H "$H" -H "$JSON" -d '{"password":"not-my-password"}' | j "(d['statusCode'], d['message'])"
 curl -s -o /dev/null -w '%{http_code}\n' -X DELETE "$A/me" -H "$H" -H "$JSON" -d '{"password":"password123"}'
 curl -s "$A/me" -H "$H" | j "(d['statusCode'], d['message'])"
